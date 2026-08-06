@@ -1,5 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+import { Evento } from "../models/evento";
 
 @Injectable({
     providedIn: 'root'
@@ -12,6 +13,16 @@ export class EventoService{
 
     listarEventos(){
         return this.http.get(this.apiUrl)
+    }
+
+    buscarPorId(id: number){
+    return this.http.get<Evento>(
+        `${this.apiUrl}/${id}`
+    );
+}
+    
+    listarParticipantesEvento(id: number){
+        return this.http.get(`${this.apiUrl}/${id}/participantes`)
     }
 
     cadastrarEvento(evento: any){

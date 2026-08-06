@@ -1,13 +1,65 @@
-<div>
-    <div>
-        <ng-container *ngFor="let evento of eventos">
-            <div>
-                <h2 class="text-black">{{evento.id}}</h2>
-                <h2 class="">{{evento.nome}}</h2>
-                <h2 class="text-black">{{evento.local}}</h2>
-                <h2 class="text-black">{{evento.capacidade_maxima}}</h2>
-                <h2 class="">{{evento.status}}</h2>
+<div class="w-full bg-gray-700 flex flex-col min-h-screen">
+    <div class="flex flex-col justify-center items-center">
+        
+        <h1 class="text-4xl bg-black w-full text-center text-white font-bold mb-10 py-4">
+            Eventos
+        </h1>
+
+        <div class="mb-8">
+            <h2 class="inline text-white font-bold mr-2 text-2xl">
+                Pesquisar Evento:
+            </h2>
+
+            <input 
+                class="p-2 rounded-2xl border border-black shadow-lg"
+                type="text"
+                [(ngModel)]="pesquisaEvento">
+        </div>
+
+
+        <!-- Mensagem quando não encontrar -->
+        <div 
+            *ngIf="eventosFiltrados.length === 0"
+            class="text-white bg-red-600 rounded-2xl p-2 text-4xl font-bold text-center mt-10">
+            
+            Nenhum evento encontrado!
+
+        </div>
+
+
+        <div class="flex justify-center w-full">
+            <div class="grid grid-cols-4 gap-6 w-4/5">
+                
+                <ng-container *ngFor="let evento of eventosFiltrados">
+
+                    <div class="bg-gray-900 rounded-2xl overflow-hidden shadow-lg">
+
+                        <!-- Parte superior do card -->
+                        <div class="bg-blue-500 px-4 py-2">
+                            <h2 class="text-2xl text-white font-bold text-center">
+                                {{evento.nome}}
+                            </h2>
+                        </div>
+
+                        <!-- Parte inferior do card -->
+                        <div class="p-8 flex justify-center flex-col items-center">
+                            <h2 class="text-white text-xl font-bold text-center">
+                                {{evento.local}}
+                            </h2>
+
+                            <button 
+                                class="text-white bg-blue-500 px-3 py-2 text-center font-bold mt-5 rounded-2xl"
+                                (click)="abrirEvento(evento.id)">
+                                Ver Detalhes
+                            </button>
+                        </div>
+
+                    </div>
+
+                </ng-container>
+
             </div>
-        </ng-container> 
+        </div>
+
     </div>
 </div>

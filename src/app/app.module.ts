@@ -5,8 +5,9 @@ import { HttpClientModule } from '@angular/common/http'
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { EventosComponent } from './eventos/eventos.component';
-import { ParticipantesComponent } from './participantes/participantes.component';
+import { ParticipantesComponent } from './participantes/formularioParticipantes/participantes.component';
 import { DetalhesEventosComponent } from './detalhes-eventos/detalhes-eventos.component';
+import { ListaParticipantesComponent } from './participantes/lista-participantes/lista-participantes.component';
 
 @NgModule({
   declarations: [
@@ -14,6 +15,7 @@ import { DetalhesEventosComponent } from './detalhes-eventos/detalhes-eventos.co
     EventosComponent,
     ParticipantesComponent,
     DetalhesEventosComponent,
+    ListaParticipantesComponent,
   ],
   imports: [
     BrowserModule,

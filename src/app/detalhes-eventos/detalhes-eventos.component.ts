@@ -10,7 +10,7 @@ import { Evento } from '../models/evento';
 })
 export class DetalhesEventosComponent implements OnInit {
 
-  id!: number;
+  id?: number;
   evento!: Evento;
 
   constructor(

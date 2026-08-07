@@ -1,0 +1,17 @@
+<div class="bg-white w-full rounded-2xl shadow-lg flex justify-center flex-col p-4">
+    <h1 class="font-bold text-blue-500 text-3xl">Participantes do Evento</h1>
+    <table class="w-full mt-4">
+        <thead>
+            <tr class="font-bold text-xl uppercase">
+                <th>Nome</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let participante of participantes" class="border border-black text-center text-xl">
+                <td class="text-center">{{ participante.nome }}</td>
+                <td class="">{{ participante.email }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

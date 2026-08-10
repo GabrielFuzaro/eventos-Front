@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { EventoService } from '../services/evento.service';
 import { Evento } from '../models/evento';
+import { ViewChild } from '@angular/core';
+import { ListaParticipantesComponent } from '../participantes/lista-participantes/lista-participantes.component';
 
 @Component({
   selector: 'app-detalhes-eventos',
@@ -9,6 +11,9 @@ import { Evento } from '../models/evento';
   styleUrls: ['./detalhes-eventos.component.css']
 })
 export class DetalhesEventosComponent implements OnInit {
+
+  @ViewChild(ListaParticipantesComponent)
+  listaParticipantes!: ListaParticipantesComponent;
 
   id?: number;
   evento!: Evento;
@@ -20,16 +25,17 @@ export class DetalhesEventosComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.id = Number(
-      this.route.snapshot.paramMap.get('id')
-    );
-
+    this.id = Number(this.route.snapshot.paramMap.get('id'));
 
     this.eventoService.buscarPorId(this.id)
       .subscribe(resposta => {
         this.evento = resposta;
       });
 
+  }
+
+  atualizarParticipantes(){
+    this.listaParticipantes.listarParticipantes();
   }
 
 }

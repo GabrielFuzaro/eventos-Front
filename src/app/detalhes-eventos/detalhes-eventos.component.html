@@ -28,7 +28,7 @@
 
             <!-- FORMULÁRIO PARTICIPANTE -->
             <div class="w-full">
-                <app-participantes></app-participantes>
+                <app-participantes [eventoId]="evento.id" (participatenCadastradoOutput)="atualizarParticipantes()"></app-participantes>
             </div>
 
         </div>

@@ -4,4 +4,5 @@ export interface Evento {
     local: string;
     capacidade_maxima: number;
     status: string;
+    data_evento: string;
 }

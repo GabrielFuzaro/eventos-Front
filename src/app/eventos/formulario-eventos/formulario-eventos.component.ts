@@ -1,0 +1,54 @@
+import { Component } from '@angular/core';
+import { FormControl, FormGroup, Validator, Validators } from '@angular/forms';
+import { EventoService } from 'src/app/services/evento.service';
+import { Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import { Output, EventEmitter } from '@angular/core';
+
+@Component({
+  selector: 'app-formulario-eventos',
+  templateUrl: './formulario-eventos.component.html',
+  styleUrls: ['./formulario-eventos.component.css']
+})
+export class FormularioEventosComponent {
+
+  constructor(private eventoService: EventoService, private route: ActivatedRoute, private router: Router) {}
+
+ @Output() eventoCadastradoOutput = new EventEmitter<void>();
+
+  mensagemErro: string = '';
+  mensagemSucesso: string ='';
+
+  onSubmit(){
+    const evento = {
+      nome: this.eventoFormulario.value.nome,
+      local: this.eventoFormulario.value.local,
+      capacidade_maxima: this.eventoFormulario.value.capacidade_maxima,
+      data_evento: this.eventoFormulario.value.data_evento + ':00-03:00'
+    };
+    
+    this.mensagemErro = '';
+    this.mensagemSucesso = '';
+
+    this.eventoService.cadastrarEvento(evento)
+    .subscribe({ 
+      next: resposta => {
+        console.log("Evento cadastrado", resposta)
+        this.mensagemSucesso = "Evento cadastrado com sucesso!"
+        this.eventoCadastradoOutput.emit()
+        this.eventoFormulario.reset();
+      },
+      error: erro => {
+        console.log("Erro ao cadastrar", erro)
+        this.mensagemErro = erro.error?.titulo ?? 'Erro ao cadastrar evento.';
+      }
+    })
+  }
+
+  eventoFormulario = new FormGroup({
+    nome: new FormControl('', Validators.required),
+    local: new FormControl('', Validators.required),
+    capacidade_maxima: new FormControl(null, Validators.required),
+    data_evento: new FormControl(null, Validators.required)
+  })
+}

@@ -8,6 +8,8 @@ import { EventosComponent } from './eventos/eventos.component';
 import { ParticipantesComponent } from './participantes/formularioParticipantes/participantes.component';
 import { DetalhesEventosComponent } from './detalhes-eventos/detalhes-eventos.component';
 import { ListaParticipantesComponent } from './participantes/lista-participantes/lista-participantes.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { FormularioEventosComponent } from './eventos/formulario-eventos/formulario-eventos.component';
 
 @NgModule({
   declarations: [
@@ -16,12 +18,14 @@ import { ListaParticipantesComponent } from './participantes/lista-participantes
     ParticipantesComponent,
     DetalhesEventosComponent,
     ListaParticipantesComponent,
+    FormularioEventosComponent,
   ],
   imports: [
     BrowserModule,
     FormsModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

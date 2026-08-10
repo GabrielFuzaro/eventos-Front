@@ -12,7 +12,7 @@ export class EventoService{
     constructor(private http: HttpClient) { }
 
     listarEventos(){
-        return this.http.get(this.apiUrl)
+        return this.http.get<Evento[]>(this.apiUrl)
     }
 
     buscarPorId(id: number){

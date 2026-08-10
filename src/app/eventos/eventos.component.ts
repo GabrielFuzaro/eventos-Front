@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { EventoService } from '../services/evento.service';
 import { Router } from '@angular/router';
+import { Evento } from '../models/evento';
+import { FormularioEventosComponent } from './formulario-eventos/formulario-eventos.component';
 
 @Component({
   selector: 'app-eventos',
@@ -9,17 +11,30 @@ import { Router } from '@angular/router';
 })
 export class EventosComponent {
 
-  eventos: any[] = []
+  eventos: Evento[] = []
 
   constructor(private eventoService: EventoService, private router: Router) {}
+
+  @ViewChild(FormularioEventosComponent)
+  formularioEventos!: FormularioEventosComponent;
   
   ngOnInit(){
-    this.eventoService.listarEventos().subscribe((dados: any) => {
+    this.listarEventos();
+  }
+
+  listarEventos(){
+    this.eventoService.listarEventos()
+    .subscribe((dados: Evento[]) => {
       this.eventos = dados;
     })
   }
 
   pesquisaEvento = '';
+  statusFormulario: boolean = false;
+
+  cadastrarEventoFormulario(){
+    this.statusFormulario = !this.statusFormulario;
+  }
 
   abrirEvento(id: number){
     this.router.navigate([
@@ -33,5 +48,9 @@ export class EventosComponent {
       !this.pesquisaEvento ||
       evento.nome.toLowerCase().includes(this.pesquisaEvento.toLowerCase())
     );
+  }
+
+  atualizarEventos(){
+    this.listarEventos();
   }
 }

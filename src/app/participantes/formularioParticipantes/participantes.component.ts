@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ParticipanteService } from '../../services/participante.service';
 import { Router } from '@angular/router';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-participantes',
@@ -15,34 +17,45 @@ export class ParticipantesComponent {
   mensagemErro: string = '';
   mensagemSucesso: string ='';
 
+  @Input() eventoId!: number;
+  @Output() participatenCadastradoOutput = new EventEmitter<void>();
+
   ngOnInit(){
     this.route.snapshot.paramMap.get("id")
   }
-  participante = {
-    nome: '',
-    email: '',
+  
+  participanteForm = new FormGroup({
+    nome: new FormControl('', Validators.required),
+    email: new FormControl('', [Validators.required, Validators.email]), 
+  })
+
+  onSubmit(){
+
+    const participante = {
+    nome: this.participanteForm.value.nome,
+    email: this.participanteForm.value.email,
     eventoId: {
-      id: this.route.snapshot.paramMap.get("id")
+      id: this.eventoId
     }
-  }
+  };
 
-  salvar() {
-    console.log("salvou")
-  }
+  this.mensagemErro = '';
+  this.mensagemSucesso = '';
 
-  cadastrarParticipante(){
-    this.participanteService.cadastrarParticipante(this.participante)
-    .subscribe({
-      next: resposta => {
-        console.log("Cadastrado com suceseso", resposta);
-        this.mensagemErro = '';
-        this.mensagemSucesso = 'Participante cadastrado com sucesso!';
-      },
-      error: erro => {
-        console.log(erro);
-        console.log("BODY DO ERRO:", erro.error);
-        this.mensagemErro = erro.error.titulo;
-      }
-    });
+  console.log("Participante: ", participante);
+
+  this.participanteService.cadastrarParticipante(participante)
+  .subscribe({
+    next: resposta => {
+      console.log("Cadastrado com Sucesso", resposta);
+      this.mensagemSucesso = 'Participante cadastrado com sucesso!';
+
+      this.participatenCadastradoOutput.emit();
+    },
+    error: erro => {
+      console.log("Erro ao cadastrar", erro)
+      this.mensagemErro = erro.error?.titulo ?? 'Erro ao cadastrar participante.';
+    }
+  });
   }
 }

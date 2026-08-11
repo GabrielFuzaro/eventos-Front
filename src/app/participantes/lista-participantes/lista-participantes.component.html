@@ -11,6 +11,7 @@
             <tr *ngFor="let participante of participantes" class="border border-black text-center text-xl">
                 <td class="text-center">{{ participante.nome }}</td>
                 <td class="">{{ participante.email }}</td>
+                <td (click)="excluirParticipante(participante.id)"><img [src]="imagemLixeira"></td>
             </tr>
              <tr *ngIf="participantes.length === 0">
                 <td colspan="2" class="text-red-500 font-bold text-center text-xl py-5">
@@ -20,4 +21,24 @@
 
         </tbody>
     </table>
+    <div 
+            *ngIf="mensagemErro"
+            class="bg-red-500 border border-red-500
+                text-red-200 p-3 rounded-xl text-center font-bold
+                text-sm mt-4 w-1/2 self-center">
+
+            {{mensagemErro}}
+
+        </div>
+
+
+        <div 
+            *ngIf="mensagemSucesso"
+            class="bg-green-500 border border-green-500
+                text-green-200 p-3 rounded-xl text-center
+                text-sm font-medium mt-4 w-1/2 self-center">
+
+            {{mensagemSucesso}}
+
+        </div>
 </div>

@@ -27,6 +27,11 @@ export class ListaParticipantesComponent implements OnChanges{
   @Input()
   eventoId!: number
 
+  imagemLixeira = '../../assets/imgs/Lixeira.svg';
+
+  mensagemErro = '';
+  mensagemSucesso = '';
+
   listarParticipantes(){
     this.eventoServices.listarParticipantesEvento(this.eventoId)
     .subscribe({
@@ -38,5 +43,30 @@ export class ListaParticipantesComponent implements OnChanges{
         console.log("Erro ao buscar participantes", erro)
       }
     });
+  }
+
+  excluirParticipante(id: number){
+    if(!confirm("Tem certeza que deseja excluír esse participante?")){
+      return;
+    }
+
+    this.participantesService.excluirParticipante(id)
+    .subscribe({
+      next: resposta => {
+        console.log("Participante excluido com sucesso", resposta)
+        this.listarParticipantes()
+        this.mensagemSucesso = "Participante excluído com sucesso"
+        setTimeout(() => {
+          this.mensagemSucesso = ''
+        }, 2500);
+      },
+      error: erro => {
+        console.log("Erro ao excluir participante", erro)
+        this.mensagemErro = erro.error?.titulo ?? "Erro ao excluír participante"
+        setTimeout(() => {
+          this.mensagemErro = ''
+        }, 2500);
+      }
+    })
   }
 }

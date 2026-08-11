@@ -19,6 +19,13 @@ export class FormularioEventosComponent {
   mensagemErro: string = '';
   mensagemSucesso: string ='';
 
+  eventoFormulario = new FormGroup({
+    nome: new FormControl('', Validators.required),
+    local: new FormControl('', Validators.required),
+    capacidade_maxima: new FormControl(null, [Validators.required, Validators.min(1)]),
+    data_evento: new FormControl(null, Validators.required)
+  })
+
   onSubmit(){
     const evento = {
       nome: this.eventoFormulario.value.nome,
@@ -26,7 +33,10 @@ export class FormularioEventosComponent {
       capacidade_maxima: this.eventoFormulario.value.capacidade_maxima,
       data_evento: this.eventoFormulario.value.data_evento + ':00-03:00'
     };
-    
+    console.log(this.eventoFormulario.value.data_evento);
+    console.log(
+  this.eventoFormulario.value.data_evento + ':00-03:00'
+);
     this.mensagemErro = '';
     this.mensagemSucesso = '';
 
@@ -45,10 +55,4 @@ export class FormularioEventosComponent {
     })
   }
 
-  eventoFormulario = new FormGroup({
-    nome: new FormControl('', Validators.required),
-    local: new FormControl('', Validators.required),
-    capacidade_maxima: new FormControl(null, [Validators.required, Validators.min(1)]),
-    data_evento: new FormControl(null, Validators.required)
-  })
 }

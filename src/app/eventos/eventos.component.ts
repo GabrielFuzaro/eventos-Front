@@ -22,12 +22,43 @@ export class EventosComponent {
     this.listarEventos();
   }
 
+  mensagemSucesso = '';
+  mensagemErro = '';
+
   listarEventos(){
     this.eventoService.listarEventos()
     .subscribe((dados: Evento[]) => {
       this.eventos = dados;
     })
   }
+
+  excluirEvento(id: number){
+
+    if (!confirm('Tem certeza que deseja excluir este evento?')) {
+        return;
+      }
+
+    this.eventoService.excluirEvento(id)
+    .subscribe({
+      next: resposta => {
+        console.log("Evento excluído com sucesso", resposta)
+        this.listarEventos()
+        this.mensagemSucesso = "Evento excluído com sucesso"
+        setTimeout(() => {
+          this.mensagemSucesso = ''
+        }, 2500);
+      },
+      error: erro => {
+        console.log("Falha ao excluír evento", erro)
+        this.mensagemErro = erro.error?.titulo ?? 'Erro ao excluír Evento'
+        setTimeout(() => {
+          this.mensagemErro = ''
+        }, 2500);
+      }
+    })
+  }
+
+  imagemLixeira = '../assets/imgs/Lixeira.svg';
 
   pesquisaEvento = '';
   statusFormulario: boolean = false;

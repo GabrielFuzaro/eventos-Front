@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormControl, FormGroup, Validator, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { EventoService } from 'src/app/services/evento.service';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
@@ -48,7 +48,7 @@ export class FormularioEventosComponent {
   eventoFormulario = new FormGroup({
     nome: new FormControl('', Validators.required),
     local: new FormControl('', Validators.required),
-    capacidade_maxima: new FormControl(null, Validators.required),
+    capacidade_maxima: new FormControl(null, [Validators.required, Validators.min(1)]),
     data_evento: new FormControl(null, Validators.required)
   })
 }

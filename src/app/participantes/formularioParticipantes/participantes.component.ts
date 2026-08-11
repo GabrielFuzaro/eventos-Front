@@ -20,10 +20,6 @@ export class ParticipantesComponent {
   @Input() eventoId!: number;
   @Output() participatenCadastradoOutput = new EventEmitter<void>();
 
-  ngOnInit(){
-    this.route.snapshot.paramMap.get("id")
-  }
-  
   participanteForm = new FormGroup({
     nome: new FormControl('', Validators.required),
     email: new FormControl('', [Validators.required, Validators.email]), 
@@ -42,8 +38,6 @@ export class ParticipantesComponent {
   this.mensagemErro = '';
   this.mensagemSucesso = '';
 
-  console.log("Participante: ", participante);
-
   this.participanteService.cadastrarParticipante(participante)
   .subscribe({
     next: resposta => {
@@ -51,6 +45,7 @@ export class ParticipantesComponent {
       this.mensagemSucesso = 'Participante cadastrado com sucesso!';
 
       this.participatenCadastradoOutput.emit();
+      this.participanteForm.reset();
     },
     error: erro => {
       console.log("Erro ao cadastrar", erro)

@@ -20,7 +20,7 @@
         <!-- Mensagem quando não encontrar -->
         <div 
             *ngIf="eventosFiltrados.length === 0"
-            class="text-white bg-red-600 rounded-2xl p-2 text-4xl font-bold text-center mt-10">
+            class="text-white bg-red-600 p-2 text-4xl font-bold text-center mt-10">
             
             Nenhum evento encontrado!
 
@@ -35,7 +35,7 @@
                     <div class="bg-gray-900 rounded-2xl overflow-hidden shadow-lg">
 
                         <!-- Parte superior do card -->
-                        <div class="bg-blue-500 px-4 py-2">
+                        <div class="px-4 py-2" [ngClass]="evento.status === 'LOTADO' ? 'bg-red-500' : 'bg-blue-500'">
                             <h2 class="text-3xl text-white font-bold text-center">
                                 {{evento.nome}}
                             </h2>
@@ -46,6 +46,9 @@
                             <h2 class="text-white text-2xl font-bold text-center mb-2">
                                 {{evento.local}}
                             </h2>
+
+                            <div *ngIf="evento.status === 'LOTADO'" class="text-red-500 font-bold text-xl mb-2">EVENTO LOTADO!</div>
+
                             <h2 class="text-white text-[18px] font-bold text-center mb-4">
                                 Capacidade Máxima: {{evento.capacidade_maxima}}
                             </h2>
@@ -57,9 +60,10 @@
                             </h2>
 
                             <button 
-                                class="text-white bg-blue-500 px-3 py-2 text-center font-bold mt-5 rounded-2xl"
+                                class="text-white bg-blue-500 px-3 py-2 text-center font-bold mt-5 rounded-2xl" [ngClass]="evento.status === 'LOTADO' ? 'opacity-0 bg-red-500' : '' "
+                                [disabled]="evento.status === 'LOTADO'"
                                 (click)="abrirEvento(evento.id)">
-                                Ver Detalhes
+                                Ver Detalhes 
                             </button>
                         </div>
 
@@ -71,7 +75,7 @@
         </div>
     </div>
         <div class="w-[80%] ml-8">
-            <button (click)="cadastrarEventoFormulario()" class="bg-blue-500 px-3 text-xl py-2 text-center font-bold mt-5 rounded-2xl text-white w-1/6">
+            <button (click)="cadastrarEventoFormulario()" class="mb-4 bg-blue-500 px-3 text-xl py-2 text-center font-bold mt-5 rounded-2xl text-white w-1/6">
             Cadastrar evento
             </button>
             <div *ngIf="statusFormulario == true">

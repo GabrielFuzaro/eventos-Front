@@ -12,6 +12,12 @@
                 <td class="text-center">{{ participante.nome }}</td>
                 <td class="">{{ participante.email }}</td>
             </tr>
+             <tr *ngIf="participantes.length === 0">
+                <td colspan="2" class="text-red-500 font-bold text-center text-xl py-5">
+                    Nenhum participante cadastrado!
+                </td>
+            </tr>
+
         </tbody>
     </table>
 </div>

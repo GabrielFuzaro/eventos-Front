@@ -6,3 +6,11 @@ export interface Participante{
     email: string
     evento: Evento
 }
+
+export interface ParticipanteInput {
+    nome: string
+    email: string
+    eventoId: {
+        id:number
+    }
+}

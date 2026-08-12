@@ -4,6 +4,7 @@ import { ParticipanteService } from '../../services/participante.service';
 import { Router } from '@angular/router';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Input, Output, EventEmitter } from '@angular/core';
+import { ParticipanteInput } from 'src/app/models/participante';
 
 @Component({
   selector: 'app-participantes',
@@ -18,6 +19,7 @@ export class ParticipantesComponent {
   mensagemSucesso: string ='';
 
   @Input() eventoId!: number;
+  @Input() statusEvento!: string;
   @Output() participatenCadastradoOutput = new EventEmitter<void>();
 
   participanteForm = new FormGroup({
@@ -27,9 +29,9 @@ export class ParticipantesComponent {
 
   onSubmit(){
 
-    const participante = {
-    nome: this.participanteForm.value.nome,
-    email: this.participanteForm.value.email,
+    const participante: ParticipanteInput = {
+    nome: this.participanteForm.value.nome!,
+    email: this.participanteForm.value.email!,
     eventoId: {
       id: this.eventoId
     }
@@ -43,7 +45,6 @@ export class ParticipantesComponent {
     next: resposta => {
       console.log("Cadastrado com Sucesso", resposta);
       this.mensagemSucesso = 'Participante cadastrado com sucesso!';
-
       this.participatenCadastradoOutput.emit();
       this.participanteForm.reset();
     },

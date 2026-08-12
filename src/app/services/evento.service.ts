@@ -20,16 +20,12 @@ export class EventoService{
         `${this.apiUrl}/${id}`
     );
 }
-    
-    listarParticipantesEvento(id: number){
-        return this.http.get(`${this.apiUrl}/${id}/participantes`)
-    }
 
-    cadastrarEvento(evento: any){
+    cadastrarEvento(evento: Omit<Evento, 'id' | 'status'>){
         return this.http.post(this.apiUrl, evento);
     }
 
-    atualizarEvento(id: number, evento: any){
+    atualizarEvento(id: number, evento: Omit<Evento, 'id' | 'status'>){
         return this.http.put(`${this.apiUrl}/${id}`, evento);
     }
 

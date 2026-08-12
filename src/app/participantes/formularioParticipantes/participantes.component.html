@@ -47,7 +47,7 @@
 
     <button 
         type="submit"
-        [disabled]="participanteForm.invalid"
+        [disabled]="participanteForm.invalid || statusEvento === 'LOTADO'"
         class="w-full mt-2
             bg-blue-500 hover:bg-blue-600
             disabled:bg-gray-600
@@ -58,10 +58,13 @@
             py-3 rounded-xl
             shadow-md
             hover:shadow-blue-500/20">
-
         Cadastrar
-
     </button>
+
+    <div *ngIf="statusEvento === 'LOTADO' " 
+        class="bg-yellow-500/10 border border-yellow-500/40 text-yellow-300 p-3 rounded-xl text-center text-sm font-medium">
+        Esse evento já está lotado. Não é possível se inscrever.
+    </div>
 
     <div 
         *ngIf="mensagemErro"

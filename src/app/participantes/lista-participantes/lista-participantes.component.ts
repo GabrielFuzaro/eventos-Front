@@ -3,7 +3,6 @@ import { ActivatedRoute, Route } from '@angular/router';
 import { Participante } from 'src/app/models/participante';
 import { ParticipanteService } from 'src/app/services/participante.service';
 import { Input } from '@angular/core';
-import { EventoService } from 'src/app/services/evento.service';
 
 @Component({
   selector: 'app-lista-participantes',
@@ -12,7 +11,7 @@ import { EventoService } from 'src/app/services/evento.service';
 })
 export class ListaParticipantesComponent implements OnChanges{
 
-  constructor(private participantesService: ParticipanteService, private route: ActivatedRoute, private eventoServices: EventoService) {}
+  constructor(private participantesService: ParticipanteService, private route: ActivatedRoute) {}
 
   participantes: Participante[] = [];
 
@@ -33,7 +32,7 @@ export class ListaParticipantesComponent implements OnChanges{
   mensagemSucesso = '';
 
   listarParticipantes(){
-    this.eventoServices.listarParticipantesEvento(this.eventoId)
+    this.participantesService.listarParticipantesEvento(this.eventoId)
     .subscribe({
       next: resposta => {
         console.log(resposta);

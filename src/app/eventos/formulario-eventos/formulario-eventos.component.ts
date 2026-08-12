@@ -28,10 +28,10 @@ export class FormularioEventosComponent {
 
   onSubmit(){
     const evento = {
-      nome: this.eventoFormulario.value.nome,
-      local: this.eventoFormulario.value.local,
-      capacidade_maxima: this.eventoFormulario.value.capacidade_maxima,
-      data_evento: this.eventoFormulario.value.data_evento + ':00-03:00'
+      nome: this.eventoFormulario.value.nome!,
+      local: this.eventoFormulario.value.local!,
+      capacidade_maxima: this.eventoFormulario.value.capacidade_maxima!,
+      data_evento: this.eventoFormulario.value.data_evento! + ':00-03:00'
     };
     console.log(this.eventoFormulario.value.data_evento);
     console.log(
@@ -39,7 +39,7 @@ export class FormularioEventosComponent {
 );
     this.mensagemErro = '';
     this.mensagemSucesso = '';
-
+    
     this.eventoService.cadastrarEvento(evento)
     .subscribe({ 
       next: resposta => {

@@ -33,13 +33,10 @@ export class FormularioEventosComponent {
       capacidade_maxima: this.eventoFormulario.value.capacidade_maxima!,
       data_evento: this.eventoFormulario.value.data_evento! + ':00-03:00'
     };
-    console.log(this.eventoFormulario.value.data_evento);
-    console.log(
-  this.eventoFormulario.value.data_evento + ':00-03:00'
-);
+    
     this.mensagemErro = '';
     this.mensagemSucesso = '';
-    
+
     this.eventoService.cadastrarEvento(evento)
     .subscribe({ 
       next: resposta => {

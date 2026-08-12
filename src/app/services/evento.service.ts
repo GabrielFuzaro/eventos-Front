@@ -22,11 +22,11 @@ export class EventoService{
 }
 
     cadastrarEvento(evento: Omit<Evento, 'id' | 'status'>){
-        return this.http.post(this.apiUrl, evento);
+        return this.http.post<Evento>(this.apiUrl, evento);
     }
 
     atualizarEvento(id: number, evento: Omit<Evento, 'id' | 'status'>){
-        return this.http.put(`${this.apiUrl}/${id}`, evento);
+        return this.http.put<Evento>(`${this.apiUrl}/${id}`, evento);
     }
 
     excluirEvento(id:number) {

@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { EventosComponent } from './eventos/eventos.component';
 import { DetalhesEventosComponent } from './detalhes-eventos/detalhes-eventos.component';
+import { FormularioEdicaoEventosComponent } from './eventos/formulario-edicao-eventos/formulario-edicao-eventos.component';
 
 const routes: Routes = [
   {
@@ -11,6 +12,10 @@ const routes: Routes = [
   {
     path: 'eventos/:id',
     component: DetalhesEventosComponent
+  },
+  {
+    path: 'eventos/:id/edição',
+    component: FormularioEdicaoEventosComponent
   },
    {
     path: '',

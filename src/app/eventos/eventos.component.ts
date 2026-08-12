@@ -22,6 +22,11 @@ export class EventosComponent {
     this.listarEventos();
   }
 
+  eventoHoje(dataEvento: string): boolean {
+   return new Date(dataEvento) < new Date;
+  }
+
+  dataHoje = new Date();
   mensagemSucesso = '';
   mensagemErro = '';
 
@@ -56,6 +61,10 @@ export class EventosComponent {
         }, 2500);
       }
     })
+  }
+
+  botaoEditarEvento(id: number){
+    this.router.navigate(['./eventos', id, 'edição'])
   }
 
   imagemLixeira = '../assets/imgs/Lixeira.svg';

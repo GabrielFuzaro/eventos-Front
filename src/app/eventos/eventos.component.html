@@ -49,6 +49,7 @@
 
                             <div *ngIf="evento.status === 'LOTADO'" class="text-red-500 font-bold text-xl mb-2">EVENTO LOTADO!</div>
                             <div *ngIf="evento.status !== 'LOTADO'" class="text-cyan-500 font-bold text-xl mb-2">Vagas disponíveis</div>
+                            <div *ngIf="eventoHoje(evento.data_evento)" class="text-yellow-500 font-bold text-xl mb-2">EVENTO ENCERRADO!</div>
 
                             <h2 class="text-white text-[18px] font-bold text-center mb-4">
                                 Capacidade Máxima: {{evento.capacidade_maxima}}
@@ -65,9 +66,17 @@
                                 (click)="abrirEvento(evento.id)">
                                 Ver Detalhes 
                             </button>
-                            <button class="self-end mt-4" (click)="excluirEvento(evento.id)">
-                                <img [src]="imagemLixeira">
-                            </button>
+                            
+                            <div class="flex w-full justify-between mt-4 mb-2">
+                                <button (click)="botaoEditarEvento(evento.id)"
+                                    class="text-black bg-gray-500 px-2 py-2 text-center font-bold rounded-2xl text-sm">
+                                        Editar
+                                    </button>
+                            
+                                <button class="mt-2" (click)="excluirEvento(evento.id)">
+                                    <img [src]="imagemLixeira">
+                                </button>
+                            </div>
                         </div>
 
                     </div>

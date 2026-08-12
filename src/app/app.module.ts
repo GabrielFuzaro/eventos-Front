@@ -10,6 +10,7 @@ import { DetalhesEventosComponent } from './detalhes-eventos/detalhes-eventos.co
 import { ListaParticipantesComponent } from './participantes/lista-participantes/lista-participantes.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormularioEventosComponent } from './eventos/formulario-eventos/formulario-eventos.component';
+import { FormularioEdicaoEventosComponent } from './eventos/formulario-edicao-eventos/formulario-edicao-eventos.component';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { FormularioEventosComponent } from './eventos/formulario-eventos/formula
     DetalhesEventosComponent,
     ListaParticipantesComponent,
     FormularioEventosComponent,
+    FormularioEdicaoEventosComponent,
   ],
   imports: [
     BrowserModule,

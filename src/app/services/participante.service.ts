@@ -1,6 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Participante, ParticipanteInput } from "../models/participante";
+import { Page } from "../models/paginacao";
 
 @Injectable({
     providedIn: 'root'
@@ -11,12 +12,12 @@ export class ParticipanteService {
 
     constructor( private http: HttpClient) {}
 
-    listarParticipantes(){
-        return this.http.get<Participante[]>(this.apiUrl);
+    listarParticipantes(page: number, size: number){
+        return this.http.get<Participante>(`${this.apiUrl}?page=${page}&size=${size}`);
     }
 
-    listarParticipantesEvento(id: number){
-        return this.http.get<Participante[]>(`${this.apiUrl}/evento/${id}`)
+    listarParticipantesEvento(id: number, page: number, size: number){
+        return this.http.get<Page<Participante>>(`${this.apiUrl}/evento/${id}/?page=${page}&size=${size}`)
     }
 
     cadastrarParticipante(participante: ParticipanteInput){

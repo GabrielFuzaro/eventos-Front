@@ -3,6 +3,7 @@ import { ActivatedRoute, Route } from '@angular/router';
 import { Participante } from 'src/app/models/participante';
 import { ParticipanteService } from 'src/app/services/participante.service';
 import { Input } from '@angular/core';
+import { Page } from 'src/app/models/paginacao';
 
 @Component({
   selector: 'app-lista-participantes',
@@ -31,17 +32,29 @@ export class ListaParticipantesComponent implements OnChanges{
   mensagemErro = '';
   mensagemSucesso = '';
 
+  paginaAtual = 0;
+  tamanhoPagina = 15;
+  totalPaginas = 0;
+
   listarParticipantes(){
-    this.participantesService.listarParticipantesEvento(this.eventoId)
+    this.participantesService.listarParticipantesEvento(this.eventoId, this.paginaAtual, this.tamanhoPagina)
     .subscribe({
       next: resposta => {
         console.log(resposta);
-        this.participantes = resposta as Participante[];
-      },
-      error: erro => {
-        console.log("Erro ao buscar participantes", erro)
+        this.participantes = resposta.content;
+        this.totalPaginas = resposta.totalPages;
       }
     });
+  }
+
+  irParaPagina(pagina: number): void{
+
+    if(pagina < 0 || pagina >= this.totalPaginas){
+      return;
+    }
+
+    this.paginaAtual = pagina;
+    this.listarParticipantes();
   }
 
   excluirParticipante(id: number){

@@ -23,7 +23,7 @@ export class EventosComponent {
   }
 
 
-  eventoHoje(dataEvento: string): boolean {
+  eventoEncerrado(dataEvento: string): boolean {
    return new Date(dataEvento) < new Date;
   }
 

@@ -1,44 +1,98 @@
 <div class="bg-white w-full rounded-2xl shadow-lg flex justify-center flex-col p-4">
-    <h1 class="font-bold text-blue-500 text-3xl">Participantes do Evento</h1>
+
+    <h1 class="font-bold text-blue-500 text-3xl">
+        Participantes do Evento
+    </h1>
+
     <table class="w-full mt-4">
+
         <thead>
             <tr class="font-bold text-xl uppercase">
                 <th>Nome</th>
                 <th>Email</th>
+                <th></th>
             </tr>
         </thead>
+
         <tbody>
-            <tr *ngFor="let participante of participantes" class="border border-black text-center text-xl">
-                <td class="text-center">{{ participante.nome }}</td>
-                <td class="">{{ participante.email }}</td>
-                <td (click)="excluirParticipante(participante.id)"><img [src]="imagemLixeira"></td>
+            <tr 
+                *ngFor="let participante of participantes" 
+                class="border border-black text-center text-xl">
+
+                <td class="text-center">
+                    {{ participante.nome }}
+                </td>
+                <td>
+                    {{ participante.email }}
+                </td>
+                <td (click)="excluirParticipante(participante.id)">
+                    <img [src]="imagemLixeira">
+                </td>
             </tr>
-             <tr *ngIf="participantes.length === 0">
-                <td colspan="2" class="text-red-500 font-bold text-center text-xl py-5">
+            <tr *ngIf="participantes.length === 0">
+                <td 
+                    colspan="3" 
+                    class="text-red-500 font-bold text-center text-xl py-5">
                     Nenhum participante cadastrado!
                 </td>
             </tr>
 
         </tbody>
     </table>
+
     <div 
-            *ngIf="mensagemErro"
-            class="bg-red-500 border border-red-500
-                text-red-200 p-3 rounded-xl text-center font-bold
-                text-sm mt-4 w-1/2 self-center">
+        *ngIf="totalPaginas > 1"
+        class="flex justify-center items-center gap-2 mt-6">
 
-            {{mensagemErro}}
+        <button
+            (click)="irParaPagina(paginaAtual - 1)"
+            [disabled]="paginaAtual === 0"
+            class="px-4 py-2 rounded-lg font-bold
+                   bg-blue-500 text-white
+                   disabled:bg-gray-300 disabled:cursor-not-allowed">
+            Anterior
+        </button>
 
-        </div>
+        <button
+            *ngFor="let pagina of [].constructor(totalPaginas); let i = index"
+            (click)="irParaPagina(i)"
+            [class.bg-blue-700]="paginaAtual === i"
+            [class.text-white]="paginaAtual === i"
+            [class.bg-gray-200]="paginaAtual !== i"
+            class="px-4 py-2 rounded-lg font-bold">
 
+            {{ i + 1 }}
 
-        <div 
-            *ngIf="mensagemSucesso"
-            class="bg-green-500 border border-green-500
-                text-green-200 p-3 rounded-xl text-center
-                text-sm font-medium mt-4 w-1/2 self-center">
+        </button>
 
-            {{mensagemSucesso}}
+        <!-- Próxima página -->
+        <button
+            (click)="irParaPagina(paginaAtual + 1)"
+            [disabled]="paginaAtual === totalPaginas - 1"
+            class="px-4 py-2 rounded-lg font-bold
+                   bg-blue-500 text-white
+                   disabled:bg-gray-300 disabled:cursor-not-allowed">
 
-        </div>
+            Próxima
+        </button>
+    </div>
+
+    <div 
+        *ngIf="mensagemErro"
+        class="bg-red-500 border border-red-500
+               text-red-200 p-3 rounded-xl text-center font-bold
+               text-sm mt-4 w-1/2 self-center">
+
+        {{mensagemErro}}
+
+    </div>
+
+    <div 
+        *ngIf="mensagemSucesso"
+        class="bg-green-500 border border-green-500
+               text-green-200 p-3 rounded-xl text-center
+               text-sm font-medium mt-4 w-1/2 self-center">
+
+        {{mensagemSucesso}}
+    </div>
 </div>

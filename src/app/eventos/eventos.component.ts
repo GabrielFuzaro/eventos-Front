@@ -18,9 +18,10 @@ export class EventosComponent {
   @ViewChild(FormularioEventosComponent)
   formularioEventos!: FormularioEventosComponent;
   
-  ngOnInit(){
-    this.listarEventos();
+  ngOnInit(): void{
+    this.carregarEventos();
   }
+
 
   eventoHoje(dataEvento: string): boolean {
    return new Date(dataEvento) < new Date;
@@ -30,11 +31,26 @@ export class EventosComponent {
   mensagemSucesso = '';
   mensagemErro = '';
 
-  listarEventos(){
-    this.eventoService.listarEventos()
-    .subscribe((dados: Evento[]) => {
-      this.eventos = dados;
+  paginaAtual = 0;
+  tamanhoPagina = 4;
+  totalPaginas = 0;
+
+  carregarEventos(): void {
+    this.eventoService.listarEventos(this.paginaAtual, this.tamanhoPagina)
+    .subscribe(resposta => {
+      this.eventos = resposta.content;
+      this.totalPaginas = resposta.totalPages;
     })
+  }
+
+  irParaPagina(pagina: number): void{
+
+    if(pagina < 0 || pagina >= this.totalPaginas){
+      return;
+    }
+
+    this.paginaAtual = pagina;
+    this.carregarEventos();
   }
 
   excluirEvento(id: number){
@@ -47,7 +63,7 @@ export class EventosComponent {
     .subscribe({
       next: resposta => {
         console.log("Evento excluído com sucesso", resposta)
-        this.listarEventos()
+        this.carregarEventos()
         this.mensagemSucesso = "Evento excluído com sucesso"
         setTimeout(() => {
           this.mensagemSucesso = ''
@@ -68,6 +84,8 @@ export class EventosComponent {
   }
 
   imagemLixeira = '../assets/imgs/Lixeira.svg';
+  imagemChevronEsquerda = '../assets/imgs/chevron esquerda.svg';
+  imagemChevronDireita = '../assets/imgs/chevron_direita.svg'
 
   pesquisaEvento = '';
   statusFormulario: boolean = false;
@@ -91,6 +109,6 @@ export class EventosComponent {
   }
 
   atualizarEventos(){
-    this.listarEventos();
+    this.carregarEventos();
   }
 }

@@ -11,8 +11,8 @@ export class EventoService{
 
     constructor(private http: HttpClient) { }
 
-    listarEventos(){
-        return this.http.get<Evento[]>(this.apiUrl)
+    listarEventos(page: number, size: number){
+        return this.http.get<any>(`${this.apiUrl}?page=${page}&size=${size}`)
     }
 
     buscarPorId(id: number){

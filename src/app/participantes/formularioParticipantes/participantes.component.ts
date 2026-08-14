@@ -13,7 +13,7 @@ import { ParticipanteInput } from 'src/app/models/participante';
 })
 export class ParticipantesComponent {
 
-  constructor(private participanteService: ParticipanteService, private route: ActivatedRoute, private router: Router) {}
+  constructor(private participanteService: ParticipanteService, private router: Router) {}
 
   mensagemErro: string = '';
   mensagemSucesso: string ='';

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { EventoService } from 'src/app/services/evento.service';
 import { ActivatedRoute } from '@angular/router';
 import { Evento } from 'src/app/models/evento';

@@ -23,11 +23,6 @@ export class EventosComponent {
   }
 
 
-  eventoEncerrado(dataEvento: string): boolean {
-   return new Date(dataEvento) < new Date;
-  }
-
-  dataHoje = new Date();
   mensagemSucesso = '';
   mensagemErro = '';
 

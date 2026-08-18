@@ -32,4 +32,8 @@ export class EventoService{
     excluirEvento(id:number) {
         return this.http.delete(`${this.apiUrl}/${id}`)
     }
+
+    encerrarEvento(id: number){
+        return this.http.put<void>(`${this.apiUrl}/${id}/encerrar`, {})
+    }
 }

@@ -33,7 +33,7 @@ export class ListaParticipantesComponent implements OnChanges{
   mensagemSucesso = '';
 
   paginaAtual = 0;
-  tamanhoPagina = 15;
+  tamanhoPagina = 9;
   totalPaginas = 0;
 
   listarParticipantes(){

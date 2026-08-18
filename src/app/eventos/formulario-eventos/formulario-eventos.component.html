@@ -1,110 +1,76 @@
-<form [formGroup]="eventoFormulario" (ngSubmit)="onSubmit()" class="bg-gray-900 rounded-2xl shadow-lg p-8 flex flex-col gap-5 w-full">
-    <div class="w-full max-w-lg mx-auto bg-white rounded-2xl shadow-lg p-8">
+<form [formGroup]="eventoFormulario" (ngSubmit)="onSubmit()" class="w-full flex items-center justify-center">
+    <div class="w-full max-w-lg bg-slate-900 border border-slate-800 rounded-2xl p-8">
 
-        <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">
-            Dados do Evento
+        <h2 class="text-2xl font-bold text-white mb-1 text-center">
+            Novo Evento
         </h2>
+        <p class="text-slate-400 text-sm text-center mb-6">Preencha os dados para cadastrar</p>
 
         <div class="mb-5">
-            <label for="nome" class="block text-sm font-semibold text-gray-700 mb-2">
+            <label for="nome" class="block text-sm font-semibold text-slate-300 mb-2">
                 Nome
             </label>
-
             <input
-                type="text"
+                type="text" required
                 id="nome"
                 formControlName="nome"
                 placeholder="Digite o nome do evento"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg
-                    focus:outline-none focus:ring-2 focus:ring-blue-500
-                    focus:border-blue-500 transition"
-            >
+                class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
         </div>
 
         <div class="mb-5">
-            <label for="local" class="block text-sm font-semibold text-gray-700 mb-2">
+            <label for="local" class="block text-sm font-semibold text-slate-300 mb-2">
                 Local
             </label>
-
             <input
-                type="text"
+                type="text" required
                 id="local"
                 formControlName="local"
                 placeholder="Digite o local do evento"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg
-                    focus:outline-none focus:ring-2 focus:ring-blue-500
-                    focus:border-blue-500 transition"
-            >
+                class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
         </div>
 
         <div class="mb-5">
-            <label for="capacidade_maxima" class="block text-sm font-semibold text-gray-700 mb-2">
+            <label for="capacidade_maxima" class="block text-sm font-semibold text-slate-300 mb-2">
                 Capacidade Máxima
             </label>
-
             <input
-                type="number"
+                type="number" min="1" required
                 id="capacidade_maxima"
                 formControlName="capacidade_maxima"
                 placeholder="Ex: 100"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg
-                    focus:outline-none focus:ring-2 focus:ring-blue-500
-                    focus:border-blue-500 transition"
-            >
+                class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
         </div>
 
-        <div class="mb-5">
-            <label for="data_evento" class="block text-sm font-semibold text-gray-700 mb-2">
+        <div class="mb-6">
+            <label for="data_evento" class="block text-sm font-semibold text-slate-300 mb-2">
                 Data e Hora do Evento
             </label>
-
             <input
-                type="datetime-local"
+                type="datetime-local" required
                 id="data_evento"
                 formControlName="data_evento"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg
-                    focus:outline-none focus:ring-2 focus:ring-blue-500
-                    focus:border-blue-500 transition"
-            >
+                class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
         </div>
-        <button 
-        type="submit"
-        [disabled]="eventoFormulario.invalid"
-        class="w-full mt-2
-            bg-blue-500 hover:bg-blue-600
-            disabled:bg-gray-600
-            disabled:cursor-not-allowed
-            disabled:opacity-50
-            transition duration-200
-            text-white font-bold
-            py-3 rounded-xl
-            shadow-md
-            hover:shadow-blue-500/20">
 
-        Cadastrar
+        <button
+            type="submit"
+            [disabled]="eventoFormulario.invalid"
+            class="w-full bg-indigo-500 hover:bg-indigo-400 disabled:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50 transition text-white font-semibold py-3 rounded-xl">
+            Cadastrar
+        </button>
 
-    </button>
+        <div
+            *ngIf="mensagemErro"
+            class="bg-rose-500/10 border border-rose-500/30 text-rose-400 p-3 rounded-xl text-center text-sm font-medium mt-4">
+            {{mensagemErro}}
+        </div>
 
-    <div 
-        *ngIf="mensagemErro"
-        class="bg-red-500 border border-red-500
-            text-red-300 p-3 rounded-xl text-center
-            text-sm font-medium mt-4">
-
-        {{mensagemErro}}
-
-    </div>
-
-
-    <div 
-        *ngIf="mensagemSucesso"
-        class="bg-green-500 border border-green-500
-            text-green-200 p-3 rounded-xl text-center
-            text-sm font-medium mt-4">
-
-        {{mensagemSucesso}}
-
-    </div>
+        <div
+            *ngIf="mensagemSucesso"
+            class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 p-3 rounded-xl text-center text-sm font-medium mt-4">
+            {{mensagemSucesso}}
+        </div>
 
     </div>
 </form>

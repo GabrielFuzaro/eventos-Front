@@ -38,40 +38,32 @@
                             <h2 class="text-lg font-bold text-white leading-snug">
                                 {{evento.nome}}
                             </h2>
+
                             <span
                                 class="text-[11px] font-semibold px-2 py-1 rounded-full whitespace-nowrap"
-                                [ngClass]="
-                                    evento.status === 'LOTADO'
-                                        ? 'bg-rose-500/15 text-rose-400'
-                                        : evento.status === 'ENCERRADO'
-                                            ? 'bg-yellow-500/15 text-yellow-400'
-                                            : 'bg-emerald-500/15 text-emerald-400'
-                                ">
-                                {{
-                                    evento.status === 'LOTADO'
-                                        ? 'Lotado'
-                                        : evento.status === 'ENCERRADO'
-                                            ? 'Encerrado'
-                                            : 'Aberto'}}
+                                [ngClass]="{
+                                    'bg-rose-500/15 text-rose-400': evento.status === 'LOTADO',
+                                    'bg-amber-500/15 text-amber-400': evento.status === 'ENCERRADO',
+                                    'bg-emerald-500/15 text-emerald-400': evento.status !== 'LOTADO' && evento.status !== 'ENCERRADO'
+                                }">
+                                {{evento.status === 'LOTADO' ? 'Lotado' : evento.status === 'ENCERRADO' ? 'Encerrado' : 'Aberto'}}
                             </span>
+
                         </div>
                         <p class="text-slate-400 text-sm mt-1">{{evento.local}}</p>
                     </div>
 
                     <div class="px-5 py-4 flex flex-col gap-3 flex-1">
                         
-                        <div
-                            *ngIf="evento.status === 'ENCERRADO'"
+                        <div *ngIf="evento.status === 'ENCERRADO'"
                             class="text-amber-400 bg-amber-500/10 text-xs font-semibold px-3 py-1.5 rounded-lg w-fit">
                             Evento encerrado
                         </div>
-                        <div
-                            *ngIf="evento.status === 'LOTADO'"
+                        <div *ngIf="evento.status === 'LOTADO'"
                             class="text-rose-400 bg-rose-500/10 text-xs font-semibold px-3 py-1.5 rounded-lg w-fit">
                             Sem vagas disponíveis
                         </div>
-                        <div
-                            *ngIf="evento.status === 'ABERTO'"
+                        <div *ngIf="evento.status !== 'ENCERRADO' && evento.status !== 'LOTADO'"
                             class="text-cyan-400 bg-cyan-500/10 text-xs font-semibold px-3 py-1.5 rounded-lg w-fit">
                             Vagas disponíveis
                         </div>
@@ -93,7 +85,11 @@
 
                         <button
                             class="mt-auto w-full font-semibold py-2.5 rounded-xl transition text-white"
-                            [ngClass]="evento.status === 'LOTADO' ? 'bg-rose-500/80 hover:bg-rose-500' : 'bg-indigo-500 hover:bg-indigo-400'"
+                            [ngClass]="{
+                                'bg-rose-500/80 hover:bg-rose-500': evento.status === 'LOTADO',
+                                'bg-amber-500/80 hover:bg-amber-500': evento.status === 'ENCERRADO',
+                                'bg-indigo-500 hover:bg-indigo-400': evento.status !== 'LOTADO' && evento.status !== 'ENCERRADO'
+                            }"
                             (click)="abrirEvento(evento.id)">
                             Ver detalhes
                         </button>

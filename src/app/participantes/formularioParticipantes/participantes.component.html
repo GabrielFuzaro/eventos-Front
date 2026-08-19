@@ -35,14 +35,19 @@
 
     <button
         type="submit"
-        [disabled]="participanteForm.invalid || statusEvento === 'LOTADO'"
+        [disabled]="participanteForm.invalid || statusEvento === 'LOTADO' || statusEvento === 'ENCERRADO' || enviando"
         class="w-full mt-2 bg-indigo-500 hover:bg-indigo-400 disabled:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50 transition text-white font-semibold py-3 rounded-xl">
-        Cadastrar
+        {{enviando ? 'Enviando...' : 'Cadastrar'}}
     </button>
 
     <div *ngIf="statusEvento === 'LOTADO'"
         class="bg-amber-500/10 border border-amber-500/30 text-amber-400 p-3 rounded-xl text-center text-sm font-medium">
         Esse evento já está lotado. Não é possível se inscrever.
+    </div>
+
+    <div *ngIf="statusEvento === 'ENCERRADO'"
+        class="bg-amber-500/10 border border-amber-500/30 text-amber-400 p-3 rounded-xl text-center text-sm font-medium">
+        Esse evento já foi encerrado. Não é possível se inscrever
     </div>
 
     <div

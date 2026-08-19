@@ -26,10 +26,20 @@
                         <span class="text-slate-500">Capacidade</span>
                         <span class="text-slate-200 font-medium">{{evento.capacidade_maxima}}</span>
                     </div>
+                    
                     <div class="flex justify-between">
                         <span class="text-slate-500">Status</span>
-                        <span class="text-slate-200 font-medium">{{evento.status}}</span>
+                        <span
+                            class="font-medium"
+                            [ngClass]="{
+                                'text-rose-400': evento.status === 'LOTADO',
+                                'text-amber-400': evento.status === 'ENCERRADO',
+                                'text-emerald-400': evento.status !== 'LOTADO' && evento.status !== 'ENCERRADO'
+                            }">
+                            {{evento.status}}
+                        </span>
                     </div>
+
                 </div>
 
                 <div class="px-6 pb-5">

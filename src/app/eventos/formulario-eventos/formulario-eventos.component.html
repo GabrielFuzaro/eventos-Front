@@ -57,7 +57,7 @@
             type="submit"
             [disabled]="eventoFormulario.invalid"
             class="w-full bg-indigo-500 hover:bg-indigo-400 disabled:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50 transition text-white font-semibold py-3 rounded-xl">
-            Cadastrar
+            {{enviando ? 'Enviando...' : 'Cadastrar'}}
         </button>
 
         <div

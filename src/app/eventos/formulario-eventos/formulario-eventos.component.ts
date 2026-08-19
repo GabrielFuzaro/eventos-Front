@@ -26,6 +26,8 @@ export class FormularioEventosComponent {
     data_evento: new FormControl(null, Validators.required)
   })
 
+  enviando: boolean = false
+
   onSubmit(){
     const evento = {
       nome: this.eventoFormulario.value.nome!,
@@ -37,17 +39,27 @@ export class FormularioEventosComponent {
     this.mensagemErro = '';
     this.mensagemSucesso = '';
 
+    this.enviando = true
+
     this.eventoService.cadastrarEvento(evento)
     .subscribe({ 
       next: resposta => {
         console.log("Evento cadastrado", resposta)
         this.mensagemSucesso = "Evento cadastrado com sucesso!"
         this.eventoCadastradoOutput.emit()
+        this.enviando = false
         this.eventoFormulario.reset();
+        setTimeout(() => {
+          this.mensagemSucesso = ''
+        }, 2500);
       },
       error: erro => {
         console.log("Erro ao cadastrar", erro)
+        this.enviando = false
         this.mensagemErro = erro.error?.titulo ?? 'Erro ao cadastrar evento.';
+        setTimeout(() => {
+          this.mensagemErro = ''
+        }, 2500);
       }
     })
   }

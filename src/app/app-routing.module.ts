@@ -4,7 +4,7 @@ import { EventosComponent } from './eventos/eventos.component';
 import { DetalhesEventosComponent } from './detalhes-eventos/detalhes-eventos.component';
 import { FormularioEdicaoEventosComponent } from './eventos/formulario-edicao-eventos/formulario-edicao-eventos.component';
 
-const routes: Routes = [
+const routes: Routes = [ //Declara as rotas para exibir as páginas
   {
     path: 'eventos',
     component: EventosComponent

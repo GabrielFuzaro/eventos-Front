@@ -18,10 +18,7 @@ export class DetalhesEventosComponent implements OnInit {
   id?: number;
   evento!: Evento;
 
-  constructor(
-    private route: ActivatedRoute,
-    private eventoService: EventoService
-  ) {}
+  constructor(private route: ActivatedRoute, private eventoService: EventoService) {}
 
   ngOnInit(): void {
 

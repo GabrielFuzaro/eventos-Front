@@ -7,33 +7,33 @@ import { Evento } from "../models/evento";
 })
 export class EventoService{
 
-    private apiUrl = "http://localhost:8080/eventos"
+    private apiUrl = "http://localhost:8080/eventos"  //Declara a URl para fazer a requisição
 
     constructor(private http: HttpClient) { }
 
-    listarEventos(page: number, size: number){
+    listarEventos(page: number, size: number){ //Método para listar eventos com paginação
         return this.http.get<any>(`${this.apiUrl}?page=${page}&size=${size}`)
     }
 
-    buscarPorId(id: number){
+    buscarPorId(id: number){ //Método para buscar um evento por Id
     return this.http.get<Evento>(
         `${this.apiUrl}/${id}`
     );
 }
 
-    cadastrarEvento(evento: Omit<Evento, 'id' | 'status'>){
+    cadastrarEvento(evento: Omit<Evento, 'id' | 'status'>){ //Método para cadastrar evento
         return this.http.post<Evento>(this.apiUrl, evento);
     }
 
-    atualizarEvento(id: number, evento: Omit<Evento, 'id' | 'status'>){
+    atualizarEvento(id: number, evento: Omit<Evento, 'id' | 'status'>){ //Método para atualizar evento
         return this.http.put<Evento>(`${this.apiUrl}/${id}`, evento);
     }
 
-    excluirEvento(id:number) {
+    excluirEvento(id:number) { //Método para excluir evento
         return this.http.delete(`${this.apiUrl}/${id}`)
     }
 
-    encerrarEvento(id: number){
+    encerrarEvento(id: number){ //Método para encerrar evento
         return this.http.put<void>(`${this.apiUrl}/${id}/encerrar`, {})
     }
 }

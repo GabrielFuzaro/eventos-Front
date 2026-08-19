@@ -12,7 +12,7 @@ import { Page } from 'src/app/models/paginacao';
 })
 export class ListaParticipantesComponent implements OnChanges{
 
-  constructor(private participantesService: ParticipanteService, private route: ActivatedRoute) {}
+  constructor(private participantesService: ParticipanteService) {}
 
   participantes: Participante[] = [];
 

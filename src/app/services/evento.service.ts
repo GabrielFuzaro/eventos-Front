@@ -1,6 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Evento } from "../models/evento";
+import { Page } from "../models/paginacao";
 
 @Injectable({
     providedIn: 'root'
@@ -12,7 +13,7 @@ export class EventoService{
     constructor(private http: HttpClient) { }
 
     listarEventos(page: number, size: number){ //Método para listar eventos com paginação
-        return this.http.get<any>(`${this.apiUrl}?page=${page}&size=${size}`)
+        return this.http.get<Page<Evento>>(`${this.apiUrl}?page=${page}&size=${size}`)
     }
 
     buscarPorId(id: number){ //Método para buscar um evento por Id
@@ -31,9 +32,5 @@ export class EventoService{
 
     excluirEvento(id:number) { //Método para excluir evento
         return this.http.delete(`${this.apiUrl}/${id}`)
-    }
-
-    encerrarEvento(id: number){ //Método para encerrar evento
-        return this.http.put<void>(`${this.apiUrl}/${id}/encerrar`, {})
     }
 }

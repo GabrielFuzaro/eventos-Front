@@ -22,7 +22,7 @@ export class ParticipantesComponent {
 
   @Input() eventoId!: number;
   @Input() statusEvento!: string;
-  @Output() participatenCadastradoOutput = new EventEmitter<void>();
+  @Output() participanteCadastradoOutput = new EventEmitter<void>();
 
   participanteForm = new FormGroup({
     nome: new FormControl('', Validators.required),
@@ -49,7 +49,7 @@ export class ParticipantesComponent {
     next: resposta => {
       console.log("Cadastrado com Sucesso", resposta);
       this.mensagemSucesso = 'Participante cadastrado com sucesso!';
-      this.participatenCadastradoOutput.emit();
+      this.participanteCadastradoOutput.emit();
       this.enviando = false
       this.participanteForm.reset();
       setTimeout(() => {

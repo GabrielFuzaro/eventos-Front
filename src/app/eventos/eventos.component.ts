@@ -14,9 +14,6 @@ export class EventosComponent {
   eventos: Evento[] = []
 
   constructor(private eventoService: EventoService, private router: Router) {}
-
-  @ViewChild(FormularioEventosComponent)
-  formularioEventos!: FormularioEventosComponent;
   
   ngOnInit(): void{
     this.carregarEventos();

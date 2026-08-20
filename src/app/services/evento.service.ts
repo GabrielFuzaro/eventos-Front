@@ -16,6 +16,10 @@ export class EventoService{
         return this.http.get<Page<Evento>>(`${this.apiUrl}?page=${page}&size=${size}`)
     }
 
+    filtrarEventosStatus(page: number, size: number, status: string){
+        return this.http.get<Page<Evento>>(`${this.apiUrl}/filtro/${status}?page=${page}&size=${size}`)
+    }
+
     buscarPorId(id: number){ //Método para buscar um evento por Id
     return this.http.get<Evento>(
         `${this.apiUrl}/${id}`

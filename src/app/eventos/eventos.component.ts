@@ -31,6 +31,7 @@ export class EventosComponent {
     .subscribe(resposta => {
       this.eventos = resposta.content;
       this.totalPaginas = resposta.totalPages;
+      this.status = ''
     })
   }
 
@@ -41,7 +42,11 @@ export class EventosComponent {
     }
 
     this.paginaAtual = pagina;
-    this.carregarEventos();
+    if(this.status === ''){
+      this.carregarEventos()
+    } else {
+      this.filtrarEventos()
+    }
   }
 
   excluirEvento(id: number){
@@ -101,5 +106,32 @@ export class EventosComponent {
 
   atualizarEventos(){
     this.carregarEventos();
+  }
+
+  status =  '';
+
+  filtrarEventos(){
+
+    this.eventoService.filtrarEventosStatus(this.paginaAtual, this.tamanhoPagina, this.status)
+    .subscribe({
+      next: resposta => {
+        console.log("Filtro de eventos ativado", resposta)
+        this.eventos = resposta.content
+        this.totalPaginas = resposta.totalPages
+      },
+      error: erro => {
+        console.log("Erro ao filtrar eventos", erro)
+      }
+    })
+  }
+
+  aplicarFiltro(){
+    this.paginaAtual = 0;
+    this.filtrarEventos();
+  }
+
+  removerFiltro(){
+    this.status = ''
+    this.carregarEventos()
   }
 }

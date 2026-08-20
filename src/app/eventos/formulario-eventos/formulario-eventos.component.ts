@@ -51,7 +51,7 @@ export class FormularioEventosComponent {
         this.eventoFormulario.reset();
         setTimeout(() => {
           this.mensagemSucesso = ''
-        }, 2500);
+        }, 3000);
       },
       error: erro => {
         console.log("Erro ao cadastrar", erro)
@@ -59,7 +59,7 @@ export class FormularioEventosComponent {
         this.mensagemErro = erro.error?.titulo ?? 'Erro ao cadastrar evento.';
         setTimeout(() => {
           this.mensagemErro = ''
-        }, 2500);
+        }, 3000);
       }
     })
   }

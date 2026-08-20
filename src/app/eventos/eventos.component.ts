@@ -2,7 +2,6 @@ import { Component, ViewChild } from '@angular/core';
 import { EventoService } from '../services/evento.service';
 import { Router } from '@angular/router';
 import { Evento } from '../models/evento';
-import { FormularioEventosComponent } from './formulario-eventos/formulario-eventos.component';
 
 @Component({
   selector: 'app-eventos',

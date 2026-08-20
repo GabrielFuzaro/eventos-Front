@@ -115,7 +115,6 @@ export class EventosComponent {
     this.eventoService.filtrarEventosStatus(this.paginaAtual, this.tamanhoPagina, this.status)
     .subscribe({
       next: resposta => {
-        console.log("Filtro de eventos ativado", resposta)
         this.eventos = resposta.content
         this.totalPaginas = resposta.totalPages
       },
@@ -126,6 +125,7 @@ export class EventosComponent {
   }
 
   aplicarFiltro(){
+    console.log("Filtro aplicado")
     this.paginaAtual = 0;
     this.filtrarEventos();
   }

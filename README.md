@@ -1,27 +1,99 @@
-# SistemaEventosFront
+# 🎟️ Eventos Front
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.2.11.
+Interface web desenvolvida em **Angular** para o gerenciamento de eventos e participantes, consumindo a [Eventos API](https://github.com/GabrielFuzaro/eventos-API).
 
-## Development server
+> Projeto de estudo/portfólio construído para aplicar na prática Angular com Reactive Forms, comunicação entre componentes, paginação e consumo de API REST.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+---
 
-## Code scaffolding
+## 📋 Funcionalidades
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+- **Listagem de eventos** em grid responsivo, com paginação
+- **Busca de eventos por nome** em tempo real
+- **Filtro de eventos por status** (Aberto, Lotado, Encerrado), integrado com paginação do back-end
+- **Cadastro e edição de eventos**, com formulários reativos e validação
+- **Página de detalhes do evento**, exibindo informações completas
+- **Cadastro de participantes** vinculado ao evento, com bloqueio automático quando o evento está lotado ou encerrado
+- **Listagem paginada de participantes** por evento
+- **Feedback visual de estado**: mensagens de sucesso/erro com desaparecimento automático, e indicação de carregamento durante o envio de formulários
 
-## Build
+---
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+## 🛠️ Tecnologias
 
-## Running unit tests
+| Categoria      | Tecnologia          |
+|-----------------|-----------------------|
+| Framework        | Angular 15            |
+| Linguagem         | TypeScript 4.9        |
+| Estilização       | Tailwind CSS 3         |
+| Formulários       | Angular Reactive Forms |
+| HTTP              | Angular HttpClient     |
+| Roteamento        | Angular Router         |
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+---
 
-## Running end-to-end tests
+## 🏗️ Arquitetura
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+O projeto segue a estrutura padrão do Angular CLI, organizada por funcionalidade (*feature-based*):
 
-## Further help
+```
+src/app
+├── eventos/                      # Listagem, cadastro e edição de eventos
+│   ├── formulario-eventos/
+│   └── formulario-edicao-eventos/
+├── detalhes-eventos/             # Página de detalhes de um evento específico
+├── participantes/                # Cadastro e listagem de participantes
+│   ├── formularioParticipantes/
+│   └── lista-participantes/
+├── models/                       # Interfaces TypeScript (Evento, Participante, Page)
+└── services/                     # Comunicação com a API (HttpClient)
+```
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+Cada funcionalidade principal (eventos, participantes) tem seus componentes de formulário e listagem separados, comunicando-se com o componente pai através de `@Input`/`@Output`.
+
+---
+
+## ▶️ Como executar
+
+### Pré-requisitos
+
+- Node.js e npm
+- Angular CLI (`npm install -g @angular/cli`)
+- [Eventos API](https://github.com/GabrielFuzaro/eventos-API) rodando localmente em `http://localhost:8080`
+
+### Passos
+
+1. Clone o repositório:
+   ```bash
+   git clone https://github.com/GabrielFuzaro/eventos-Front.git
+   cd eventos-Front
+   ```
+
+2. Instale as dependências:
+   ```bash
+   npm install
+   ```
+
+3. Execute o servidor de desenvolvimento:
+   ```bash
+   ng serve
+   ```
+
+4. Acesse `http://localhost:4200` no navegador
+
+---
+
+## 🚧 Próximos passos
+
+- [ ] Mensagens de validação por campo nos formulários reativos
+- [ ] Testes unitários dos componentes principais
+- [ ] Tratamento de estado de carregamento na listagem inicial de eventos
+
+---
+
+## 👤 Autor
+
+**Gabriel Fuzaro**
+[GitHub](https://github.com/GabrielFuzaro)
+
+> Este é o front-end do sistema. A API (Spring Boot) está disponível em [eventos-API](https://github.com/GabrielFuzaro/eventos-API).

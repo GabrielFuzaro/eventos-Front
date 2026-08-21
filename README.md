@@ -83,14 +83,6 @@ Cada funcionalidade principal (eventos, participantes) tem seus componentes de f
 
 ---
 
-## 🚧 Próximos passos
-
-- [ ] Mensagens de validação por campo nos formulários reativos
-- [ ] Testes unitários dos componentes principais
-- [ ] Tratamento de estado de carregamento na listagem inicial de eventos
-
----
-
 ## 👤 Autor
 
 **Gabriel Fuzaro**

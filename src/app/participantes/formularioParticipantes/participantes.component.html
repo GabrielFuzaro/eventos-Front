@@ -18,7 +18,16 @@
             id="nome"
             formControlName="nome"
             placeholder="Digite seu nome"
-            class="w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 text-white placeholder-slate-500 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 hover:border-slate-600">
+            class="w-full rounded-xl bg-slate-800 border px-4 py-3 text-white placeholder-slate-500 outline-none transition hover:border-slate-600"
+            [ngClass]="participanteForm.get('nome')?.invalid && participanteForm.get('nome')?.touched ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500/30'
+            :'border-slate-700 focus:border-indigo-500 focus:ring-indigo-500/30'">
+
+            <span
+                *ngIf="participanteForm.get('nome')?.invalid && participanteForm.get('nome')?.touched"
+                class="text-rose-400 text-xs">
+                Nome é obrigatório
+            </span>
+
     </div>
 
     <div class="flex flex-col gap-1">
@@ -26,11 +35,23 @@
             Email
         </label>
         <input
+        [ngClass]="participanteForm.get('email')?.invalid && participanteForm.get('email')?.touched ? 'border-rose-500 focus:borderrose-500 focus-within:ring-rose-500-30'
+        : 'border-slate-700 focus:border-indigo-500 focus:ring-indigo-500/30' "
             type="email"
             id="email"
             formControlName="email"
             placeholder="Digite seu email"
-            class="w-full rounded-xl bg-slate-800 border border-slate-700 px-4 py-3 text-white placeholder-slate-500 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 hover:border-slate-600">
+            class="w-full rounded-xl bg-slate-800 border px-4 py-3 text-white placeholder-slate-500 outline-none transition hover:border-slate-600">
+            
+            <span *ngIf="participanteForm.get('email')?.hasError('required') && participanteForm.get('email')?.touched"
+                class="text-rose-400 text-xs">
+                Email é obrigatório
+            </span>
+
+            <span *ngIf="participanteForm.get('email')?.hasError('email') && participanteForm.get('email')?.touched"
+                class="text-rose-400 text-xs">
+                Email inválido
+            </span>
     </div>
 
     <button

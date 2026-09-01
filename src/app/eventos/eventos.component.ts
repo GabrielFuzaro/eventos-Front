@@ -132,6 +132,7 @@ export class EventosComponent {
 
   removerFiltro(){
     this.status = ''
+    this.paginaAtual = 0
     this.carregarEventos()
   }
 }

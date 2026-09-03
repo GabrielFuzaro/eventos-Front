@@ -65,7 +65,7 @@ export class ListaParticipantesComponent implements OnChanges{
     this.participantesService.excluirParticipante(id)
     .subscribe({
       next: resposta => {
-        console.log("Participante excluido com sucesso", resposta)
+        console.log("Participante excluido com sucesso")
         this.listarParticipantes()
         this.mensagemSucesso = "Participante excluído com sucesso"
         setTimeout(() => {

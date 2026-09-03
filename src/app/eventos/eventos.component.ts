@@ -58,7 +58,7 @@ export class EventosComponent {
     this.eventoService.excluirEvento(id)
     .subscribe({
       next: resposta => {
-        console.log("Evento excluído com sucesso", resposta)
+        console.log("Evento excluído com sucesso")
         this.carregarEventos()
         this.mensagemSucesso = "Evento excluído com sucesso"
         setTimeout(() => {

@@ -47,7 +47,7 @@ export class ParticipantesComponent {
   
   .subscribe({
     next: resposta => {
-      console.log("Cadastrado com Sucesso", resposta);
+      console.log("Cadastrado com Sucesso");
       this.mensagemSucesso = 'Participante cadastrado com sucesso!';
       this.participanteCadastradoOutput.emit();
       this.enviando = false

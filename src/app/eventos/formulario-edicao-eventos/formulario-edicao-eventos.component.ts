@@ -52,7 +52,7 @@ export class FormularioEdicaoEventosComponent implements OnInit{
     this.eventoService.atualizarEvento(this.id, eventosEdicao)
     .subscribe({
       next: resultado => {
-        console.log("formulario atualizado", resultado);
+        console.log("formulario atualizado");
         this.mensagemSucesso = "Evento atualizado com sucesso.";
         this.eventoFormularioEdicao.reset
       },

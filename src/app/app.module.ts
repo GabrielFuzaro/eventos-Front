@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms'
-import { HttpClientModule } from '@angular/common/http'
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http'
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { EventosComponent } from './eventos/eventos.component';
@@ -11,6 +11,8 @@ import { ListaParticipantesComponent } from './participantes/lista-participantes
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormularioEventosComponent } from './eventos/formulario-eventos/formulario-eventos.component';
 import { FormularioEdicaoEventosComponent } from './eventos/formulario-edicao-eventos/formulario-edicao-eventos.component';
+import { LoginComponent } from './login/login.component';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -21,6 +23,7 @@ import { FormularioEdicaoEventosComponent } from './eventos/formulario-edicao-ev
     ListaParticipantesComponent,
     FormularioEventosComponent,
     FormularioEdicaoEventosComponent,
+    LoginComponent,
   ],
   imports: [
     BrowserModule,
@@ -29,7 +32,13 @@ import { FormularioEdicaoEventosComponent } from './eventos/formulario-edicao-ev
     HttpClientModule,
     ReactiveFormsModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { EventosComponent } from './eventos/eventos.component';
 import { DetalhesEventosComponent } from './detalhes-eventos/detalhes-eventos.component';
 import { FormularioEdicaoEventosComponent } from './eventos/formulario-edicao-eventos/formulario-edicao-eventos.component';
+import { LoginComponent } from './login/login.component';
 
 const routes: Routes = [ //Declara as rotas para exibir as páginas
   {
@@ -21,6 +22,10 @@ const routes: Routes = [ //Declara as rotas para exibir as páginas
     path: '',
     redirectTo: 'eventos',
     pathMatch: 'full'
+  },
+  {
+    path: 'auth/login',
+    component: LoginComponent
   }
 ];
 

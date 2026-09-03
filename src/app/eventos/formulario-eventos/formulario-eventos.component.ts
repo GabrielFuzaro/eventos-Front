@@ -44,7 +44,7 @@ export class FormularioEventosComponent {
     this.eventoService.cadastrarEvento(evento)
     .subscribe({ 
       next: resposta => {
-        console.log("Evento cadastrado", resposta)
+        console.log("Evento cadastrado")
         this.mensagemSucesso = "Evento cadastrado com sucesso!"
         this.eventoCadastradoOutput.emit()
         this.enviando = false

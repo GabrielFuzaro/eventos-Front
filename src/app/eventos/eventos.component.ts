@@ -2,6 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { EventoService } from '../services/evento.service';
 import { Router } from '@angular/router';
 import { Evento } from '../models/evento';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-eventos',
@@ -12,7 +13,7 @@ export class EventosComponent {
 
   eventos: Evento[] = []
 
-  constructor(private eventoService: EventoService, private router: Router) {}
+  constructor(private eventoService: EventoService, private router: Router, private authService: AuthService) {}
   
   ngOnInit(): void{
     this.carregarEventos();
@@ -134,5 +135,10 @@ export class EventosComponent {
     this.status = ''
     this.paginaAtual = 0
     this.carregarEventos()
+  }
+
+  logout(): void {
+    this.authService.logout()
+    console.log("logout executado")
   }
 }

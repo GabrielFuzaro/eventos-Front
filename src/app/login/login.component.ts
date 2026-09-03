@@ -18,7 +18,7 @@ export class LoginComponent {
     this.authService.login(this.username, this.password)
     .subscribe({
       next: token => {
-        localStorage.setItem('token', token);
+        sessionStorage.setItem('token', token);
         console.log("Login Realizado");
         console.log("Token:", token);
       },

@@ -4,6 +4,7 @@ import { Participante } from 'src/app/models/participante';
 import { ParticipanteService } from 'src/app/services/participante.service';
 import { Input } from '@angular/core';
 import { Page } from 'src/app/models/paginacao';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-lista-participantes',
@@ -12,7 +13,7 @@ import { Page } from 'src/app/models/paginacao';
 })
 export class ListaParticipantesComponent implements OnChanges{
 
-  constructor(private participantesService: ParticipanteService) {}
+  constructor(private participantesService: ParticipanteService, public authService: AuthService) {}
 
   participantes: Participante[] = [];
 

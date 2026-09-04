@@ -2,6 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import { Observable } from "rxjs";
+import { Usuario } from "../models/Usuario";
 
 @Injectable({
     providedIn: 'root'
@@ -23,6 +24,13 @@ export class AuthService {
     });
     }
 
+    cadatrar(username: string, senha: string): Observable<Usuario>{
+        return this.http.post<Usuario>(`${this.apiUrl}/cadastro`, {
+            username: username,
+            senha: senha
+        })
+    }
+
     logout(): void {
         sessionStorage.removeItem('token');
         this.route.navigate(['/auth/login'])
@@ -30,5 +38,22 @@ export class AuthService {
 
     getToken(): string | null {
         return sessionStorage.getItem('token');
+    }
+
+    getRole(): string | null {
+
+        const token = this.getToken();
+
+        if(!token){
+            return null;
+        }
+
+        const payload = JSON.parse(atob(token.split('.')[1]));
+
+        return payload.role;
+    }
+
+    isAdmin(): boolean {
+        return this.getRole() === 'ADMIN';
     }
 }

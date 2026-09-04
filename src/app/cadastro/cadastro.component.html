@@ -1,0 +1,67 @@
+<div class="min-h-screen bg-slate-950 flex items-center justify-center p-6">
+    <div class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-8">
+
+        <h2 class="text-2xl font-bold text-white mb-1 text-center">
+            Criar conta
+        </h2>
+        <p class="text-slate-400 text-sm text-center mb-6">
+            Preencha os dados para se cadastrar
+        </p>
+
+        <form [formGroup]="cadastroFormulario" (ngSubmit)="enviarCadastro()" class="flex flex-col gap-5">
+
+            <div class="flex flex-col gap-1">
+                <label for="username" class="text-sm font-semibold text-slate-300">
+                    Usuário
+                </label>
+
+                <input
+                    id="username"
+                    type="text"
+                    formControlName="username"
+                    placeholder="Digite seu usuário"
+                    class="w-full rounded-xl bg-slate-800 border px-4 py-3 text-white placeholder-slate-500 outline-none transition focus:ring-2 hover:border-slate-600"
+                    [ngClass]="cadastroFormulario.get('username')?.invalid && cadastroFormulario.get('username')?.touched
+                        ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500/30'
+                        : 'border-slate-700 focus:border-indigo-500 focus:ring-indigo-500/30'">
+
+                <span
+                    *ngIf="cadastroFormulario.get('username')?.invalid && cadastroFormulario.get('username')?.touched"
+                    class="text-rose-400 text-xs">
+                    Informe um usuário.
+                </span>
+            </div>
+
+            <div class="flex flex-col gap-1">
+                <label for="senha" class="text-sm font-semibold text-slate-300">
+                    Senha
+                </label>
+
+                <input
+                    id="senha"
+                    type="password"
+                    formControlName="senha"
+                    placeholder="Digite sua senha"
+                    class="w-full rounded-xl bg-slate-800 border px-4 py-3 text-white placeholder-slate-500 outline-none transition focus:ring-2 hover:border-slate-600"
+                    [ngClass]="cadastroFormulario.get('senha')?.invalid && cadastroFormulario.get('senha')?.touched
+                        ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500/30'
+                        : 'border-slate-700 focus:border-indigo-500 focus:ring-indigo-500/30'">
+
+                <span
+                    *ngIf="cadastroFormulario.get('senha')?.invalid && cadastroFormulario.get('senha')?.touched"
+                    class="text-rose-400 text-xs">
+                    Informe uma senha.
+                </span>
+            </div>
+
+            <button
+                type="submit"
+                [disabled]="cadastroFormulario.invalid"
+                class="w-full mt-2 bg-indigo-500 hover:bg-indigo-400 disabled:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50 transition text-white font-semibold py-3 rounded-xl">
+                Cadastrar
+            </button>
+
+        </form>
+
+    </div>
+</div>

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -11,7 +12,11 @@ export class LoginComponent {
   username: string = '';
   password: string = '';
 
-  constructor(private authService: AuthService) {}
+  mensagemErro: string = '';
+  mensagemSucesso: string = '';
+
+
+  constructor(private authService: AuthService, private router: Router) {}
 
   login(): void{
 
@@ -20,12 +25,24 @@ export class LoginComponent {
       next: token => {
         sessionStorage.setItem('token', token);
         console.log("Login Realizado");
-        console.log("Token:", token);
+        this.mensagemSucesso = 'Login realizado com Sucesso! Aguarde...'
+        setTimeout(() => {
+          this.router.navigate([
+            './eventos'
+          ])
+        }, 2000);
       },
       error: erro => {
         console.error("Erro ao fazer login:", erro)
+        this.mensagemErro = 'Usuário ou senha inválidos.'
       }
     })
+  }
+
+  irParaCadastro(){
+    this.router.navigate([
+      './auth/cadastro'
+    ]);
   }
 
 }

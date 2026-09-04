@@ -26,7 +26,9 @@
                         {{ participante.email }}
                     </td>
                     <td class="py-3 text-center">
-                        <button (click)="excluirParticipante(participante.id)" class="p-1.5 rounded-lg hover:bg-slate-700 transition-colors">
+                        <button
+                            *ngIf="authService.isAdmin()" 
+                            (click)="excluirParticipante(participante.id)" class="p-1.5 rounded-lg hover:bg-slate-700 transition-colors">
                             <img [src]="imagemLixeira" class="w-4 h-4 opacity-100 invert">
                         </button>
                     </td>

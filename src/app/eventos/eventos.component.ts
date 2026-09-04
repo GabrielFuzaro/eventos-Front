@@ -13,10 +13,11 @@ export class EventosComponent {
 
   eventos: Evento[] = []
 
-  constructor(private eventoService: EventoService, private router: Router, private authService: AuthService) {}
+  constructor(private eventoService: EventoService, private router: Router, public authService: AuthService) {}
   
   ngOnInit(): void{
     this.carregarEventos();
+    console.log(this.authService.getRole());
   }
 
 

@@ -13,6 +13,7 @@ import { FormularioEventosComponent } from './eventos/formulario-eventos/formula
 import { FormularioEdicaoEventosComponent } from './eventos/formulario-edicao-eventos/formulario-edicao-eventos.component';
 import { LoginComponent } from './login/login.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { CadastroComponent } from './cadastro/cadastro.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     FormularioEventosComponent,
     FormularioEdicaoEventosComponent,
     LoginComponent,
+    CadastroComponent,
   ],
   imports: [
     BrowserModule,

@@ -5,17 +5,21 @@ import { DetalhesEventosComponent } from './detalhes-eventos/detalhes-eventos.co
 import { FormularioEdicaoEventosComponent } from './eventos/formulario-edicao-eventos/formulario-edicao-eventos.component';
 import { LoginComponent } from './login/login.component';
 import { CadastroComponent } from './cadastro/cadastro.component';
+import { AuthGuard } from './guards/auth.guard';
 
 const routes: Routes = [ //Declara as rotas para exibir as páginas
   {
+    canActivate: [AuthGuard],
     path: 'eventos',
     component: EventosComponent
   },
   {
+    canActivate: [AuthGuard],
     path: 'eventos/:id',
     component: DetalhesEventosComponent
   },
   {
+    canActivate: [AuthGuard],
     path: 'eventos/:id/edição',
     component: FormularioEdicaoEventosComponent
   },

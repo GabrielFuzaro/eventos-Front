@@ -40,6 +40,24 @@ export class AuthService {
         return sessionStorage.getItem('token');
     }
 
+    isTokenValido(): boolean {
+        const token = this.getToken();
+
+        if(!token){
+            return false;
+        }
+
+        try{
+            const payload = JSON.parse(atob(token.split('.')[1]));
+
+            const agora = Math.floor(Date.now() / 1000);
+
+            return payload.exp > agora;
+        } catch (erro) {
+            return false;
+        }
+    }
+
     getRole(): string | null {
 
         const token = this.getToken();

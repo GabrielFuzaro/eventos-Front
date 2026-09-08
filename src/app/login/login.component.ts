@@ -35,6 +35,9 @@ export class LoginComponent {
       error: erro => {
         console.error("Erro ao fazer login:", erro)
         this.mensagemErro = 'Usuário ou senha inválidos.'
+        setTimeout(() => {
+          this.mensagemErro = ''
+        }, 2500);
       }
     })
   }

@@ -12,7 +12,7 @@
 
             <div class="flex flex-col gap-1">
                 <label for="username" class="text-sm font-semibold text-slate-300">
-                    Usuário
+                    Nome Completo
                 </label>
 
                 <input
@@ -57,11 +57,32 @@
             <button
                 type="submit"
                 [disabled]="cadastroFormulario.invalid"
-                class="w-full mt-2 bg-indigo-500 hover:bg-indigo-400 disabled:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50 transition text-white font-semibold py-3 rounded-xl">
+                class="w-full mb-5 mt-2 bg-indigo-500 hover:bg-indigo-400 disabled:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50 transition text-white font-semibold py-3 rounded-xl">
                 Cadastrar
             </button>
 
         </form>
+
+        <div 
+            *ngIf="mensagemErro"
+            class="mb-5 mt-5 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm text-center">
+            {{ mensagemErro }}
+        </div>
+
+        <div
+            *ngIf="mensagemSucesso"
+            class="mb-5 p-4 bg-green-500/10 border border-green-500/30 rounded-xl text-green-400 text-sm text-center">
+            {{ mensagemSucesso }}
+        </div>
+
+        <div class="mt-4">
+            <button
+                type="button"
+                (click)="irParaLogin()"
+                class="w-full border border-slate-700 bg-slate-800 hover:bg-slate-700 transition text-slate-200 font-semibold py-3 rounded-xl">
+                Fazer Login
+            </button>
+        </div>
 
     </div>
 </div>

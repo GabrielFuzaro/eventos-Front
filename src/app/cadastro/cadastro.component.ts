@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -10,7 +11,10 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 })
 export class CadastroComponent {
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private router: Router) {}
+
+  mensagemErro: string = '';
+  mensagemSucesso: string = '';
 
   cadastroFormulario = new FormGroup({
     username: new FormControl<string>('', { nonNullable: true, validators: [Validators.required]}),
@@ -27,8 +31,18 @@ export class CadastroComponent {
         this.cadastroFormulario.reset()
       },
       error: erro => {
+        this.mensagemErro = erro.error?.titulo
         console.log("Erro ao cadastrar:", erro)
+        setTimeout(() => {
+          this.mensagemErro = '';
+        }, 2500);
       }
     })
+  }
+
+  irParaLogin(): void {
+    this.router.navigate([
+      './auth/login'
+    ])
   }
 }

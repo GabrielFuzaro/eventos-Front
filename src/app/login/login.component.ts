@@ -24,7 +24,7 @@ export class LoginComponent {
     .subscribe({
       next: token => {
         sessionStorage.setItem('token', token);
-        console.log("Login Realizado");
+        //console.log("Login Realizado");
         this.mensagemSucesso = 'Login realizado com Sucesso! Aguarde...'
         setTimeout(() => {
           this.router.navigate([

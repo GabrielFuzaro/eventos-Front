@@ -27,12 +27,10 @@ export class CadastroComponent {
     this.authService.cadatrar(usuario.username, usuario.senha) 
     .subscribe({
       next: resposta => {
-        console.log("Cadastro realizado:", resposta);
         this.cadastroFormulario.reset()
       },
       error: erro => {
         this.mensagemErro = erro.error?.titulo
-        console.log("Erro ao cadastrar:", erro)
         setTimeout(() => {
           this.mensagemErro = '';
         }, 2500);

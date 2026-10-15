@@ -52,12 +52,12 @@ export class FormularioEdicaoEventosComponent implements OnInit{
     this.eventoService.atualizarEvento(this.id, eventosEdicao)
     .subscribe({
       next: resultado => {
-        console.log("formulario atualizado");
+        //console.log("formulario atualizado");
         this.mensagemSucesso = "Evento atualizado com sucesso.";
         this.eventoFormularioEdicao.reset
       },
       error: erro => {
-        console.log("Erro ao atualizar evento", erro);
+        //console.log("Erro ao atualizar evento", erro);
         this.mensagemErro = erro.error?.titulo ?? "Erro ao atualizar evento. Verifique todos os campos e tente novamente";
         setTimeout(() => {
           this.mensagemErro = ''

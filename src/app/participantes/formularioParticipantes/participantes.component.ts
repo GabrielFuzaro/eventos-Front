@@ -47,7 +47,7 @@ export class ParticipantesComponent {
   
   .subscribe({
     next: resposta => {
-      console.log("Cadastrado com Sucesso");
+      //("Cadastrado com Sucesso");
       this.mensagemSucesso = 'Participante cadastrado com sucesso!';
       this.participanteCadastradoOutput.emit();
       this.enviando = false
@@ -57,7 +57,7 @@ export class ParticipantesComponent {
       }, 2000);
     },
     error: erro => {
-      console.log("Erro ao cadastrar", erro)
+      //console.log("Erro ao cadastrar", erro)
       this.enviando = false
       this.mensagemErro = erro.error?.titulo ?? 'Erro ao cadastrar participante.';
       setTimeout(() => {

@@ -4,6 +4,7 @@ import { EventoService } from '../services/evento.service';
 import { Evento } from '../models/evento';
 import { ViewChild } from '@angular/core';
 import { ListaParticipantesComponent } from '../participantes/lista-participantes/lista-participantes.component';
+import { ParticipanteService } from '../services/participante.service';
 
 @Component({
   selector: 'app-detalhes-eventos',
@@ -18,7 +19,7 @@ export class DetalhesEventosComponent implements OnInit {
   id?: number;
   evento!: Evento;
 
-  constructor(private route: ActivatedRoute, private eventoService: EventoService) {}
+  constructor(private route: ActivatedRoute, private eventoService: EventoService, private participanteService: ParticipanteService) {}
 
   ngOnInit(): void {
 
@@ -35,4 +36,16 @@ export class DetalhesEventosComponent implements OnInit {
     this.listaParticipantes.listarParticipantes();
   }
 
+  baixar(): void{
+    this.participanteService.baixarExcel(this.evento.id).subscribe({
+      next: (arquivo: Blob) => {
+        const url = URL.createObjectURL(arquivo);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'participantes.xlsx';
+        link.click();
+        URL.revokeObjectURL(url);
+      }
+    })
+  }
 }

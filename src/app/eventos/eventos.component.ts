@@ -17,7 +17,6 @@ export class EventosComponent {
   
   ngOnInit(): void{
     this.carregarEventos();
-    console.log(this.authService.getRole());
   }
 
 
@@ -60,7 +59,6 @@ export class EventosComponent {
     this.eventoService.excluirEvento(id)
     .subscribe({
       next: resposta => {
-        console.log("Evento excluído com sucesso")
         this.carregarEventos()
         this.mensagemSucesso = "Evento excluído com sucesso"
         setTimeout(() => {
@@ -68,7 +66,6 @@ export class EventosComponent {
         }, 2500);
       },
       error: erro => {
-        console.log("Falha ao excluír evento", erro)
         this.mensagemErro = erro.error?.titulo ?? 'Erro ao excluír Evento'
         setTimeout(() => {
           this.mensagemErro = ''
@@ -121,13 +118,11 @@ export class EventosComponent {
         this.totalPaginas = resposta.totalPages
       },
       error: erro => {
-        console.log("Erro ao filtrar eventos", erro)
       }
     })
   }
 
   aplicarFiltro(){
-    console.log("Filtro aplicado")
     this.paginaAtual = 0;
     this.filtrarEventos();
   }
@@ -140,6 +135,6 @@ export class EventosComponent {
 
   logout(): void {
     this.authService.logout()
-    console.log("logout executado")
+    //console.log("logout executado")
   }
 }

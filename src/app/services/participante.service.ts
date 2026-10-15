@@ -2,6 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Participante, ParticipanteInput } from "../models/participante";
 import { Page } from "../models/paginacao";
+import { Observable } from "rxjs";
 
 @Injectable({
     providedIn: 'root'
@@ -26,5 +27,12 @@ export class ParticipanteService {
 
     excluirParticipante(id: number){ //Método para excluir participante
         return this.http.delete(`${this.apiUrl}/${id}`)
+    }
+
+    baixarExcel(eventoId: number): Observable<Blob> {
+        return this.http.get(`${this.apiUrl}/excel`, {
+            params: { eventoId },
+            responseType: 'blob'
+        });
     }
 }

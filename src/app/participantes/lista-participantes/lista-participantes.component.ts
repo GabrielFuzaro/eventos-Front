@@ -41,7 +41,7 @@ export class ListaParticipantesComponent implements OnChanges{
     this.participantesService.listarParticipantesEvento(this.eventoId, this.paginaAtual, this.tamanhoPagina)
     .subscribe({
       next: resposta => {
-        console.log(resposta);
+        //console.log(resposta);
         this.participantes = resposta.content;
         this.totalPaginas = resposta.totalPages;
       }
@@ -66,7 +66,7 @@ export class ListaParticipantesComponent implements OnChanges{
     this.participantesService.excluirParticipante(id)
     .subscribe({
       next: resposta => {
-        console.log("Participante excluido com sucesso")
+        //console.log("Participante excluido com sucesso")
         this.listarParticipantes()
         this.mensagemSucesso = "Participante excluído com sucesso"
         setTimeout(() => {
@@ -74,7 +74,7 @@ export class ListaParticipantesComponent implements OnChanges{
         }, 2500);
       },
       error: erro => {
-        console.log("Erro ao excluir participante", erro)
+        //console.log("Erro ao excluir participante", erro)
         this.mensagemErro = erro.error?.titulo ?? "Erro ao excluír participante"
         setTimeout(() => {
           this.mensagemErro = ''

@@ -44,7 +44,7 @@ export class FormularioEventosComponent {
     this.eventoService.cadastrarEvento(evento)
     .subscribe({ 
       next: resposta => {
-        console.log("Evento cadastrado")
+        //console.log("Evento cadastrado")
         this.mensagemSucesso = "Evento cadastrado com sucesso!"
         this.eventoCadastradoOutput.emit()
         this.enviando = false
@@ -54,7 +54,7 @@ export class FormularioEventosComponent {
         }, 3000);
       },
       error: erro => {
-        console.log("Erro ao cadastrar", erro)
+        //console.log("Erro ao cadastrar", erro)
         this.enviando = false
         this.mensagemErro = erro.error?.titulo ?? 'Erro ao cadastrar evento.';
         setTimeout(() => {

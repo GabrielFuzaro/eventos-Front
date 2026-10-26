@@ -3,6 +3,7 @@ import { EventoService } from '../services/evento.service';
 import { Router } from '@angular/router';
 import { Evento } from '../models/evento';
 import { AuthService } from '../services/auth.service';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-eventos',
@@ -17,6 +18,7 @@ export class EventosComponent {
   
   ngOnInit(): void{
     this.carregarEventos();
+    this.carregarTotais()
   }
 
 
@@ -26,6 +28,13 @@ export class EventosComponent {
   paginaAtual = 0;
   tamanhoPagina = 4;
   totalPaginas = 0;
+  dataInicial: string = '';
+  dataFinal = '';
+  paginacao: boolean = true;
+  totalAbertos: number = 0;
+  totalLotados: number = 0;
+  totalEncerrados: number = 0;
+  mostrarEstatisticas: boolean = true;
 
   carregarEventos(): void {
     this.eventoService.listarEventos(this.paginaAtual, this.tamanhoPagina)
@@ -34,6 +43,11 @@ export class EventosComponent {
       this.totalPaginas = resposta.totalPages;
       this.status = ''
     })
+  }
+
+  toogleEstatisticas(): boolean{
+    const toogle = this.mostrarEstatisticas = !this.mostrarEstatisticas;
+    return toogle
   }
 
   irParaPagina(pagina: number): void{
@@ -49,6 +63,49 @@ export class EventosComponent {
       this.filtrarEventos()
     }
   }
+
+  filtrarPorPeriodo(dataInicial: string, dataFinal: string): void {
+  if (!dataInicial || !dataFinal) {
+    this.mensagemErro = 'Informe a data inicial e a data final.';
+    setTimeout(() => { this.mensagemErro = ''; }, 2500);
+    return;
+  }
+
+  this.paginacao = false;
+
+  const inicio = `${dataInicial}T00:00:00-03:00`;
+  const fim = `${dataFinal}T23:59:59-03:00`;
+
+  this.eventoService.listarEventosPeriodo(inicio, fim)
+    .subscribe({
+      next: resposta => {
+        this.eventos = resposta;
+      },
+      error: erro => {
+        this.mensagemErro = erro.error?.titulo ?? 'Erro ao buscar eventos do período.';
+        setTimeout(() => { this.mensagemErro = ''; }, 2500);
+      }
+    });
+}
+
+
+async carregarTotais(): Promise<void> {
+  try {
+    const [abertos, lotados, encerrados] = await Promise.all([
+      firstValueFrom(this.eventoService.contarPorStatus('ABERTO')),
+      firstValueFrom(this.eventoService.contarPorStatus('LOTADO')),
+      firstValueFrom(this.eventoService.contarPorStatus('ENCERRADO'))
+    ]);
+
+    this.totalAbertos = abertos;
+    this.totalLotados = lotados;
+    this.totalEncerrados = encerrados;
+  } catch (error) {
+    this.mensagemErro = 'Erro ao carregar estatísticas.';
+    setTimeout(() => { this.mensagemErro = ''; }, 2500);
+  }
+}
+
 
   excluirEvento(id: number){
 
@@ -131,6 +188,7 @@ export class EventosComponent {
     this.status = ''
     this.paginaAtual = 0
     this.carregarEventos()
+    this.paginacao = true;
   }
 
   logout(): void {

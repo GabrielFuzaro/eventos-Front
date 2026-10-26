@@ -1,90 +1,202 @@
 <div class="w-full min-h-screen bg-slate-950">
 
-<header class="bg-slate-900 border-b border-slate-800 sticky">
+    <header class="sticky top-0 z-10 bg-slate-900/95 backdrop-blur border-b border-slate-800">
 
-    <div class="max-w-6xl mx-auto px-6 py-6 flex items-start justify-between">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
 
-        <div>
-            <h1 class="text-3xl font-bold text-white">Eventos</h1>
-            <p class="text-slate-400 text-sm mt-1">Gerencie e acompanhe todos os eventos cadastrados</p>
+            <div class="flex-1">
+                <h1 class="text-2xl sm:text-3xl font-bold text-white">Eventos</h1>
+                <p class="text-slate-400 text-sm mt-1">Gerencie e acompanhe todos os eventos cadastrados</p>
 
-            <div class="mt-5 relative max-w-md">
-                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" 
-                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                        d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
+                <div class="mt-4 relative max-w-md">
+                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path
+                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
 
-                <input
-                    type="text"
-                    [(ngModel)]="pesquisaEvento"
-                    placeholder="Pesquisar evento..."
-                    class="w-full pl-10 pr-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white 
-                    placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+                    <input
+                        type="text"
+                        [(ngModel)]="pesquisaEvento"
+                        aria-label="Pesquisar evento por nome"
+                        placeholder="Pesquisar nesta página..."
+                        class="w-full pl-10 pr-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white
+                        placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button
+                    type="button"
+                    (click)="cadastrarEventoFormulario()"
+                    class="rounded-xl bg-indigo-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-400 active:scale-95">
+                    {{ statusFormulario ? 'Fechar formulário' : '+ Cadastrar evento' }}
+                </button>
+
+                <button
+                    type="button"
+                    (click)="logout()"
+                    class="rounded-xl border border-slate-700 bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-300 transition hover:bg-slate-700 hover:text-white active:scale-95">
+                    Logout
+                </button>
             </div>
 
         </div>
 
-        <button
-            type="button"
-            (click)="logout()"
-            class="rounded-xl border border-slate-700 bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-300 transition hover:bg-slate-700 hover:text-white active:scale-95">
-            Logout
-        </button>
+    </header>
 
-    </div>
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8">
 
-</header>
-
-    <main class="max-w-6xl mx-auto px-6 py-8">
-
-        <div
-            *ngIf="eventosFiltrados.length === 0"
-            class="text-center py-16">
-            <p class="text-slate-500 text-lg font-medium">Nenhum evento encontrado</p>
+        <div *ngIf="statusFormulario" class="mb-8">
+            <app-formulario-eventos (eventoCadastradoOutput)="atualizarEventos()"></app-formulario-eventos>
         </div>
 
-        <div class="mb-5 flex flex-wrap items-end gap-3">
-
-            <div class="flex flex-col gap-1">
-                <label class="text-sm font-medium text-gray-300">
-                    Filtrar
-                </label>
-
-                <select [(ngModel)]="status"
-                    class="w-40 rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-sm text-white outline-none
-                    transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30">
-
-                    <option value="ABERTO">Aberto</option>
-                    <option value="LOTADO">Lotado</option>
-                    <option value="ENCERRADO">Encerrado</option>
-                    
-                </select>
-            </div>
-
-            <button type="button"
-                (click)="aplicarFiltro()"
-                class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 active:scale-95">
-                Aplicar
-            </button>
+        <div class="mb-8">
 
             <button
                 type="button"
-                (click)="removerFiltro()"
-                class="rounded-lg border border-gray-600 bg-gray-700 px-4 py-2 text-sm font-medium text-gray-200 transition hover:bg-gray-600 active:scale-95">
-                Limpar
+                (click)="toogleEstatisticas()"
+                [attr.aria-expanded]="mostrarEstatisticas"
+                class="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-300 transition hover:bg-slate-700 hover:text-white active:scale-95">
+                {{ mostrarEstatisticas ? 'Ocultar estatísticas' : 'Mostrar estatísticas' }}
+                <svg
+                    class="h-4 w-4 transition-transform duration-200"
+                    [class.rotate-180]="mostrarEstatisticas"
+                    fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6" />
+                </svg>
             </button>
+
+            <div
+                *ngIf="mostrarEstatisticas"
+                class="mt-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
+
+                <div class="rounded-2xl border border-slate-800 bg-slate-900 p-4">
+                    <div class="flex items-center gap-2">
+                        <span class="h-2.5 w-2.5 rounded-full bg-indigo-400"></span>
+                        <p class="text-sm text-slate-500">Total</p>
+                    </div>
+                    <p class="mt-2 text-3xl font-bold text-white">
+                        {{ totalAbertos + totalLotados + totalEncerrados }}
+                    </p>
+                </div>
+
+                <div class="rounded-2xl border border-slate-800 bg-slate-900 p-4">
+                    <div class="flex items-center gap-2">
+                        <span class="h-2.5 w-2.5 rounded-full bg-emerald-400"></span>
+                        <p class="text-sm text-slate-500">Abertos</p>
+                    </div>
+                    <p class="mt-2 text-3xl font-bold text-emerald-400">{{ totalAbertos }}</p>
+                </div>
+
+                <div class="rounded-2xl border border-slate-800 bg-slate-900 p-4">
+                    <div class="flex items-center gap-2">
+                        <span class="h-2.5 w-2.5 rounded-full bg-rose-400"></span>
+                        <p class="text-sm text-slate-500">Lotados</p>
+                    </div>
+                    <p class="mt-2 text-3xl font-bold text-rose-400">{{ totalLotados }}</p>
+                </div>
+
+                <div class="rounded-2xl border border-slate-800 bg-slate-900 p-4">
+                    <div class="flex items-center gap-2">
+                        <span class="h-2.5 w-2.5 rounded-full bg-amber-400"></span>
+                        <p class="text-sm text-slate-500">Encerrados</p>
+                    </div>
+                    <p class="mt-2 text-3xl font-bold text-amber-400">{{ totalEncerrados }}</p>
+                </div>
+
+            </div>
+
         </div>
+                <section class="mb-8 rounded-2xl border border-slate-800 bg-slate-900 p-5">
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            <ng-container *ngFor="let evento of eventosFiltrados">
+            <div class="flex flex-col gap-6 lg:flex-row lg:items-end">
 
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden flex flex-col hover:border-slate-700 transition-colors">
+                <div class="flex flex-col gap-2 sm:flex-row sm:items-end">
+                    <div>
+                        <label for="filtroStatus" class="block text-sm font-semibold text-slate-300 mb-2">
+                            Status
+                        </label>
+                        <select
+                            id="filtroStatus"
+                            [(ngModel)]="status"
+                            class="w-full sm:w-44 px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white
+                            focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+                            <option value="" disabled>Selecione...</option>
+                            <option value="ABERTO">Aberto</option>
+                            <option value="LOTADO">Lotado</option>
+                            <option value="ENCERRADO">Encerrado</option>
+                        </select>
+                    </div>
+
+                    <button
+                        type="button"
+                        (click)="aplicarFiltro()"
+                        [disabled]="!status"
+                        class="rounded-xl bg-indigo-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-400 active:scale-95
+                        disabled:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                        Filtrar status
+                    </button>
+                </div>
+
+                <div class="hidden lg:block self-stretch w-px bg-slate-800"></div>
+
+                <div class="flex flex-1 flex-col gap-3 sm:flex-row sm:items-end">
+                    <div class="flex-1">
+                        <label for="dataInicial" class="block text-sm font-semibold text-slate-300 mb-2">Data inicial</label>
+                        <input
+                            #inicio
+                            type="date"
+                            id="dataInicial"
+                            class="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white [color-scheme:dark]
+                            focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+                    </div>
+
+                    <div class="flex-1">
+                        <label for="dataFinal" class="block text-sm font-semibold text-slate-300 mb-2">Data final</label>
+                        <input
+                            #fim
+                            type="date"
+                            id="dataFinal"
+                            class="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white [color-scheme:dark]
+                            focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+                    </div>
+
+                    <button
+                        type="button"
+                        (click)="filtrarPorPeriodo(inicio.value, fim.value)"
+                        class="rounded-xl bg-indigo-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-400 active:scale-95">
+                        Filtrar período
+                    </button>
+                </div>
+
+                <button
+                    type="button"
+                    (click)="inicio.value = ''; fim.value = ''; removerFiltro()"
+                    class="rounded-xl border border-slate-700 bg-slate-800 px-5 py-2.5 text-sm font-semibold text-slate-300 transition hover:bg-slate-700 hover:text-white active:scale-95">
+                    Limpar filtros
+                </button>
+
+            </div>
+
+        </section>
+
+        <ng-container *ngIf="eventosFiltrados as lista">
+
+            <div *ngIf="lista.length === 0" class="text-center py-16">
+                <p class="text-slate-400 text-lg font-medium">Nenhum evento encontrado</p>
+                <p class="text-slate-600 text-sm mt-1">Tente outro filtro ou cadastre um novo evento.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                <div
+                    *ngFor="let evento of lista"
+                    class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden flex flex-col hover:border-slate-600 transition-colors">
 
                     <div class="px-5 py-4 border-b border-slate-800">
                         <div class="flex items-start justify-between gap-2">
-                            <h2 class="text-lg font-bold text-white leading-snug">
+                            <h2 class="text-lg font-bold text-white leading-snug break-words min-w-0">
                                 {{evento.nome}}
                             </h2>
 
@@ -97,13 +209,12 @@
                                 }">
                                 {{evento.status === 'LOTADO' ? 'Lotado' : evento.status === 'ENCERRADO' ? 'Encerrado' : 'Aberto'}}
                             </span>
-
                         </div>
                         <p class="text-slate-400 text-sm mt-1">{{evento.local}}</p>
                     </div>
 
                     <div class="px-5 py-4 flex flex-col gap-3 flex-1">
-                        
+
                         <div *ngIf="evento.status === 'ENCERRADO'"
                             class="text-amber-400 bg-amber-500/10 text-xs font-semibold px-3 py-1.5 rounded-lg w-fit">
                             Evento encerrado
@@ -133,42 +244,46 @@
                         </div>
 
                         <button
-                            class="mt-auto w-full font-semibold py-2.5 rounded-xl transition text-white"
-                            [ngClass]="{
-                                'bg-rose-500/80 hover:bg-rose-500': evento.status === 'LOTADO',
-                                'bg-amber-500/80 hover:bg-amber-500': evento.status === 'ENCERRADO',
-                                'bg-indigo-500 hover:bg-indigo-400': evento.status !== 'LOTADO' && evento.status !== 'ENCERRADO'
-                            }"
+                            type="button"
+                            class="mt-auto w-full font-semibold py-2.5 rounded-xl transition text-white bg-indigo-500 hover:bg-indigo-400 active:scale-95"
                             (click)="abrirEvento(evento.id)">
                             Ver detalhes
                         </button>
 
-                        <div class="flex items-center justify-between pt-3 mt-1 border-t border-slate-800">
+                        <div
+                            *ngIf="authService.isAdmin()"
+                            class="flex items-center justify-between pt-3 mt-1 border-t border-slate-800">
                             <button
+                                type="button"
                                 (click)="botaoEditarEvento(evento.id)"
                                 class="text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors">
                                 Editar
                             </button>
 
                             <button
-                            *ngIf="authService.isAdmin()"
+                                type="button"
+                                aria-label="Excluir evento"
+                                title="Excluir evento"
                                 (click)="excluirEvento(evento.id)"
                                 class="p-1.5 rounded-lg hover:bg-slate-800 transition-colors">
-                                <img [src]="imagemLixeira" class="w-5 h-5 opacity-70">
+                                <img [src]="imagemLixeira" alt="" class="w-5 h-5 opacity-70">
                             </button>
                         </div>
                     </div>
 
                 </div>
-            </ng-container>
-        </div>
+            </div>
 
-        <div class="flex justify-center items-center gap-4 mt-10">
+        </ng-container>
+
+        <div *ngIf="totalPaginas > 1 && paginacao" class="flex justify-center items-center gap-4 mt-10">
             <button
+                type="button"
+                aria-label="Página anterior"
                 (click)="irParaPagina(paginaAtual - 1)"
                 [disabled]="paginaAtual === 0"
                 class="p-2 bg-slate-900 border border-slate-800 rounded-xl hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed transition">
-                <img [src]="imagemChevronEsquerda" class="w-4 h-4">
+                <img [src]="imagemChevronEsquerda" alt="" class="w-4 h-4">
             </button>
 
             <span class="text-slate-400 text-sm font-medium">
@@ -176,36 +291,31 @@
             </span>
 
             <button
+                type="button"
+                aria-label="Próxima página"
                 (click)="irParaPagina(paginaAtual + 1)"
-                [disabled]="paginaAtual === totalPaginas - 1"
+                [disabled]="paginaAtual >= totalPaginas - 1"
                 class="p-2 bg-slate-900 border border-slate-800 rounded-xl hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed transition">
-                <img [src]="imagemChevronDireita" class="w-4 h-4">
+                <img [src]="imagemChevronDireita" alt="" class="w-4 h-4">
             </button>
         </div>
 
+    </main>
+
+    <div class="fixed top-4 right-4 z-50 flex w-full max-w-sm flex-col gap-3 px-4 sm:px-0">
         <div
             *ngIf="mensagemErro"
-            class="bg-rose-500/10 border border-rose-500/30 text-rose-400 p-3 rounded-xl text-center font-medium text-sm mt-6 max-w-md mx-auto">
+            role="alert"
+            class="bg-rose-500/10 border border-rose-500/30 text-rose-400 backdrop-blur p-3 rounded-xl text-center font-medium text-sm shadow-lg">
             {{mensagemErro}}
         </div>
 
         <div
             *ngIf="mensagemSucesso"
-            class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 p-3 rounded-xl text-center font-medium text-sm mt-6 max-w-md mx-auto">
+            role="status"
+            class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 backdrop-blur p-3 rounded-xl text-center font-medium text-sm shadow-lg">
             {{mensagemSucesso}}
         </div>
+    </div>
 
-        <div class="mt-10 pt-8 border-t border-slate-800">
-            <button
-                (click)="cadastrarEventoFormulario()"
-                class="bg-indigo-500 hover:bg-indigo-400 text-white font-semibold px-5 py-2.5 rounded-xl transition-colors">
-                + Cadastrar evento
-            </button>
-
-            <div *ngIf="statusFormulario == true" class="mt-6">
-                <app-formulario-eventos (eventoCadastradoOutput)="atualizarEventos()"></app-formulario-eventos>
-            </div>
-        </div>
-
-    </main>
 </div>

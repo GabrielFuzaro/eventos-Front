@@ -16,15 +16,28 @@ export class EventoService{
         return this.http.get<Page<Evento>>(`${this.apiUrl}?page=${page}&size=${size}`)
     }
 
+    listarEventosPeriodo(dataInicial: string, dataFinal: string){
+        return this.http.get<Evento[]>(`${this.apiUrl}/periodo`, {
+            params: {dataInicial, dataFinal}
+        });
+    }
+
+    contarPorStatus(status: string){
+        return this.http.get<number>(`${this.apiUrl}/status`, {
+            params: {status}
+        }
+        );
+    }
+
     filtrarEventosStatus(page: number, size: number, status: string){
         return this.http.get<Page<Evento>>(`${this.apiUrl}/filtro/${status}?page=${page}&size=${size}`)
     }
 
     buscarPorId(id: number){ //Método para buscar um evento por Id
-    return this.http.get<Evento>(
-        `${this.apiUrl}/${id}`
-    );
-}
+        return this.http.get<Evento>(
+            `${this.apiUrl}/${id}`
+        );
+    }
 
     cadastrarEvento(evento: Omit<Evento, 'id' | 'status'>){ //Método para cadastrar evento
         return this.http.post<Evento>(this.apiUrl, evento);

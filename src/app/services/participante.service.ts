@@ -35,4 +35,8 @@ export class ParticipanteService {
             responseType: 'blob'
         });
     }
+
+    contarParticipantes(eventoId: number):Observable<Object> {
+        return this.http.get(`${this.apiUrl}/quantidade/${eventoId}`);
+    }
 }

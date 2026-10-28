@@ -5,6 +5,8 @@ import { Evento } from '../models/evento';
 import { ViewChild } from '@angular/core';
 import { ListaParticipantesComponent } from '../participantes/lista-participantes/lista-participantes.component';
 import { ParticipanteService } from '../services/participante.service';
+import { firstValueFrom } from 'rxjs';
+import { corCategoria } from '../models/categoria';
 
 @Component({
   selector: 'app-detalhes-eventos',
@@ -18,6 +20,8 @@ export class DetalhesEventosComponent implements OnInit {
 
   id?: number;
   evento!: Evento;
+  quantidadeParticipantes: number = 0;
+  corCategoria = corCategoria;
 
   constructor(private route: ActivatedRoute, private eventoService: EventoService, private participanteService: ParticipanteService) {}
 
@@ -29,6 +33,8 @@ export class DetalhesEventosComponent implements OnInit {
       .subscribe(resposta => {
         this.evento = resposta;
       });
+
+      this.contarParticipantes(this.id);
 
   }
 
@@ -47,5 +53,10 @@ export class DetalhesEventosComponent implements OnInit {
         URL.revokeObjectURL(url);
       }
     })
+  }
+
+  async contarParticipantes(eventoId: number){
+    const response = await firstValueFrom(this.participanteService.contarParticipantes(eventoId));
+    this.quantidadeParticipantes = Number(response)  
   }
 }

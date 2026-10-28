@@ -28,7 +28,8 @@ export class FormularioEdicaoEventosComponent implements OnInit{
           nome: evento.nome,
           local: evento.local,
           capacidade_maxima: evento.capacidade_maxima,
-          data_evento: evento.data_evento
+          data_evento: evento.data_evento,
+          categoriaId: evento.categoriaId
         });
       });
     }
@@ -37,7 +38,8 @@ export class FormularioEdicaoEventosComponent implements OnInit{
     nome: new FormControl('', Validators.required),
     local: new FormControl('', Validators.required),
     capacidade_maxima: new FormControl<number | null>(null, [Validators.min(1), Validators.required]),
-    data_evento: new FormControl<string | null>(null, Validators.required)
+    data_evento: new FormControl<string | null>(null, Validators.required),
+    categoriaId: new FormControl<number | null>(null, Validators.required)
   })
   
   onSubmit(){
@@ -46,7 +48,8 @@ export class FormularioEdicaoEventosComponent implements OnInit{
       nome: this.eventoFormularioEdicao.value.nome!,
       local: this.eventoFormularioEdicao.value.local!,
       capacidade_maxima: this.eventoFormularioEdicao.value.capacidade_maxima!,
-      data_evento: this.eventoFormularioEdicao.value.data_evento! + ':00-03:00'
+      data_evento: this.eventoFormularioEdicao.value.data_evento! + ':00-03:00',
+      categoriaId: this.eventoFormularioEdicao.value.categoriaId!
     }
 
     this.eventoService.atualizarEvento(this.id, eventosEdicao)

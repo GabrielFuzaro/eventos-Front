@@ -15,25 +15,39 @@ export class CadastroComponent {
 
   mensagemErro: string = '';
   mensagemSucesso: string = '';
+  enviando: boolean = false;
 
   cadastroFormulario = new FormGroup({
     username: new FormControl<string>('', { nonNullable: true, validators: [Validators.required]}),
     senha: new FormControl<string>('', {nonNullable: true, validators: [Validators.required]})
   })
 
+  invalido(campo: string): boolean {
+    const controle = this.cadastroFormulario.get(campo);
+    return !!controle && controle.invalid && controle.touched;
+  }
+
   enviarCadastro() {
     const usuario = this.cadastroFormulario.getRawValue();
-    
-    this.authService.cadatrar(usuario.username, usuario.senha) 
+
+    this.mensagemErro = '';
+    this.enviando = true;
+
+    this.authService.cadatrar(usuario.username, usuario.senha)
     .subscribe({
       next: resposta => {
         this.cadastroFormulario.reset()
+        this.mensagemSucesso = 'Conta criada com sucesso! Redirecionando para o login...';
+        setTimeout(() => {
+          this.irParaLogin();
+        }, 1500);
       },
       error: erro => {
-        this.mensagemErro = erro.error?.titulo
+        this.enviando = false;
+        this.mensagemErro = erro.error?.titulo ?? 'Erro ao criar conta.';
         setTimeout(() => {
           this.mensagemErro = '';
-        }, 2500);
+        }, 3000);
       }
     })
   }

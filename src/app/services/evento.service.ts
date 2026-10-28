@@ -13,7 +13,7 @@ export class EventoService{
     constructor(private http: HttpClient) { }
 
     listarEventos(page: number, size: number){ //Método para listar eventos com paginação
-        return this.http.get<Page<Evento>>(`${this.apiUrl}?page=${page}&size=${size}`)
+        return this.http.get<Page<Evento>>(`${this.apiUrl}?page=${page}&size=${size}&sort=id,desc`) //Mais recentes primeiro
     }
 
     listarEventosPeriodo(dataInicial: string, dataFinal: string){
@@ -30,7 +30,7 @@ export class EventoService{
     }
 
     filtrarEventosStatus(page: number, size: number, status: string){
-        return this.http.get<Page<Evento>>(`${this.apiUrl}/filtro/${status}?page=${page}&size=${size}`)
+        return this.http.get<Page<Evento>>(`${this.apiUrl}/filtro/${status}?page=${page}&size=${size}&sort=id,desc`)
     }
 
     buscarPorId(id: number){ //Método para buscar um evento por Id

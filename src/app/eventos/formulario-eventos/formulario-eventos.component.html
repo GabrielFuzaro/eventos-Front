@@ -1,109 +1,95 @@
-<form [formGroup]="eventoFormulario" (ngSubmit)="onSubmit()" class="w-full flex items-center justify-center">
-    <div class="w-full max-w-lg bg-slate-900 border border-slate-800 rounded-2xl p-8">
+<form [formGroup]="eventoFormulario" (ngSubmit)="onSubmit()" class="card overflow-hidden">
 
-        <h2 class="text-2xl font-bold text-white mb-1 text-center">
-            Novo Evento
-        </h2>
-        <p class="text-slate-400 text-sm text-center mb-6">Preencha os dados para cadastrar</p>
-
-        <div class="mb-5">
-            <label for="nome" class="block text-sm font-semibold text-slate-300 mb-2">
-                Nome
-            </label>
-            <input
-                [ngClass]="eventoFormulario.get('nome')?.invalid && eventoFormulario.get('nome')?.touched ? 'border-rose-700 focus:border-rose-700 focus:ring-rose-500/30' 
-                : 'border-slate-700 focus:border-indigo-500 focus:ring-indigo-500/30' "
-                type="text" required
-                id="nome"
-                formControlName="nome"
-                placeholder="Digite o nome do evento"
-                class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
-        
-            <span *ngIf="eventoFormulario.get('nome')?.invalid && eventoFormulario.get('nome')?.touched"
-                class="text-rose-400 text-xs">
-                Nome é obrigatorio
-            </span>
+    <div class="flex items-start justify-between gap-4 border-b border-slate-800 px-6 py-5">
+        <div>
+            <h2 class="text-lg font-bold text-white">Novo evento</h2>
+            <p class="mt-0.5 text-sm text-slate-400">Preencha os dados para cadastrar.</p>
         </div>
-
-        <div class="mb-5">
-            <label for="local" class="block text-sm font-semibold text-slate-300 mb-2">
-                Local
-            </label>
-            <input
-                [ngClass]="eventoFormulario.get('local')?.invalid && eventoFormulario.get('local')?.touched ? 'border-rose-700 focus:border-rose-700 focus:ring-rose-500/30' 
-                : 'border-slate-700 focus:border-indigo-500 focus:ring-indigo-500/30' "
-                type="text" required
-                id="local"
-                formControlName="local"
-                placeholder="Digite o local do evento"
-                class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
-       
-            <span *ngIf="eventoFormulario.get('local')?.invalid && eventoFormulario.get('local')?.touched"
-                class="text-rose-400 text-xs">
-                Local é obrigatorio
-            </span>
-        </div>
-
-        <div class="mb-5">
-            <label for="capacidade_maxima" class="block text-sm font-semibold text-slate-300 mb-2">
-                Capacidade Máxima
-            </label>
-            <input
-                [ngClass]="eventoFormulario.get('capacidade_maxima')?.invalid && eventoFormulario.get('capacidade_maxima')?.touched ? 'border-rose-700 focus:border-rose-700 focus:ring-rose-500/30' 
-                : 'border-slate-700 focus:border-indigo-500 focus:ring-indigo-500/30' "
-                type="number" min="1" required
-                id="capacidade_maxima"
-                formControlName="capacidade_maxima"
-                placeholder="Ex: 100"
-                class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
-
-                <span *ngIf="eventoFormulario.get('capacidade_maxima')?.hasError('required') && eventoFormulario.get('capacidade_maxima')?.touched"
-                class="text-rose-400 text-xs">
-                    Capacidade é obrigatoria
-                </span>
-
-                <span *ngIf="eventoFormulario.get('capacidade_maxima')?.hasError('min') && eventoFormulario.get('capacidade_maxima')?.touched"
-                    class="text-rose-400 text-xs">
-                    Capacidade deve ser maior que 0
-                </span>
-        </div>
-
-        <div class="mb-6">
-            <label for="data_evento" class="block text-sm font-semibold text-slate-300 mb-2">
-                Data e Hora do Evento
-            </label>
-            <input
-                [ngClass]="eventoFormulario.get('data_evento')?.invalid && eventoFormulario.get('data_evento')?.touched ? 'border-rose-700 focus:border-rose-700 focus:ring-rose-500/30' 
-                : 'border-slate-700 focus:border-indigo-500 focus:ring-indigo-500/30' "
-                type="datetime-local" required
-                id="data_evento"
-                formControlName="data_evento"
-                class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
-        
-            <span *ngIf="eventoFormulario.get('data_evento')?.invalid && eventoFormulario.get('data_evento')?.touched"
-                class="text-rose-400 text-xs">
-                Data é obrigatoria
-            </span>
-        </div>
-
-        <button
-            type="submit"
-            [disabled]="eventoFormulario.invalid"
-            class="w-full bg-indigo-500 hover:bg-indigo-400 disabled:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50 transition text-white font-semibold py-3 rounded-xl">
-            {{enviando ? 'Enviando...' : 'Cadastrar'}}
+        <button type="button" (click)="fecharOutput.emit()" aria-label="Fechar" class="btn-icon -mr-2 -mt-1">
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
         </button>
-
-        <div
-            *ngIf="mensagemErro"
-            class="bg-rose-500/10 border border-rose-500/30 text-rose-400 p-3 rounded-xl text-center text-sm font-medium mt-4">
-            {{mensagemErro}}
-        </div>
-
-        <div
-            *ngIf="mensagemSucesso"
-            class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 p-3 rounded-xl text-center text-sm font-medium mt-4">
-            {{mensagemSucesso}}
-        </div>
-
     </div>
+
+    <div class="space-y-5 px-6 py-6">
+
+        <div>
+            <label for="nome" class="label">Nome</label>
+            <input
+                id="nome"
+                type="text"
+                formControlName="nome"
+                placeholder="Ex: Workshop de Angular"
+                class="input"
+                [class.input-invalid]="invalido('nome')">
+            <span *ngIf="invalido('nome')" class="field-error">Nome é obrigatório.</span>
+        </div>
+
+        <div class="grid gap-5 sm:grid-cols-2">
+            <div>
+                <label for="categoriaId" class="label">Categoria</label>
+                <select
+                    id="categoriaId"
+                    formControlName="categoriaId"
+                    class="input"
+                    [class.input-invalid]="invalido('categoriaId')">
+                    <option [ngValue]="null" disabled>Selecione...</option>
+                    <option *ngFor="let categoria of categorias" [ngValue]="categoria.id">{{ categoria.nome }}</option>
+                </select>
+                <span *ngIf="invalido('categoriaId')" class="field-error">Categoria é obrigatória.</span>
+            </div>
+
+            <div>
+                <label for="capacidade_maxima" class="label">Capacidade</label>
+                <input
+                    id="capacidade_maxima"
+                    type="number"
+                    min="1"
+                    formControlName="capacidade_maxima"
+                    placeholder="Ex: 100"
+                    class="input"
+                    [class.input-invalid]="invalido('capacidade_maxima')">
+                <span *ngIf="eventoFormulario.get('capacidade_maxima')?.hasError('required') && eventoFormulario.get('capacidade_maxima')?.touched" class="field-error">
+                    Capacidade é obrigatória.
+                </span>
+                <span *ngIf="eventoFormulario.get('capacidade_maxima')?.hasError('min') && eventoFormulario.get('capacidade_maxima')?.touched" class="field-error">
+                    Deve ser maior que 0.
+                </span>
+            </div>
+        </div>
+
+        <div>
+            <label for="local" class="label">Local</label>
+            <input
+                id="local"
+                type="text"
+                formControlName="local"
+                placeholder="Ex: Auditório principal"
+                class="input"
+                [class.input-invalid]="invalido('local')">
+            <span *ngIf="invalido('local')" class="field-error">Local é obrigatório.</span>
+        </div>
+
+        <div>
+            <label for="data_evento" class="label">Data e hora</label>
+            <input
+                id="data_evento"
+                type="datetime-local"
+                formControlName="data_evento"
+                class="input"
+                [class.input-invalid]="invalido('data_evento')">
+            <span *ngIf="invalido('data_evento')" class="field-error">Data é obrigatória.</span>
+        </div>
+
+        <div *ngIf="mensagemErro" role="alert" class="alert-error">{{ mensagemErro }}</div>
+    </div>
+
+    <div class="flex justify-end gap-2 border-t border-slate-800 bg-slate-950/30 px-6 py-4">
+        <button type="button" (click)="fecharOutput.emit()" class="btn-secondary">Cancelar</button>
+        <button type="submit" [disabled]="eventoFormulario.invalid || enviando" class="btn-primary">
+            {{ enviando ? 'Salvando...' : 'Cadastrar evento' }}
+        </button>
+    </div>
+
 </form>

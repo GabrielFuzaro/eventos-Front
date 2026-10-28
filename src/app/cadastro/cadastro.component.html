@@ -1,88 +1,90 @@
-<div class="min-h-screen bg-slate-950 flex items-center justify-center p-6">
-    <div class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-8">
+<div class="grid min-h-screen lg:grid-cols-2">
 
-        <h2 class="text-2xl font-bold text-white mb-1 text-center">
-            Criar conta
-        </h2>
-        <p class="text-slate-400 text-sm text-center mb-6">
-            Preencha os dados para se cadastrar
-        </p>
+    <!-- Painel da marca (telas grandes) -->
+    <aside class="relative hidden overflow-hidden border-r border-slate-800/80 lg:flex lg:flex-col lg:justify-between lg:p-12">
+        <div class="absolute inset-0 bg-gradient-to-br from-fuchsia-600/20 via-slate-950 to-indigo-600/30"></div>
+        <div class="absolute -right-24 top-1/4 h-72 w-72 rounded-full bg-fuchsia-500/15 blur-3xl"></div>
 
-        <form [formGroup]="cadastroFormulario" (ngSubmit)="enviarCadastro()" class="flex flex-col gap-5">
+        <div class="relative flex items-center gap-2.5">
+            <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-fuchsia-500 shadow-lg shadow-indigo-500/30">
+                <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+            </span>
+            <span class="text-xl font-bold tracking-tight text-white">Eventos</span>
+        </div>
 
-            <div class="flex flex-col gap-1">
-                <label for="username" class="text-sm font-semibold text-slate-300">
-                    Nome Completo
-                </label>
+        <div class="relative max-w-md">
+            <h1 class="text-4xl font-extrabold leading-tight tracking-tight text-white">
+                Comece a gerenciar seus eventos hoje.
+            </h1>
+            <p class="mt-4 text-slate-400">
+                Crie sua conta em segundos e tenha todos os seus eventos e participantes organizados.
+            </p>
+        </div>
 
-                <input
-                    id="username"
-                    type="text"
-                    formControlName="username"
-                    placeholder="Digite seu usuário"
-                    class="w-full rounded-xl bg-slate-800 border px-4 py-3 text-white placeholder-slate-500 outline-none transition focus:ring-2 hover:border-slate-600"
-                    [ngClass]="cadastroFormulario.get('username')?.invalid && cadastroFormulario.get('username')?.touched
-                        ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500/30'
-                        : 'border-slate-700 focus:border-indigo-500 focus:ring-indigo-500/30'">
+        <p class="relative text-xs text-slate-500">Sistema de Eventos</p>
+    </aside>
 
-                <span
-                    *ngIf="cadastroFormulario.get('username')?.invalid && cadastroFormulario.get('username')?.touched"
-                    class="text-rose-400 text-xs">
-                    Informe um usuário.
+    <!-- Formulário -->
+    <main class="flex items-center justify-center px-4 py-12 sm:px-6">
+        <div class="w-full max-w-sm">
+
+            <div class="mb-8 flex items-center gap-2.5 lg:hidden">
+                <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-fuchsia-500">
+                    <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
                 </span>
+                <span class="text-lg font-bold text-white">Eventos</span>
             </div>
 
-            <div class="flex flex-col gap-1">
-                <label for="senha" class="text-sm font-semibold text-slate-300">
-                    Senha
-                </label>
+            <h2 class="text-2xl font-bold tracking-tight text-white">Criar conta</h2>
+            <p class="mt-1 text-sm text-slate-400">Preencha os dados para se cadastrar.</p>
 
-                <input
-                    id="senha"
-                    type="password"
-                    formControlName="senha"
-                    placeholder="Digite sua senha"
-                    class="w-full rounded-xl bg-slate-800 border px-4 py-3 text-white placeholder-slate-500 outline-none transition focus:ring-2 hover:border-slate-600"
-                    [ngClass]="cadastroFormulario.get('senha')?.invalid && cadastroFormulario.get('senha')?.touched
-                        ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500/30'
-                        : 'border-slate-700 focus:border-indigo-500 focus:ring-indigo-500/30'">
+            <form [formGroup]="cadastroFormulario" (ngSubmit)="enviarCadastro()" class="mt-8 space-y-5">
 
-                <span
-                    *ngIf="cadastroFormulario.get('senha')?.invalid && cadastroFormulario.get('senha')?.touched"
-                    class="text-rose-400 text-xs">
-                    Informe uma senha.
-                </span>
-            </div>
+                <div>
+                    <label for="username" class="label">Usuário</label>
+                    <input
+                        id="username"
+                        type="text"
+                        formControlName="username"
+                        autocomplete="username"
+                        placeholder="Escolha um usuário"
+                        class="input"
+                        [class.input-invalid]="invalido('username')">
+                    <span *ngIf="invalido('username')" class="field-error">Informe um usuário.</span>
+                </div>
 
-            <button
-                type="submit"
-                [disabled]="cadastroFormulario.invalid"
-                class="w-full mb-5 mt-2 bg-indigo-500 hover:bg-indigo-400 disabled:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50 transition text-white font-semibold py-3 rounded-xl">
-                Cadastrar
-            </button>
+                <div>
+                    <label for="senha" class="label">Senha</label>
+                    <input
+                        id="senha"
+                        type="password"
+                        formControlName="senha"
+                        autocomplete="new-password"
+                        placeholder="Crie uma senha"
+                        class="input"
+                        [class.input-invalid]="invalido('senha')">
+                    <span *ngIf="invalido('senha')" class="field-error">Informe uma senha.</span>
+                </div>
 
-        </form>
+                <button type="submit" [disabled]="cadastroFormulario.invalid || enviando" class="btn-primary w-full py-3">
+                    {{ enviando ? 'Criando conta...' : 'Criar conta' }}
+                </button>
 
-        <div 
-            *ngIf="mensagemErro"
-            class="mb-5 mt-5 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm text-center">
-            {{ mensagemErro }}
+                <div *ngIf="mensagemErro" role="alert" class="alert-error">{{ mensagemErro }}</div>
+                <div *ngIf="mensagemSucesso" role="status" class="alert-success">{{ mensagemSucesso }}</div>
+            </form>
+
+            <p class="mt-8 text-center text-sm text-slate-400">
+                Já tem uma conta?
+                <button type="button" (click)="irParaLogin()" class="font-semibold text-indigo-400 hover:text-indigo-300">
+                    Fazer login
+                </button>
+            </p>
         </div>
+    </main>
 
-        <div
-            *ngIf="mensagemSucesso"
-            class="mb-5 p-4 bg-green-500/10 border border-green-500/30 rounded-xl text-green-400 text-sm text-center">
-            {{ mensagemSucesso }}
-        </div>
-
-        <div class="mt-4">
-            <button
-                type="button"
-                (click)="irParaLogin()"
-                class="w-full border border-slate-700 bg-slate-800 hover:bg-slate-700 transition text-slate-200 font-semibold py-3 rounded-xl">
-                Fazer Login
-            </button>
-        </div>
-
-    </div>
 </div>

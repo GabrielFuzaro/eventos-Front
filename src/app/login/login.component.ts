@@ -15,29 +15,36 @@ export class LoginComponent {
   mensagemErro: string = '';
   mensagemSucesso: string = '';
 
+  enviando: boolean = false;
+  mostrarSenha: boolean = false;
 
   constructor(private authService: AuthService, private router: Router) {}
 
   login(): void{
 
+    this.mensagemErro = '';
+    this.enviando = true;
+
     this.authService.login(this.username, this.password)
     .subscribe({
       next: token => {
         sessionStorage.setItem('token', token);
-        //console.log("Login Realizado");
-        this.mensagemSucesso = 'Login realizado com Sucesso! Aguarde...'
+        this.mensagemSucesso = 'Login realizado com sucesso! Redirecionando...'
         setTimeout(() => {
           this.router.navigate([
             './eventos'
           ])
-        }, 2000);
+        }, 1000);
       },
       error: erro => {
         console.error("Erro ao fazer login:", erro)
-        this.mensagemErro = 'Usuário ou senha inválidos.'
+        this.enviando = false;
+        this.mensagemErro = erro.status === 0
+          ? 'Não foi possível conectar ao servidor.'
+          : 'Usuário ou senha inválidos.'
         setTimeout(() => {
           this.mensagemErro = ''
-        }, 2500);
+        }, 3000);
       }
     })
   }

@@ -1,321 +1,315 @@
-<div class="w-full min-h-screen bg-slate-950">
+<main class="mx-auto max-w-6xl px-4 py-8 sm:px-6">
 
-    <header class="sticky top-0 z-10 bg-slate-900/95 backdrop-blur border-b border-slate-800">
-
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-
-            <div class="flex-1">
-                <h1 class="text-2xl sm:text-3xl font-bold text-white">Eventos</h1>
-                <p class="text-slate-400 text-sm mt-1">Gerencie e acompanhe todos os eventos cadastrados</p>
-
-                <div class="mt-4 relative max-w-md">
-                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500"
-                        fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path
-                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-
-                    <input
-                        type="text"
-                        [(ngModel)]="pesquisaEvento"
-                        aria-label="Pesquisar evento por nome"
-                        placeholder="Pesquisar nesta página..."
-                        class="w-full pl-10 pr-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white
-                        placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
-                </div>
-            </div>
-
-            <div class="flex items-center gap-3">
-                <button
-                    type="button"
-                    (click)="cadastrarEventoFormulario()"
-                    class="rounded-xl bg-indigo-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-400 active:scale-95">
-                    {{ statusFormulario ? 'Fechar formulário' : '+ Cadastrar evento' }}
-                </button>
-
-                <button
-                    type="button"
-                    (click)="logout()"
-                    class="rounded-xl border border-slate-700 bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-300 transition hover:bg-slate-700 hover:text-white active:scale-95">
-                    Logout
-                </button>
-            </div>
-
+    <!-- Cabeçalho da página -->
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+            <h1 class="text-3xl font-extrabold tracking-tight text-white">Eventos</h1>
+            <p class="mt-1 text-sm text-slate-400">Gerencie e acompanhe todos os eventos cadastrados.</p>
         </div>
 
-    </header>
-
-    <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8">
-
-        <div *ngIf="statusFormulario" class="mb-8">
-            <app-formulario-eventos (eventoCadastradoOutput)="atualizarEventos()"></app-formulario-eventos>
-        </div>
-
-        <div class="mb-8">
-
-            <button
-                type="button"
-                (click)="toogleEstatisticas()"
-                [attr.aria-expanded]="mostrarEstatisticas"
-                class="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-300 transition hover:bg-slate-700 hover:text-white active:scale-95">
-                {{ mostrarEstatisticas ? 'Ocultar estatísticas' : 'Mostrar estatísticas' }}
-                <svg
-                    class="h-4 w-4 transition-transform duration-200"
-                    [class.rotate-180]="mostrarEstatisticas"
-                    fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6" />
+        <div class="flex items-center gap-2">
+            <button type="button" (click)="toogleEstatisticas()" [attr.aria-expanded]="mostrarEstatisticas" class="btn-secondary">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
                 </svg>
+                <span class="hidden sm:inline">{{ mostrarEstatisticas ? 'Ocultar estatísticas' : 'Estatísticas' }}</span>
             </button>
 
-            <div
-                *ngIf="mostrarEstatisticas"
-                class="mt-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
-
-                <div class="rounded-2xl border border-slate-800 bg-slate-900 p-4">
-                    <div class="flex items-center gap-2">
-                        <span class="h-2.5 w-2.5 rounded-full bg-indigo-400"></span>
-                        <p class="text-sm text-slate-500">Total</p>
-                    </div>
-                    <p class="mt-2 text-3xl font-bold text-white">
-                        {{ totalAbertos + totalLotados + totalEncerrados }}
-                    </p>
-                </div>
-
-                <div class="rounded-2xl border border-slate-800 bg-slate-900 p-4">
-                    <div class="flex items-center gap-2">
-                        <span class="h-2.5 w-2.5 rounded-full bg-emerald-400"></span>
-                        <p class="text-sm text-slate-500">Abertos</p>
-                    </div>
-                    <p class="mt-2 text-3xl font-bold text-emerald-400">{{ totalAbertos }}</p>
-                </div>
-
-                <div class="rounded-2xl border border-slate-800 bg-slate-900 p-4">
-                    <div class="flex items-center gap-2">
-                        <span class="h-2.5 w-2.5 rounded-full bg-rose-400"></span>
-                        <p class="text-sm text-slate-500">Lotados</p>
-                    </div>
-                    <p class="mt-2 text-3xl font-bold text-rose-400">{{ totalLotados }}</p>
-                </div>
-
-                <div class="rounded-2xl border border-slate-800 bg-slate-900 p-4">
-                    <div class="flex items-center gap-2">
-                        <span class="h-2.5 w-2.5 rounded-full bg-amber-400"></span>
-                        <p class="text-sm text-slate-500">Encerrados</p>
-                    </div>
-                    <p class="mt-2 text-3xl font-bold text-amber-400">{{ totalEncerrados }}</p>
-                </div>
-
-            </div>
-
-        </div>
-                <section class="mb-8 rounded-2xl border border-slate-800 bg-slate-900 p-5">
-
-            <div class="flex flex-col gap-6 lg:flex-row lg:items-end">
-
-                <div class="flex flex-col gap-2 sm:flex-row sm:items-end">
-                    <div>
-                        <label for="filtroStatus" class="block text-sm font-semibold text-slate-300 mb-2">
-                            Status
-                        </label>
-                        <select
-                            id="filtroStatus"
-                            [(ngModel)]="status"
-                            class="w-full sm:w-44 px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white
-                            focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
-                            <option value="" disabled>Selecione...</option>
-                            <option value="ABERTO">Aberto</option>
-                            <option value="LOTADO">Lotado</option>
-                            <option value="ENCERRADO">Encerrado</option>
-                        </select>
-                    </div>
-
-                    <button
-                        type="button"
-                        (click)="aplicarFiltro()"
-                        [disabled]="!status"
-                        class="rounded-xl bg-indigo-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-400 active:scale-95
-                        disabled:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed">
-                        Filtrar status
-                    </button>
-                </div>
-
-                <div class="hidden lg:block self-stretch w-px bg-slate-800"></div>
-
-                <div class="flex flex-1 flex-col gap-3 sm:flex-row sm:items-end">
-                    <div class="flex-1">
-                        <label for="dataInicial" class="block text-sm font-semibold text-slate-300 mb-2">Data inicial</label>
-                        <input
-                            #inicio
-                            type="date"
-                            id="dataInicial"
-                            class="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white [color-scheme:dark]
-                            focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
-                    </div>
-
-                    <div class="flex-1">
-                        <label for="dataFinal" class="block text-sm font-semibold text-slate-300 mb-2">Data final</label>
-                        <input
-                            #fim
-                            type="date"
-                            id="dataFinal"
-                            class="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white [color-scheme:dark]
-                            focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
-                    </div>
-
-                    <button
-                        type="button"
-                        (click)="filtrarPorPeriodo(inicio.value, fim.value)"
-                        class="rounded-xl bg-indigo-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-400 active:scale-95">
-                        Filtrar período
-                    </button>
-                </div>
-
-                <button
-                    type="button"
-                    (click)="inicio.value = ''; fim.value = ''; removerFiltro()"
-                    class="rounded-xl border border-slate-700 bg-slate-800 px-5 py-2.5 text-sm font-semibold text-slate-300 transition hover:bg-slate-700 hover:text-white active:scale-95">
-                    Limpar filtros
-                </button>
-
-            </div>
-
-        </section>
-
-        <ng-container *ngIf="eventosFiltrados as lista">
-
-            <div *ngIf="lista.length === 0" class="text-center py-16">
-                <p class="text-slate-400 text-lg font-medium">Nenhum evento encontrado</p>
-                <p class="text-slate-600 text-sm mt-1">Tente outro filtro ou cadastre um novo evento.</p>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                <div
-                    *ngFor="let evento of lista"
-                    class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden flex flex-col hover:border-slate-600 transition-colors">
-
-                    <div class="px-5 py-4 border-b border-slate-800">
-                        <div class="flex items-start justify-between gap-2">
-                            <h2 class="text-lg font-bold text-white leading-snug break-words min-w-0">
-                                {{evento.nome}}
-                            </h2>
-
-                            <span
-                                class="text-[11px] font-semibold px-2 py-1 rounded-full whitespace-nowrap"
-                                [ngClass]="{
-                                    'bg-rose-500/15 text-rose-400': evento.status === 'LOTADO',
-                                    'bg-amber-500/15 text-amber-400': evento.status === 'ENCERRADO',
-                                    'bg-emerald-500/15 text-emerald-400': evento.status !== 'LOTADO' && evento.status !== 'ENCERRADO'
-                                }">
-                                {{evento.status === 'LOTADO' ? 'Lotado' : evento.status === 'ENCERRADO' ? 'Encerrado' : 'Aberto'}}
-                            </span>
-                        </div>
-                        <p class="text-slate-400 text-sm mt-1">{{evento.local}}</p>
-                    </div>
-
-                    <div class="px-5 py-4 flex flex-col gap-3 flex-1">
-
-                        <div *ngIf="evento.status === 'ENCERRADO'"
-                            class="text-amber-400 bg-amber-500/10 text-xs font-semibold px-3 py-1.5 rounded-lg w-fit">
-                            Evento encerrado
-                        </div>
-                        <div *ngIf="evento.status === 'LOTADO'"
-                            class="text-rose-400 bg-rose-500/10 text-xs font-semibold px-3 py-1.5 rounded-lg w-fit">
-                            Sem vagas disponíveis
-                        </div>
-                        <div *ngIf="evento.status !== 'ENCERRADO' && evento.status !== 'LOTADO'"
-                            class="text-cyan-400 bg-cyan-500/10 text-xs font-semibold px-3 py-1.5 rounded-lg w-fit">
-                            Vagas disponíveis
-                        </div>
-
-                        <div class="text-sm text-slate-300 space-y-1.5 mt-1">
-                            <div class="flex justify-between">
-                                <span class="text-slate-500">Capacidade</span>
-                                <span class="font-medium">{{evento.capacidade_maxima}}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-slate-500">Data</span>
-                                <span class="font-medium">{{evento.data_evento | date:'dd/MM/yyyy'}}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-slate-500">Horário</span>
-                                <span class="font-medium">{{evento.data_evento | date:'HH:mm'}}</span>
-                            </div>
-                        </div>
-
-                        <button
-                            type="button"
-                            class="mt-auto w-full font-semibold py-2.5 rounded-xl transition text-white bg-indigo-500 hover:bg-indigo-400 active:scale-95"
-                            (click)="abrirEvento(evento.id)">
-                            Ver detalhes
-                        </button>
-
-                        <div
-                            *ngIf="authService.isAdmin()"
-                            class="flex items-center justify-between pt-3 mt-1 border-t border-slate-800">
-                            <button
-                                type="button"
-                                (click)="botaoEditarEvento(evento.id)"
-                                class="text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors">
-                                Editar
-                            </button>
-
-                            <button
-                                type="button"
-                                aria-label="Excluir evento"
-                                title="Excluir evento"
-                                (click)="excluirEvento(evento.id)"
-                                class="p-1.5 rounded-lg hover:bg-slate-800 transition-colors">
-                                <img [src]="imagemLixeira" alt="" class="w-5 h-5 opacity-70">
-                            </button>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-        </ng-container>
-
-        <div *ngIf="totalPaginas > 1 && paginacao" class="flex justify-center items-center gap-4 mt-10">
-            <button
-                type="button"
-                aria-label="Página anterior"
-                (click)="irParaPagina(paginaAtual - 1)"
-                [disabled]="paginaAtual === 0"
-                class="p-2 bg-slate-900 border border-slate-800 rounded-xl hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed transition">
-                <img [src]="imagemChevronEsquerda" alt="" class="w-4 h-4">
+            <button type="button" (click)="cadastrarEventoFormulario()" class="btn-primary">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                Novo evento
             </button>
-
-            <span class="text-slate-400 text-sm font-medium">
-                Página {{ paginaAtual + 1 }} de {{ totalPaginas }}
-            </span>
-
-            <button
-                type="button"
-                aria-label="Próxima página"
-                (click)="irParaPagina(paginaAtual + 1)"
-                [disabled]="paginaAtual >= totalPaginas - 1"
-                class="p-2 bg-slate-900 border border-slate-800 rounded-xl hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed transition">
-                <img [src]="imagemChevronDireita" alt="" class="w-4 h-4">
-            </button>
-        </div>
-
-    </main>
-
-    <div class="fixed top-4 right-4 z-50 flex w-full max-w-sm flex-col gap-3 px-4 sm:px-0">
-        <div
-            *ngIf="mensagemErro"
-            role="alert"
-            class="bg-rose-500/10 border border-rose-500/30 text-rose-400 backdrop-blur p-3 rounded-xl text-center font-medium text-sm shadow-lg">
-            {{mensagemErro}}
-        </div>
-
-        <div
-            *ngIf="mensagemSucesso"
-            role="status"
-            class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 backdrop-blur p-3 rounded-xl text-center font-medium text-sm shadow-lg">
-            {{mensagemSucesso}}
         </div>
     </div>
 
+    <!-- Estatísticas -->
+    <section *ngIf="mostrarEstatisticas" class="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
+
+        <div class="card p-5">
+            <div class="flex items-center justify-between">
+                <p class="text-sm font-medium text-slate-400">Total</p>
+                <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-500/15 text-indigo-300">
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                </span>
+            </div>
+            <p class="mt-3 text-3xl font-bold text-white">{{ totalEventos }}</p>
+        </div>
+
+        <div class="card p-5">
+            <div class="flex items-center justify-between">
+                <p class="text-sm font-medium text-slate-400">Abertos</p>
+                <span class="h-2.5 w-2.5 rounded-full bg-emerald-400 shadow-[0_0_12px] shadow-emerald-400/60"></span>
+            </div>
+            <p class="mt-3 text-3xl font-bold text-emerald-300">{{ totalAbertos }}</p>
+            <div class="mt-3 h-1 overflow-hidden rounded-full bg-slate-800">
+                <div class="h-full rounded-full bg-emerald-400" [style.width.%]="totalEventos ? totalAbertos / totalEventos * 100 : 0"></div>
+            </div>
+        </div>
+
+        <div class="card p-5">
+            <div class="flex items-center justify-between">
+                <p class="text-sm font-medium text-slate-400">Lotados</p>
+                <span class="h-2.5 w-2.5 rounded-full bg-rose-400 shadow-[0_0_12px] shadow-rose-400/60"></span>
+            </div>
+            <p class="mt-3 text-3xl font-bold text-rose-300">{{ totalLotados }}</p>
+            <div class="mt-3 h-1 overflow-hidden rounded-full bg-slate-800">
+                <div class="h-full rounded-full bg-rose-400" [style.width.%]="totalEventos ? totalLotados / totalEventos * 100 : 0"></div>
+            </div>
+        </div>
+
+        <div class="card p-5">
+            <div class="flex items-center justify-between">
+                <p class="text-sm font-medium text-slate-400">Encerrados</p>
+                <span class="h-2.5 w-2.5 rounded-full bg-amber-400 shadow-[0_0_12px] shadow-amber-400/60"></span>
+            </div>
+            <p class="mt-3 text-3xl font-bold text-amber-300">{{ totalEncerrados }}</p>
+            <div class="mt-3 h-1 overflow-hidden rounded-full bg-slate-800">
+                <div class="h-full rounded-full bg-amber-400" [style.width.%]="totalEventos ? totalEncerrados / totalEventos * 100 : 0"></div>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- Busca e filtros -->
+    <section class="card mt-6 p-4 sm:p-5">
+        <div class="flex flex-col gap-4 lg:flex-row lg:items-end">
+
+            <div class="lg:w-64">
+                <label for="pesquisa" class="label">Pesquisar</label>
+                <div class="relative">
+                    <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <input
+                        id="pesquisa"
+                        type="text"
+                        [(ngModel)]="pesquisaEvento"
+                        placeholder="Nome do evento..."
+                        class="input pl-9">
+                </div>
+            </div>
+
+            <div class="flex items-end gap-2">
+                <div class="flex-1 lg:w-40">
+                    <label for="filtroStatus" class="label">Status</label>
+                    <select id="filtroStatus" [(ngModel)]="status" class="input">
+                        <option value="" disabled>Todos</option>
+                        <option value="ABERTO">Aberto</option>
+                        <option value="LOTADO">Lotado</option>
+                        <option value="ENCERRADO">Encerrado</option>
+                    </select>
+                </div>
+                <button type="button" (click)="aplicarFiltro()" [disabled]="!status" class="btn-secondary">
+                    Filtrar
+                </button>
+            </div>
+
+            <div class="flex flex-1 flex-col gap-2 sm:flex-row sm:items-end">
+                <div class="flex-1">
+                    <label for="dataInicial" class="label">De</label>
+                    <input #inicio id="dataInicial" type="date" class="input">
+                </div>
+                <div class="flex-1">
+                    <label for="dataFinal" class="label">Até</label>
+                    <input #fim id="dataFinal" type="date" class="input">
+                </div>
+                <button type="button" (click)="filtrarPorPeriodo(inicio.value, fim.value)" class="btn-secondary">
+                    Filtrar período
+                </button>
+            </div>
+
+            <button
+                *ngIf="filtroAtivo"
+                type="button"
+                (click)="inicio.value = ''; fim.value = ''; removerFiltro()"
+                class="btn-ghost">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                Limpar
+            </button>
+        </div>
+    </section>
+
+    <!-- Carregando -->
+    <div *ngIf="carregando" class="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div *ngFor="let item of [1, 2, 3, 4]" class="card h-64 animate-pulse p-5">
+            <div class="h-4 w-2/3 rounded bg-slate-800"></div>
+            <div class="mt-3 h-3 w-1/3 rounded bg-slate-800"></div>
+            <div class="mt-8 h-3 w-full rounded bg-slate-800"></div>
+            <div class="mt-3 h-3 w-5/6 rounded bg-slate-800"></div>
+            <div class="mt-10 h-10 w-full rounded-xl bg-slate-800"></div>
+        </div>
+    </div>
+
+    <ng-container *ngIf="!carregando">
+
+        <!-- Nenhum evento -->
+        <div *ngIf="eventosFiltrados.length === 0" class="card mt-6 flex flex-col items-center px-6 py-16 text-center">
+            <span class="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-800 text-slate-400">
+                <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+            </span>
+            <p class="mt-4 text-lg font-semibold text-white">Nenhum evento encontrado</p>
+            <p class="mt-1 text-sm text-slate-400">Tente outro filtro ou cadastre um novo evento.</p>
+            <button type="button" (click)="cadastrarEventoFormulario()" class="btn-primary mt-6">
+                Cadastrar evento
+            </button>
+        </div>
+
+        <!-- Cards -->
+        <div class="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <article
+                *ngFor="let evento of eventosFiltrados"
+                class="card group relative flex flex-col overflow-hidden transition duration-200 hover:-translate-y-1 hover:border-slate-700 hover:shadow-2xl hover:shadow-indigo-500/10">
+
+                <div class="h-1 w-full" [ngClass]="statusEvento(evento.status).dot"></div>
+
+                <div class="flex flex-1 flex-col p-5">
+
+                    <div class="flex items-start gap-3">
+                        <!-- Data em formato de calendário -->
+                        <div class="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-xl border border-slate-700 bg-slate-950/60">
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-300">{{ evento.data_evento | date:'MMM' }}</span>
+                            <span class="text-xl font-bold leading-none text-white">{{ evento.data_evento | date:'dd' }}</span>
+                        </div>
+
+                        <div class="min-w-0 flex-1">
+                            <h2 class="truncate text-base font-bold text-white" [title]="evento.nome">{{ evento.nome }}</h2>
+                            <p class="mt-1 flex items-center gap-1 truncate text-sm text-slate-400">
+                                <svg class="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0116 0z" />
+                                    <circle cx="12" cy="10" r="3" />
+                                </svg>
+                                <span class="truncate">{{ evento.local }}</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 flex flex-wrap items-center gap-2">
+                        <span class="badge" [ngClass]="statusEvento(evento.status).badge">
+                            <span class="h-1.5 w-1.5 rounded-full" [ngClass]="statusEvento(evento.status).dot"></span>
+                            {{ statusEvento(evento.status).label }}
+                        </span>
+                        <span class="badge" [ngClass]="corCategoria(evento.categoriaId)">
+                            {{ evento.categoriaNome || 'Sem categoria' }}
+                        </span>
+                    </div>
+
+                    <dl class="mt-4 grid grid-cols-2 gap-3 rounded-xl border border-slate-800 bg-slate-950/40 p-3 text-sm">
+                        <div>
+                            <dt class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Horário</dt>
+                            <dd class="mt-0.5 font-semibold text-slate-200">{{ evento.data_evento | date:'HH:mm' }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Vagas</dt>
+                            <dd class="mt-0.5 font-semibold text-slate-200">{{ evento.capacidade_maxima }}</dd>
+                        </div>
+                    </dl>
+
+                    <div class="mt-auto pt-5">
+                        <button type="button" (click)="abrirEvento(evento.id)" class="btn-primary w-full">
+                            Ver detalhes
+                            <svg class="h-4 w-4 transition group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                            </svg>
+                        </button>
+
+                        <div *ngIf="authService.isAdmin()" class="mt-3 flex items-center justify-between border-t border-slate-800 pt-3">
+                            <button type="button" (click)="botaoEditarEvento(evento.id)" class="btn-ghost px-3 py-1.5">
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.86 4.49l1.69-1.69a1.88 1.88 0 112.65 2.65L10.58 16.07a4.5 4.5 0 01-1.9 1.13L6 18l.8-2.68a4.5 4.5 0 011.13-1.9l8.93-8.93z" />
+                                </svg>
+                                Editar
+                            </button>
+                            <button type="button" (click)="excluirEvento(evento)" aria-label="Excluir evento" title="Excluir evento" class="btn-danger px-3 py-1.5">
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.35 9m-4.78 0L9.26 9m9.97-3.21c.34.05.68.11 1.02.17m-1.02-.17L18.16 19.67A2.25 2.25 0 0115.92 21.75H8.08a2.25 2.25 0 01-2.24-2.08L4.77 5.79m14.46 0a48.1 48.1 0 00-3.48-.4m-12 .56c.34-.06.68-.11 1.02-.17m0 0a48.1 48.1 0 013.48-.4m7.5 0v-.92c0-1.18-.91-2.16-2.09-2.2a51.96 51.96 0 00-3.32 0c-1.18.04-2.09 1.02-2.09 2.2v.92m7.5 0a48.67 48.67 0 00-7.5 0" />
+                                </svg>
+                                Excluir
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </div>
+
+        <!-- Paginação -->
+        <nav *ngIf="totalPaginas > 1 && paginacao" class="mt-10 flex items-center justify-center gap-1.5" aria-label="Paginação">
+            <button
+                type="button"
+                (click)="irParaPagina(paginaAtual - 1)"
+                [disabled]="paginaAtual === 0"
+                aria-label="Página anterior"
+                class="btn-icon disabled:cursor-not-allowed disabled:opacity-30">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+            </button>
+
+            <button
+                *ngFor="let pagina of paginas"
+                type="button"
+                (click)="irParaPagina(pagina)"
+                [attr.aria-current]="pagina === paginaAtual ? 'page' : null"
+                [ngClass]="pagina === paginaAtual ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/30' : 'text-slate-400 hover:bg-slate-800 hover:text-white'"
+                class="h-9 min-w-[2.25rem] rounded-lg px-2 text-sm font-semibold transition">
+                {{ pagina + 1 }}
+            </button>
+
+            <button
+                type="button"
+                (click)="irParaPagina(paginaAtual + 1)"
+                [disabled]="paginaAtual >= totalPaginas - 1"
+                aria-label="Próxima página"
+                class="btn-icon disabled:cursor-not-allowed disabled:opacity-30">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+            </button>
+        </nav>
+
+    </ng-container>
+</main>
+
+<!-- Modal: novo evento -->
+<div *ngIf="statusFormulario" class="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto p-4 sm:items-center">
+    <div class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm" (click)="cadastrarEventoFormulario()" aria-hidden="true"></div>
+    <div class="relative my-8 w-full max-w-lg" role="dialog" aria-modal="true" aria-label="Novo evento">
+        <app-formulario-eventos
+            (eventoCadastradoOutput)="atualizarEventos()"
+            (fecharOutput)="cadastrarEventoFormulario()">
+        </app-formulario-eventos>
+    </div>
+</div>
+
+<!-- Diálogo: confirmar exclusão -->
+<div *ngIf="eventoParaExcluir" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm" (click)="eventoParaExcluir = null" aria-hidden="true"></div>
+    <div class="card relative w-full max-w-sm p-6" role="alertdialog" aria-modal="true" aria-labelledby="tituloExclusao">
+        <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-rose-500/15 text-rose-300">
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+            </svg>
+        </span>
+        <h3 id="tituloExclusao" class="mt-4 text-lg font-bold text-white">Excluir evento?</h3>
+        <p class="mt-1 text-sm text-slate-400">
+            O evento <span class="font-semibold text-slate-200">{{ eventoParaExcluir.nome }}</span> será excluído permanentemente.
+        </p>
+        <div class="mt-6 flex justify-end gap-2">
+            <button type="button" (click)="eventoParaExcluir = null" class="btn-secondary">Cancelar</button>
+            <button type="button" (click)="confirmarExclusao()" class="btn bg-rose-600 text-white hover:bg-rose-500">Excluir</button>
+        </div>
+    </div>
+</div>
+
+<!-- Avisos -->
+<div class="toast-area">
+    <div *ngIf="mensagemErro" role="alert" class="alert-error">{{ mensagemErro }}</div>
+    <div *ngIf="mensagemSucesso" role="status" class="alert-success">{{ mensagemSucesso }}</div>
 </div>

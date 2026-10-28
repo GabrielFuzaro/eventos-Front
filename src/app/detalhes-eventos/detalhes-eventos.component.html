@@ -1,4 +1,4 @@
-<div class="bg-slate-950 min-h-screen p-6">
+<div class="bg-slate-950 min-h-screen p-4 sm:p-6">
 
     <div *ngIf="evento" class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
 
@@ -6,63 +6,118 @@
 
             <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
 
-                <div class="px-6 py-5 border-b border-slate-800">
+                <!-- Cabeçalho: nome, local, status e Excel -->
+                <div class="px-5 sm:px-6 py-5 border-b border-slate-800">
                     <div class="flex items-start justify-between gap-3">
-                        <h1 class="text-2xl font-bold text-white leading-snug">{{evento.nome}}</h1>
 
-                        <div class="flex items-center gap-2 shrink-0">
-                            <button
-                                type="button"
-                                (click)="baixar()"
-                                class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3.5 py-2 rounded-xl whitespace-nowrap transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-400/50">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                        <div class="min-w-0">
+                            <h1 class="text-xl sm:text-2xl font-bold text-white leading-snug break-words">
+                                {{evento.nome}}
+                            </h1>
+                            <p class="mt-1.5 flex items-start gap-1.5 text-sm text-slate-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="mt-0.5 h-4 w-4 shrink-0 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
+                                    <circle cx="12" cy="10" r="3"></circle>
                                 </svg>
-                                Excel
-                            </button>
-
+                                <span class="break-words">{{evento.local}}</span>
+                            </p>
                             <span
-                                class="text-[11px] font-semibold px-2 py-1 rounded-full whitespace-nowrap"
+                                class="inline-block mt-2.5 text-[11px] font-semibold px-2.5 py-1 rounded-full"
+                                [ngClass]="corCategoria(evento.categoriaId)">
+                                {{evento.categoriaNome || 'Sem categoria'}}
+                            </span>
+                        </div>
+
+                        <div class="flex flex-col items-end gap-2 shrink-0">
+                            <span
+                                class="text-[11px] font-semibold px-2.5 py-1 rounded-full whitespace-nowrap"
                                 [ngClass]="{
                                     'bg-rose-500/15 text-rose-400': evento.status === 'LOTADO',
                                     'bg-amber-500/15 text-amber-400': evento.status === 'ENCERRADO',
                                     'bg-emerald-500/15 text-emerald-400': evento.status !== 'LOTADO' && evento.status !== 'ENCERRADO'
                                 }">
-                                {{evento.status === 'LOTADO' ? 'Lotado' : evento.status === 'ABERTO' ? 'aberto' : 'Encerrado'}}
+                                {{evento.status === 'LOTADO' ? 'Lotado' : evento.status === 'ENCERRADO' ? 'Encerrado' : 'Aberto'}}
                             </span>
+
+                            <button
+                                type="button"
+                                (click)="baixar()"
+                                aria-label="Baixar lista de participantes em Excel"
+                                class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white text-xs font-semibold px-3.5 py-2 rounded-xl whitespace-nowrap transition focus:outline-none focus:ring-2 focus:ring-emerald-400/50">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                                </svg>
+                                Excel
+                            </button>
                         </div>
+
                     </div>
                 </div>
 
-                <div class="px-6 py-5 space-y-2.5 text-sm">
-                    <div class="flex justify-between">
-                        <span class="text-slate-500">Local</span>
-                        <span class="text-slate-200 font-medium">{{evento.local}}</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-slate-500">Capacidade</span>
-                        <span class="text-slate-200 font-medium">{{evento.capacidade_maxima}}</span>
-                    </div>
-                    
-                    <div class="flex justify-between">
-                        <span class="text-slate-500">Status</span>
-                        <span
-                            class="font-medium"
-                            [ngClass]="{
-                                'text-rose-400': evento.status === 'LOTADO',
-                                'text-amber-400': evento.status === 'ENCERRADO',
-                                'text-emerald-400': evento.status !== 'LOTADO' && evento.status !== 'ENCERRADO'
-                            }">
-                            {{evento.status}}
+                <div class="px-5 sm:px-6 py-5 flex flex-col gap-5">
+
+                    <!-- Data e horário -->
+                    <div class="flex items-center gap-2 text-sm text-slate-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <span class="font-medium">
+                            {{evento.data_evento | date:'dd/MM/yyyy'}} às {{evento.data_evento | date:'HH:mm'}}
                         </span>
                     </div>
 
+                    <!-- Ocupação -->
+                    <div>
+                        <div class="mb-2 flex items-center justify-between text-sm">
+                            <span class="text-slate-500">Ocupação</span>
+                            <span class="font-medium text-slate-200">
+                                {{quantidadeParticipantes}} de {{evento.capacidade_maxima}} vagas
+                            </span>
+                        </div>
+
+                        <div class="h-2 w-full overflow-hidden rounded-full bg-slate-800" aria-hidden="true">
+                            <div
+                                class="h-full rounded-full transition-all duration-500"
+                                [style.width.%]="evento.capacidade_maxima > 0 ? (quantidadeParticipantes / evento.capacidade_maxima) * 100 : 0"
+                                [ngClass]="{
+                                    'bg-rose-400': evento.status === 'LOTADO',
+                                    'bg-amber-400': evento.status === 'ENCERRADO',
+                                    'bg-emerald-400': evento.status !== 'LOTADO' && evento.status !== 'ENCERRADO'
+                                }">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Números -->
+                    <div class="grid grid-cols-3 gap-3">
+                        <div class="rounded-xl border border-slate-800 bg-slate-950/40 px-3 py-3 text-center">
+                            <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Capacidade</p>
+                            <p class="mt-1 text-xl font-bold text-white">{{evento.capacidade_maxima}}</p>
+                        </div>
+
+                        <div class="rounded-xl border border-slate-800 bg-slate-950/40 px-3 py-3 text-center">
+                            <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Preenchidas</p>
+                            <p class="mt-1 text-xl font-bold text-white">{{quantidadeParticipantes}}</p>
+                        </div>
+
+                        <div class="rounded-xl border border-slate-800 bg-slate-950/40 px-3 py-3 text-center">
+                            <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Restantes</p>
+                            <p class="mt-1 text-xl font-bold text-white">
+                                {{ evento.capacidade_maxima - quantidadeParticipantes > 0 ? evento.capacidade_maxima - quantidadeParticipantes : 0 }}
+                            </p>
+                        </div>
+                    </div>
+
                 </div>
 
-                <div class="px-6 pb-5">
+                <div class="px-5 sm:px-6 pb-5">
                     <button
+                        type="button"
                         routerLink="/eventos"
-                        class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-2.5 px-5 rounded-xl transition-colors">
+                        class="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-300 hover:text-white font-semibold py-2.5 px-5 rounded-xl transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                        </svg>
                         Voltar
                     </button>
                 </div>

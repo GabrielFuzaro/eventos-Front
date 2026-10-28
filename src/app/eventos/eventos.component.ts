@@ -1,47 +1,74 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { EventoService } from '../services/evento.service';
 import { Router } from '@angular/router';
-import { Evento } from '../models/evento';
+import { Evento, statusEvento } from '../models/evento';
 import { AuthService } from '../services/auth.service';
 import { firstValueFrom } from 'rxjs';
+import { corCategoria } from '../models/categoria';
 
 @Component({
   selector: 'app-eventos',
   templateUrl: './eventos.component.html',
   styleUrls: ['./eventos.component.css']
 })
-export class EventosComponent {
+export class EventosComponent implements OnInit {
 
   eventos: Evento[] = []
 
   constructor(private eventoService: EventoService, private router: Router, public authService: AuthService) {}
-  
+
   ngOnInit(): void{
     this.carregarEventos();
     this.carregarTotais()
   }
 
+  corCategoria = corCategoria;
+  statusEvento = statusEvento;
 
   mensagemSucesso = '';
   mensagemErro = '';
 
+  carregando: boolean = true;
   paginaAtual = 0;
-  tamanhoPagina = 4;
+  tamanhoPagina = 8;
   totalPaginas = 0;
-  dataInicial: string = '';
-  dataFinal = '';
   paginacao: boolean = true;
   totalAbertos: number = 0;
   totalLotados: number = 0;
   totalEncerrados: number = 0;
   mostrarEstatisticas: boolean = true;
 
+  pesquisaEvento = '';
+  statusFormulario: boolean = false;
+  eventoParaExcluir: Evento | null = null;
+  status = '';
+
+  get totalEventos(): number {
+    return this.totalAbertos + this.totalLotados + this.totalEncerrados;
+  }
+
+  get paginas(): number[] {
+    return Array.from({ length: this.totalPaginas }, (_, i) => i);
+  }
+
+  get filtroAtivo(): boolean {
+    return !!this.status || !this.paginacao;
+  }
+
   carregarEventos(): void {
+    this.carregando = true;
     this.eventoService.listarEventos(this.paginaAtual, this.tamanhoPagina)
-    .subscribe(resposta => {
-      this.eventos = resposta.content;
-      this.totalPaginas = resposta.totalPages;
-      this.status = ''
+    .subscribe({
+      next: resposta => {
+        this.eventos = resposta.content;
+        this.totalPaginas = resposta.totalPages;
+        this.status = ''
+        this.carregando = false;
+      },
+      error: () => {
+        this.carregando = false;
+        this.mostrarErro('Não foi possível carregar os eventos.');
+      }
     })
   }
 
@@ -65,68 +92,68 @@ export class EventosComponent {
   }
 
   filtrarPorPeriodo(dataInicial: string, dataFinal: string): void {
-  if (!dataInicial || !dataFinal) {
-    this.mensagemErro = 'Informe a data inicial e a data final.';
-    setTimeout(() => { this.mensagemErro = ''; }, 2500);
-    return;
+    if (!dataInicial || !dataFinal) {
+      this.mostrarErro('Informe a data inicial e a data final.');
+      return;
+    }
+
+    this.paginacao = false;
+    this.carregando = true;
+
+    const inicio = `${dataInicial}T00:00:00-03:00`;
+    const fim = `${dataFinal}T23:59:59-03:00`;
+
+    this.eventoService.listarEventosPeriodo(inicio, fim)
+      .subscribe({
+        next: resposta => {
+          this.eventos = resposta;
+          this.carregando = false;
+        },
+        error: erro => {
+          this.carregando = false;
+          this.mostrarErro(erro.error?.titulo ?? 'Erro ao buscar eventos do período.');
+        }
+      });
   }
 
-  this.paginacao = false;
+  async carregarTotais(): Promise<void> {
+    try {
+      const [abertos, lotados, encerrados] = await Promise.all([
+        firstValueFrom(this.eventoService.contarPorStatus('ABERTO')),
+        firstValueFrom(this.eventoService.contarPorStatus('LOTADO')),
+        firstValueFrom(this.eventoService.contarPorStatus('ENCERRADO'))
+      ]);
 
-  const inicio = `${dataInicial}T00:00:00-03:00`;
-  const fim = `${dataFinal}T23:59:59-03:00`;
-
-  this.eventoService.listarEventosPeriodo(inicio, fim)
-    .subscribe({
-      next: resposta => {
-        this.eventos = resposta;
-      },
-      error: erro => {
-        this.mensagemErro = erro.error?.titulo ?? 'Erro ao buscar eventos do período.';
-        setTimeout(() => { this.mensagemErro = ''; }, 2500);
-      }
-    });
-}
-
-
-async carregarTotais(): Promise<void> {
-  try {
-    const [abertos, lotados, encerrados] = await Promise.all([
-      firstValueFrom(this.eventoService.contarPorStatus('ABERTO')),
-      firstValueFrom(this.eventoService.contarPorStatus('LOTADO')),
-      firstValueFrom(this.eventoService.contarPorStatus('ENCERRADO'))
-    ]);
-
-    this.totalAbertos = abertos;
-    this.totalLotados = lotados;
-    this.totalEncerrados = encerrados;
-  } catch (error) {
-    this.mensagemErro = 'Erro ao carregar estatísticas.';
-    setTimeout(() => { this.mensagemErro = ''; }, 2500);
+      this.totalAbertos = abertos;
+      this.totalLotados = lotados;
+      this.totalEncerrados = encerrados;
+    } catch (error) {
+      this.mostrarErro('Erro ao carregar estatísticas.');
+    }
   }
-}
 
+  // Abre o diálogo de confirmação; a exclusão acontece em confirmarExclusao()
+  excluirEvento(evento: Evento){
+    this.eventoParaExcluir = evento;
+  }
 
-  excluirEvento(id: number){
+  confirmarExclusao(){
+    if (!this.eventoParaExcluir) {
+      return;
+    }
 
-    if (!confirm('Tem certeza que deseja excluir este evento?')) {
-        return;
-      }
+    const id = this.eventoParaExcluir.id;
+    this.eventoParaExcluir = null;
 
     this.eventoService.excluirEvento(id)
     .subscribe({
-      next: resposta => {
+      next: () => {
         this.carregarEventos()
-        this.mensagemSucesso = "Evento excluído com sucesso"
-        setTimeout(() => {
-          this.mensagemSucesso = ''
-        }, 2500);
+        this.carregarTotais()
+        this.mostrarSucesso('Evento excluído com sucesso.');
       },
       error: erro => {
-        this.mensagemErro = erro.error?.titulo ?? 'Erro ao excluír Evento'
-        setTimeout(() => {
-          this.mensagemErro = ''
-        }, 2500);
+        this.mostrarErro(erro.error?.titulo ?? 'Erro ao excluir evento.');
       }
     })
   }
@@ -135,15 +162,15 @@ async carregarTotais(): Promise<void> {
     this.router.navigate(['./eventos', id, 'edição'])
   }
 
-  imagemLixeira = '../assets/imgs/Lixeira.svg';
-  imagemChevronEsquerda = '../assets/imgs/chevron esquerda.svg';
-  imagemChevronDireita = '../assets/imgs/chevron_direita.svg'
-
-  pesquisaEvento = '';
-  statusFormulario: boolean = false;
-
   cadastrarEventoFormulario(){
     this.statusFormulario = !this.statusFormulario;
+  }
+
+  // Fecha o modal ou o diálogo de exclusão com a tecla Esc
+  @HostListener('document:keydown.escape')
+  fecharModais(){
+    this.statusFormulario = false;
+    this.eventoParaExcluir = null;
   }
 
   abrirEvento(id: number){
@@ -153,7 +180,7 @@ async carregarTotais(): Promise<void> {
     ]);
   }
 
-    get eventosFiltrados() {
+  get eventosFiltrados() {
     return this.eventos.filter(evento =>
       !this.pesquisaEvento ||
       evento.nome.toLowerCase().includes(this.pesquisaEvento.toLowerCase())
@@ -161,38 +188,52 @@ async carregarTotais(): Promise<void> {
   }
 
   atualizarEventos(){
-    this.carregarEventos();
+    // Volta para a primeira página sem filtros, onde o evento recém-cadastrado aparece primeiro
+    this.statusFormulario = false;
+    this.pesquisaEvento = '';
+    this.removerFiltro();
+    this.carregarTotais();
+    this.mostrarSucesso('Evento cadastrado com sucesso!');
   }
 
-  status =  '';
-
   filtrarEventos(){
-
+    this.carregando = true;
     this.eventoService.filtrarEventosStatus(this.paginaAtual, this.tamanhoPagina, this.status)
     .subscribe({
       next: resposta => {
         this.eventos = resposta.content
         this.totalPaginas = resposta.totalPages
+        this.carregando = false;
       },
       error: erro => {
+        // A API responde 404 quando não existe nenhum evento com o status
+        this.eventos = [];
+        this.totalPaginas = 0;
+        this.carregando = false;
       }
     })
   }
 
   aplicarFiltro(){
     this.paginaAtual = 0;
+    this.paginacao = true;
     this.filtrarEventos();
   }
 
   removerFiltro(){
     this.status = ''
     this.paginaAtual = 0
-    this.carregarEventos()
     this.paginacao = true;
+    this.carregarEventos()
   }
 
-  logout(): void {
-    this.authService.logout()
-    //console.log("logout executado")
+  private mostrarSucesso(mensagem: string){
+    this.mensagemSucesso = mensagem;
+    setTimeout(() => { this.mensagemSucesso = ''; }, 2500);
+  }
+
+  private mostrarErro(mensagem: string){
+    this.mensagemErro = mensagem;
+    setTimeout(() => { this.mensagemErro = ''; }, 3000);
   }
 }

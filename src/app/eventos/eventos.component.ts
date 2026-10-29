@@ -1,26 +1,22 @@
-import { Component, HostListener, OnInit } from '@angular/core';
-import { EventoService } from '../services/evento.service';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { EventoService, FiltrosEvento } from '../services/evento.service';
 import { Router } from '@angular/router';
 import { Evento, statusEvento } from '../models/evento';
 import { AuthService } from '../services/auth.service';
-import { firstValueFrom } from 'rxjs';
+import { Subject, Subscription, catchError, debounceTime, firstValueFrom, of, switchMap, tap } from 'rxjs';
 import { corCategoria } from '../models/categoria';
+import { Page } from '../models/paginacao';
 
 @Component({
   selector: 'app-eventos',
   templateUrl: './eventos.component.html',
   styleUrls: ['./eventos.component.css']
 })
-export class EventosComponent implements OnInit {
+export class EventosComponent implements OnInit, OnDestroy {
 
   eventos: Evento[] = []
 
   constructor(private eventoService: EventoService, private router: Router, public authService: AuthService) {}
-
-  ngOnInit(): void{
-    this.carregarEventos();
-    this.carregarTotais()
-  }
 
   corCategoria = corCategoria;
   statusEvento = statusEvento;
@@ -32,16 +28,51 @@ export class EventosComponent implements OnInit {
   paginaAtual = 0;
   tamanhoPagina = 8;
   totalPaginas = 0;
-  paginacao: boolean = true;
   totalAbertos: number = 0;
   totalLotados: number = 0;
   totalEncerrados: number = 0;
   mostrarEstatisticas: boolean = true;
 
+  // Filtros: todos são enviados juntos para a API, sempre com paginação
   pesquisaEvento = '';
+  status = '';
+  dataInicial = '';
+  dataFinal = '';
+
   statusFormulario: boolean = false;
   eventoParaExcluir: Evento | null = null;
-  status = '';
+
+  private busca$ = new Subject<void>();
+  private pesquisa$ = new Subject<string>();
+  private inscricoes = new Subscription();
+
+  ngOnInit(): void{
+    // switchMap descarta respostas antigas, então a lista sempre reflete os filtros atuais
+    this.inscricoes.add(
+      this.busca$.pipe(
+        tap(() => this.carregando = true),
+        switchMap(() => this.eventoService.listarEventos(this.paginaAtual, this.tamanhoPagina, this.filtros).pipe(
+          catchError(erro => {
+            this.mostrarErro(erro.error?.titulo ?? 'Não foi possível carregar os eventos.');
+            return of(null);
+          })
+        ))
+      ).subscribe(resposta => this.receberEventos(resposta))
+    );
+
+    // Espera o usuário parar de digitar antes de buscar
+    this.inscricoes.add(
+      this.pesquisa$.pipe(debounceTime(300))
+        .subscribe(() => this.aplicarFiltros())
+    );
+
+    this.carregarEventos();
+    this.carregarTotais()
+  }
+
+  ngOnDestroy(): void {
+    this.inscricoes.unsubscribe();
+  }
 
   get totalEventos(): number {
     return this.totalAbertos + this.totalLotados + this.totalEncerrados;
@@ -52,24 +83,39 @@ export class EventosComponent implements OnInit {
   }
 
   get filtroAtivo(): boolean {
-    return !!this.status || !this.paginacao;
+    return !!(this.pesquisaEvento.trim() || this.status || this.dataInicial || this.dataFinal);
+  }
+
+  private get filtros(): FiltrosEvento {
+    return {
+      nome: this.pesquisaEvento.trim(),
+      status: this.status,
+      dataInicial: this.dataInicial ? `${this.dataInicial}T00:00:00-03:00` : '',
+      dataFinal: this.dataFinal ? `${this.dataFinal}T23:59:59-03:00` : ''
+    };
   }
 
   carregarEventos(): void {
-    this.carregando = true;
-    this.eventoService.listarEventos(this.paginaAtual, this.tamanhoPagina)
-    .subscribe({
-      next: resposta => {
-        this.eventos = resposta.content;
-        this.totalPaginas = resposta.totalPages;
-        this.status = ''
-        this.carregando = false;
-      },
-      error: () => {
-        this.carregando = false;
-        this.mostrarErro('Não foi possível carregar os eventos.');
+    if (this.dataInicial && this.dataFinal && this.dataInicial > this.dataFinal) {
+      this.mostrarErro('A data inicial não pode ser depois da data final.');
+      return;
+    }
+    this.busca$.next();
+  }
+
+  private receberEventos(resposta: Page<Evento> | null): void {
+    if (resposta) {
+      this.eventos = resposta.content;
+      this.totalPaginas = resposta.totalPages;
+
+      // A página atual ficou vazia (ex.: último evento dela foi excluído): volta para a última que existe
+      if (this.eventos.length === 0 && this.paginaAtual > 0) {
+        this.paginaAtual = Math.max(this.totalPaginas - 1, 0);
+        this.carregarEventos();
+        return;
       }
-    })
+    }
+    this.carregando = false;
   }
 
   toogleEstatisticas(): boolean{
@@ -78,42 +124,31 @@ export class EventosComponent implements OnInit {
   }
 
   irParaPagina(pagina: number): void{
-
     if(pagina < 0 || pagina >= this.totalPaginas){
       return;
     }
 
     this.paginaAtual = pagina;
-    if(this.status === ''){
-      this.carregarEventos()
-    } else {
-      this.filtrarEventos()
-    }
+    this.carregarEventos();
   }
 
-  filtrarPorPeriodo(dataInicial: string, dataFinal: string): void {
-    if (!dataInicial || !dataFinal) {
-      this.mostrarErro('Informe a data inicial e a data final.');
-      return;
-    }
+  pesquisar(texto: string): void {
+    this.pesquisaEvento = texto;
+    this.pesquisa$.next(texto);
+  }
 
-    this.paginacao = false;
-    this.carregando = true;
+  // Qualquer mudança de filtro volta para a primeira página
+  aplicarFiltros(): void {
+    this.paginaAtual = 0;
+    this.carregarEventos();
+  }
 
-    const inicio = `${dataInicial}T00:00:00-03:00`;
-    const fim = `${dataFinal}T23:59:59-03:00`;
-
-    this.eventoService.listarEventosPeriodo(inicio, fim)
-      .subscribe({
-        next: resposta => {
-          this.eventos = resposta;
-          this.carregando = false;
-        },
-        error: erro => {
-          this.carregando = false;
-          this.mostrarErro(erro.error?.titulo ?? 'Erro ao buscar eventos do período.');
-        }
-      });
+  limparFiltros(): void {
+    this.pesquisaEvento = '';
+    this.status = '';
+    this.dataInicial = '';
+    this.dataFinal = '';
+    this.aplicarFiltros();
   }
 
   async carregarTotais(): Promise<void> {
@@ -180,51 +215,12 @@ export class EventosComponent implements OnInit {
     ]);
   }
 
-  get eventosFiltrados() {
-    return this.eventos.filter(evento =>
-      !this.pesquisaEvento ||
-      evento.nome.toLowerCase().includes(this.pesquisaEvento.toLowerCase())
-    );
-  }
-
   atualizarEventos(){
     // Volta para a primeira página sem filtros, onde o evento recém-cadastrado aparece primeiro
     this.statusFormulario = false;
-    this.pesquisaEvento = '';
-    this.removerFiltro();
+    this.limparFiltros();
     this.carregarTotais();
     this.mostrarSucesso('Evento cadastrado com sucesso!');
-  }
-
-  filtrarEventos(){
-    this.carregando = true;
-    this.eventoService.filtrarEventosStatus(this.paginaAtual, this.tamanhoPagina, this.status)
-    .subscribe({
-      next: resposta => {
-        this.eventos = resposta.content
-        this.totalPaginas = resposta.totalPages
-        this.carregando = false;
-      },
-      error: erro => {
-        // A API responde 404 quando não existe nenhum evento com o status
-        this.eventos = [];
-        this.totalPaginas = 0;
-        this.carregando = false;
-      }
-    })
-  }
-
-  aplicarFiltro(){
-    this.paginaAtual = 0;
-    this.paginacao = true;
-    this.filtrarEventos();
-  }
-
-  removerFiltro(){
-    this.status = ''
-    this.paginaAtual = 0
-    this.paginacao = true;
-    this.carregarEventos()
   }
 
   private mostrarSucesso(mensagem: string){

@@ -51,6 +51,12 @@ export class ListaParticipantesComponent implements OnChanges{
         }
         this.participantes = resposta.content;
         this.totalPaginas = resposta.totalPages;
+      },
+      error: erro => {
+        this.mensagemErro = erro.error?.titulo ?? 'Erro ao listar participantes';
+        setTimeout(() => {
+          this.mensagemErro = ''
+        }, 2500);
       }
     });
   }

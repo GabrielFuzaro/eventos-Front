@@ -10,7 +10,7 @@
                 <tr class="bg-slate-800/60 text-slate-400 text-xs uppercase tracking-wide">
                     <th class="text-left px-4 py-3 font-semibold">Nome</th>
                     <th class="text-left px-4 py-3 font-semibold">Email</th>
-                    <th class="px-4 py-3 text- font-semibold">Excluir</th>
+                    <th *ngIf="authService.isAdmin()" class="px-4 py-3 font-semibold">Excluir</th>
                 </tr>
             </thead>
 
@@ -25,17 +25,17 @@
                     <td class="text-slate-400">
                         {{ participante.email }}
                     </td>
-                    <td class="py-3 text-center">
+                    <td *ngIf="authService.isAdmin()" class="py-3 text-center">
                         <button
-                            *ngIf="authService.isAdmin()" 
-                            (click)="excluirParticipante(participante.id)" class="p-1.5 rounded-lg hover:bg-slate-700 transition-colors">
-                            <img [src]="imagemLixeira" class="w-4 h-4 opacity-100 invert">
+                            (click)="excluirParticipante(participante.id)" class="p-1.5 rounded-lg hover:bg-slate-700 transition-colors"
+                            [attr.aria-label]="'Excluir ' + participante.nome">
+                            <img [src]="imagemLixeira" class="w-4 h-4 opacity-100 invert" alt="">
                         </button>
                     </td>
                 </tr>
 
                 <tr *ngIf="participantes.length === 0">
-                    <td colspan="3" class="text-slate-500 font-medium text-center py-8">
+                    <td [attr.colspan]="authService.isAdmin() ? 3 : 2" class="text-slate-500 font-medium text-center py-8">
                         Nenhum participante cadastrado
                     </td>
                 </tr>

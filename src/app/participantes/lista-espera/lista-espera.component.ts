@@ -52,6 +52,11 @@ export class ListaEsperaComponent implements OnChanges {
           this.inscricoes = resposta.content;
           this.totalPaginas = resposta.totalPages;
           this.totalNaFila = resposta.totalElements;
+        },
+        error: () => {
+          this.inscricoes = [];
+          this.totalPaginas = 0;
+          this.totalNaFila = 0;
         }
       });
   }

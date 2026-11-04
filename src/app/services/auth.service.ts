@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
-import { Observable } from "rxjs";
+import { Observable, catchError, map, of, tap } from "rxjs";
 import { Usuario } from "../models/Usuario";
 
 @Injectable({
@@ -12,77 +12,59 @@ export class AuthService {
 
     private apiUrl = 'http://localhost:8080/auth'
 
-    constructor(private http: HttpClient, private route: Router) {}
+    // O token fica num cookie HttpOnly que o JavaScript não consegue ler (protege contra roubo por XSS).
+    // Aqui guardamos só os dados públicos do usuário, em memória.
+    private usuario: Usuario | null = null;
 
-    login(username: string, password: string): Observable<string> {
-        return this.http.post(`${this.apiUrl}/login`,{
-            username: username,
-            password: password
-        },
-    {
-        responseType: 'text'
-    });
+    constructor(private http: HttpClient, private route: Router) {
+        sessionStorage.removeItem('token'); // Limpa o token salvo pela versão antiga do front
+    }
+
+    login(username: string, password: string): Observable<Usuario> {
+        return this.http.post<Usuario>(`${this.apiUrl}/login`, { username, password })
+            .pipe(tap(usuario => this.usuario = usuario));
     }
 
     cadatrar(username: string, senha: string): Observable<Usuario>{
-        return this.http.post<Usuario>(`${this.apiUrl}/cadastro`, {
-            username: username,
-            senha: senha
-        })
+        return this.http.post<Usuario>(`${this.apiUrl}/cadastro`, { username, senha })
+    }
+
+    // Pergunta à API quem está logado (usa o cookie). Retorna false se não houver sessão válida.
+    carregarUsuario(): Observable<boolean> {
+        if (this.usuario) {
+            return of(true);
+        }
+        return this.http.get<Usuario>(`${this.apiUrl}/me`).pipe(
+            tap(usuario => this.usuario = usuario),
+            map(() => true),
+            catchError(() => of(false))
+        );
     }
 
     logout(): void {
-        sessionStorage.removeItem('token');
-        this.route.navigate(['/auth/login'])
+        // A API apaga o cookie; mesmo se a chamada falhar, a sessão local é encerrada
+        this.http.post(`${this.apiUrl}/logout`, {}).subscribe({
+            complete: () => this.encerrarSessao(),
+            error: () => this.encerrarSessao()
+        });
     }
 
-    getToken(): string | null {
-        return sessionStorage.getItem('token');
+    // Usado quando a API responde 401 (token expirado ou inválido)
+    encerrarSessao(): void {
+        this.usuario = null;
+        this.route.navigate(['/auth/login']);
     }
 
-    isTokenValido(): boolean {
-        const token = this.getToken();
-
-        if(!token){
-            return false;
-        }
-
-        try{
-            const payload = JSON.parse(atob(token.split('.')[1]));
-
-            const agora = Math.floor(Date.now() / 1000);
-
-            return payload.exp > agora;
-        } catch (erro) {
-            return false;
-        }
+    estaLogado(): boolean {
+        return this.usuario !== null;
     }
 
     getRole(): string | null {
-
-        const token = this.getToken();
-
-        if(!token){
-            return null;
-        }
-
-        const payload = JSON.parse(atob(token.split('.')[1]));
-
-        return payload.role;
+        return this.usuario?.role ?? null;
     }
 
     getUsername(): string {
-        const token = this.getToken();
-
-        if(!token){
-            return '';
-        }
-
-        try{
-            return JSON.parse(atob(token.split('.')[1])).sub ?? '';
-        } catch (erro) {
-            return '';
-        }
+        return this.usuario?.username ?? '';
     }
 
     isAdmin(): boolean {

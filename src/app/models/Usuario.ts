@@ -1,6 +1,5 @@
+// Dados do usuário logado devolvidos pela API (/auth/login e /auth/me). A senha nunca vem da API.
 export interface Usuario {
-    id: number;
     username: string;
-    senha: string;
     role: string;
 }

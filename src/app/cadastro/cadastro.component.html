@@ -54,7 +54,11 @@
                         placeholder="Escolha um usuário"
                         class="input"
                         [class.input-invalid]="invalido('username')">
-                    <span *ngIf="invalido('username')" class="field-error">Informe um usuário.</span>
+                    <ng-container *ngIf="invalido('username')">
+                        <span *ngIf="cadastroFormulario.get('username')?.hasError('required')" class="field-error">Informe um usuário.</span>
+                        <span *ngIf="cadastroFormulario.get('username')?.hasError('minlength') || cadastroFormulario.get('username')?.hasError('maxlength')" class="field-error">O usuário deve ter entre 3 e 50 caracteres.</span>
+                        <span *ngIf="cadastroFormulario.get('username')?.hasError('pattern')" class="field-error">Use apenas letras, números, ponto, hífen e sublinhado.</span>
+                    </ng-container>
                 </div>
 
                 <div>
@@ -67,7 +71,9 @@
                         placeholder="Crie uma senha"
                         class="input"
                         [class.input-invalid]="invalido('senha')">
-                    <span *ngIf="invalido('senha')" class="field-error">Informe uma senha.</span>
+                    <span *ngIf="invalido('senha') && cadastroFormulario.get('senha')?.hasError('required')" class="field-error">Informe uma senha.</span>
+                    <span *ngIf="invalido('senha') && (cadastroFormulario.get('senha')?.hasError('minlength') || cadastroFormulario.get('senha')?.hasError('maxlength'))" class="field-error">A senha deve ter entre 8 e 100 caracteres.</span>
+                    <span *ngIf="!invalido('senha')" class="mt-1.5 block text-xs text-slate-500">Mínimo de 8 caracteres.</span>
                 </div>
 
                 <button type="submit" [disabled]="cadastroFormulario.invalid || enviando" class="btn-primary w-full py-3">

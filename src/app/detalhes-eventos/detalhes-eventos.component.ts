@@ -8,6 +8,7 @@ import { ParticipanteService } from '../services/participante.service';
 import { corCategoria } from '../models/categoria';
 import { ListaEsperaComponent } from '../participantes/lista-espera/lista-espera.component';
 import { ListaEsperaService } from '../services/lista-espera.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-detalhes-eventos',
@@ -31,7 +32,7 @@ export class DetalhesEventosComponent implements OnInit {
   mensagemErro = '';
   corCategoria = corCategoria;
 
-  constructor(private route: ActivatedRoute, private eventoService: EventoService, private participanteService: ParticipanteService, private listaEsperaService: ListaEsperaService) {}
+  constructor(private route: ActivatedRoute, private eventoService: EventoService, private participanteService: ParticipanteService, private listaEsperaService: ListaEsperaService, public authService: AuthService) {}
 
   ngOnInit(): void {
 

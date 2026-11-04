@@ -18,8 +18,13 @@ export class CadastroComponent {
   enviando: boolean = false;
 
   cadastroFormulario = new FormGroup({
-    username: new FormControl<string>('', { nonNullable: true, validators: [Validators.required]}),
-    senha: new FormControl<string>('', {nonNullable: true, validators: [Validators.required]})
+    // Mesmas regras da API (CadastroRequest)
+    username: new FormControl<string>('', { nonNullable: true, validators: [
+      Validators.required, Validators.minLength(3), Validators.maxLength(50), Validators.pattern(/^[a-zA-Z0-9._-]+$/)
+    ]}),
+    senha: new FormControl<string>('', {nonNullable: true, validators: [
+      Validators.required, Validators.minLength(8), Validators.maxLength(100)
+    ]})
   })
 
   invalido(campo: string): boolean {
@@ -44,7 +49,8 @@ export class CadastroComponent {
       },
       error: erro => {
         this.enviando = false;
-        this.mensagemErro = erro.error?.titulo ?? 'Erro ao criar conta.';
+        // Erros de validação da API vêm em "campos"; mostra o primeiro, senão o título
+        this.mensagemErro = erro.error?.campos?.[0]?.mensagem ?? erro.error?.titulo ?? 'Erro ao criar conta.';
         setTimeout(() => {
           this.mensagemErro = '';
         }, 3000);

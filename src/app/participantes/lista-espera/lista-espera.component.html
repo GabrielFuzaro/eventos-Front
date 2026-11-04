@@ -1,0 +1,98 @@
+<div *ngIf="visivel" class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+
+    <div class="mb-4 flex items-baseline justify-between gap-3">
+        <h1 class="font-bold text-white text-xl">
+            Lista de Espera
+        </h1>
+        <span class="badge bg-amber-500/15 text-amber-300">
+            {{ totalNaFila }} {{ totalNaFila === 1 ? 'pessoa' : 'pessoas' }} na fila
+        </span>
+    </div>
+
+    <p class="mb-4 text-sm text-slate-400">
+        Quando alguém desistir, o primeiro da fila assume a vaga automaticamente.
+    </p>
+
+    <div class="overflow-hidden rounded-xl border border-slate-800">
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="bg-slate-800/60 text-slate-400 text-xs uppercase tracking-wide">
+                    <th class="text-left px-4 py-3 font-semibold w-12">#</th>
+                    <th class="text-left px-4 py-3 font-semibold">Nome</th>
+                    <th class="text-left px-4 py-3 font-semibold">Email</th>
+                    <th *ngIf="authService.isAdmin()" class="px-4 py-3 font-semibold">Remover</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr
+                    *ngFor="let inscricao of inscricoes"
+                    class="border-t border-slate-800 hover:bg-slate-800/40 transition-colors">
+
+                    <td class="px-4 py-3 font-semibold"
+                        [ngClass]="inscricao.posicao === 1 ? 'text-amber-300' : 'text-slate-500'">
+                        {{ inscricao.posicao }}º
+                    </td>
+                    <td class="px-4 py-3 text-slate-200 font-medium">
+                        {{ inscricao.nome }}
+                    </td>
+                    <td class="text-slate-400 break-all">
+                        {{ inscricao.email }}
+                    </td>
+                    <td *ngIf="authService.isAdmin()" class="py-3 text-center">
+                        <button
+                            (click)="remover(inscricao)" class="p-1.5 rounded-lg hover:bg-slate-700 transition-colors"
+                            [attr.aria-label]="'Remover ' + inscricao.nome + ' da lista de espera'">
+                            <img [src]="imagemLixeira" class="w-4 h-4 opacity-100 invert" alt="">
+                        </button>
+                    </td>
+                </tr>
+
+                <tr *ngIf="inscricoes.length === 0">
+                    <td [attr.colspan]="authService.isAdmin() ? 4 : 3" class="text-slate-500 font-medium text-center py-8">
+                        Ninguém na lista de espera
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div
+        *ngIf="totalPaginas > 1"
+        class="flex justify-center items-center gap-2 mt-5">
+
+        <button
+            (click)="irParaPagina(paginaAtual - 1)"
+            [disabled]="paginaAtual === 0"
+            class="px-3 py-1.5 rounded-lg font-semibold text-sm bg-indigo-500 hover:bg-indigo-400 text-white disabled:bg-slate-800 disabled:text-slate-600 disabled:cursor-not-allowed transition">
+            Anterior
+        </button>
+
+        <button
+            *ngFor="let pagina of [].constructor(totalPaginas); let i = index"
+            (click)="irParaPagina(i)"
+            [ngClass]="paginaAtual === i ? 'bg-indigo-500 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'"
+            class="px-3 py-1.5 rounded-lg font-semibold text-sm transition-colors">
+            {{ i + 1 }}
+        </button>
+
+        <button
+            (click)="irParaPagina(paginaAtual + 1)"
+            [disabled]="paginaAtual === totalPaginas - 1"
+            class="px-3 py-1.5 rounded-lg font-semibold text-sm bg-indigo-500 hover:bg-indigo-400 text-white disabled:bg-slate-800 disabled:text-slate-600 disabled:cursor-not-allowed transition">
+            Próxima
+        </button>
+    </div>
+
+    <div
+        *ngIf="mensagemErro"
+        class="bg-rose-500/10 border border-rose-500/30 text-rose-400 p-3 rounded-xl text-center text-sm font-medium mt-4 max-w-sm mx-auto">
+        {{mensagemErro}}
+    </div>
+
+    <div
+        *ngIf="mensagemSucesso"
+        class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 p-3 rounded-xl text-center text-sm font-medium mt-4 max-w-sm mx-auto">
+        {{mensagemSucesso}}
+    </div>
+</div>

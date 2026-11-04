@@ -64,15 +64,24 @@
                         </div>
                     </div>
 
-                    <p class="mt-3 text-sm text-slate-500">
-                        {{ evento.capacidade_maxima - quantidadeParticipantes > 0 ? evento.capacidade_maxima - quantidadeParticipantes : 0 }} vagas restantes
-                    </p>
+                    <div class="mt-3 flex flex-wrap items-center justify-between gap-2 text-sm">
+                        <p class="text-slate-500">
+                            {{ evento.capacidade_maxima - quantidadeParticipantes > 0 ? evento.capacidade_maxima - quantidadeParticipantes : 0 }} vagas restantes
+                        </p>
+                        <p *ngIf="quantidadeListaEspera > 0" class="font-medium text-amber-300">
+                            {{ quantidadeListaEspera }} na lista de espera
+                        </p>
+                    </div>
                 </section>
 
                 <app-participantes [eventoId]="evento.id" [statusEvento]="evento.status" (participanteCadastradoOutput)="atualizarParticipantes()"></app-participantes>
             </div>
 
-            <app-lista-participantes [eventoId]="evento.id"></app-lista-participantes>
+            <div class="flex flex-col gap-6">
+                <app-lista-participantes [eventoId]="evento.id" (participanteExcluidoOutput)="atualizarParticipantes()"></app-lista-participantes>
+
+                <app-lista-espera [eventoId]="evento.id" [statusEvento]="evento.status" (listaAlteradaOutput)="atualizarParticipantes()"></app-lista-espera>
+            </div>
         </div>
 
     </ng-container>

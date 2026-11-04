@@ -27,8 +27,8 @@ export class LoginComponent {
 
     this.authService.login(this.username, this.password)
     .subscribe({
-      next: token => {
-        sessionStorage.setItem('token', token);
+      next: () => {
+        // O token chega num cookie HttpOnly gravado pelo navegador; não é guardado no JavaScript
         this.mensagemSucesso = 'Login realizado com sucesso! Redirecionando...'
         setTimeout(() => {
           this.router.navigate([
@@ -37,11 +37,11 @@ export class LoginComponent {
         }, 1000);
       },
       error: erro => {
-        console.error("Erro ao fazer login:", erro)
         this.enviando = false;
+        this.password = ''; // Não deixa a senha errada no campo
         this.mensagemErro = erro.status === 0
           ? 'Não foi possível conectar ao servidor.'
-          : 'Usuário ou senha inválidos.'
+          : erro.error?.titulo ?? 'Usuário ou senha inválidos.' // Inclui o aviso de bloqueio por muitas tentativas
         setTimeout(() => {
           this.mensagemErro = ''
         }, 3000);

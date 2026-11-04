@@ -22,8 +22,8 @@ npx ng build      # build; precisa passar sem erros antes de commitar
 src/app
 ├── models/          # Interfaces (Evento, Participante, ListaEspera, Page<T>, Categoria...) + helpers de exibição
 ├── services/        # Um service por recurso da API (evento, participante, lista-espera, categoria, auth)
-├── interceptors/    # AuthInterceptor: injeta "Authorization: Bearer <token>"
-├── guards/          # AuthGuard: bloqueia rotas sem token válido
+├── interceptors/    # AuthInterceptor: envia o cookie do token (withCredentials) e trata 401
+├── guards/          # AuthGuard: só libera rotas internas se a API (/auth/me) confirmar a sessão
 ├── eventos/         # Página de eventos + formulários de cadastro e edição
 ├── detalhes-eventos/# Página de detalhes (ocupação, formulário de inscrição, participantes, lista de espera)
 ├── participantes/   # formularioParticipantes, lista-participantes, lista-espera
@@ -62,11 +62,19 @@ src/app
   (ver `statusEvento()` em `models/evento.ts`). Cores de categoria em `corCategoria()` (`models/categoria.ts`).
 - Layout responsivo (mobile primeiro, `sm:` / `lg:`). Evite CSS no `.component.css` quando Tailwind resolve.
 
-### Autenticação
+### Autenticação e segurança
 
-- O token JWT fica em `sessionStorage` (`token`); o `AuthService` lê `sub` (username) e `role` do payload.
-- Rotas internas usam `canActivate: [AuthGuard]`; `/auth/login` e `/auth/cadastro` são públicas.
-- Token expirado ou inválido: o guard limpa a sessão e redireciona para o login.
+- **O token JWT fica num cookie HttpOnly gravado pela API** (`eventos_token`). O JavaScript não consegue lê-lo, e isso é
+  proposital (protege contra roubo por XSS). **Nunca** guarde token em `localStorage`, `sessionStorage` ou variável.
+- O `AuthInterceptor` envia `withCredentials: true` só para `http://localhost:8080`. Requisição nova para a API deve
+  passar por ele (use o `HttpClient` injetado, nunca `fetch`).
+- O `AuthService` guarda em memória apenas `{ username, role }`, vindos de `/auth/login` ou `/auth/me`.
+  Use `isAdmin()`, `getUsername()` e `estaLogado()`; não decodifique token no front.
+- Rotas internas usam `canActivate: [AuthGuard]`, que pergunta à API (`/auth/me`) se a sessão é válida.
+  `/auth/login` e `/auth/cadastro` são públicas.
+- Resposta 401 da API (sessão expirada) faz o interceptor encerrar a sessão e voltar para o login. Logout chama
+  `POST /auth/logout`, que apaga o cookie.
+- Não use `innerHTML`/`bypassSecurityTrust*` com dados vindos da API ou do usuário; deixe o Angular escapar o conteúdo.
 
 ## Regras de negócio (aplicadas pela API, refletidas na interface)
 
@@ -78,9 +86,10 @@ src/app
 - Só é possível excluir eventos sem participantes. Editar e excluir: apenas `ADMIN`.
 
 ### Participantes
-- Nome e email obrigatórios (email válido). O mesmo email não pode se inscrever duas vezes no mesmo evento.
+- Nome (até 30) e email (válido, até 40) obrigatórios. O mesmo email não pode se inscrever duas vezes no mesmo evento.
 - Evento `ENCERRADO`: formulário de inscrição desabilitado.
-- Somente `ADMIN` exclui participantes. O Excel exportado contém apenas participantes.
+- Somente `ADMIN` exclui participantes e baixa o Excel (que contém apenas participantes).
+- Para quem não é `ADMIN`, a API devolve os emails mascarados (`an***@x.com`) na lista de participantes e na fila.
 
 ### Lista de espera
 - Evento `LOTADO` que ainda não ocorreu: o formulário de inscrição vira **"Entrar na lista de espera"**
@@ -93,7 +102,10 @@ src/app
 
 ### Usuários
 - Papéis `ADMIN` e `USER`. O cadastro pela tela sempre cria `USER`.
-- Login devolve um token válido por 1 hora.
+- Cadastro: usuário com 3 a 50 caracteres (letras, números, `.`, `-`, `_`) e senha com pelo menos 8 caracteres
+  (as mesmas regras da API).
+- A sessão dura 1 hora (padrão da API). Depois de 5 senhas erradas, o login fica bloqueado por 15 minutos
+  e a API devolve a mensagem para exibir.
 
 ## Regras de commit
 

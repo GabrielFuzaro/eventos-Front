@@ -22,8 +22,8 @@ npx ng build      # build; precisa passar sem erros antes de commitar
 src/app
 ├── models/          # Interfaces (Evento, Participante, ListaEspera, Page<T>, Categoria...) + helpers de exibição
 ├── services/        # Um service por recurso da API (evento, participante, lista-espera, categoria, auth)
-├── interceptors/    # AuthInterceptor: injeta "Authorization: Bearer <token>"
-├── guards/          # AuthGuard: bloqueia rotas sem token válido
+├── interceptors/    # AuthInterceptor: envia o cookie do token (withCredentials) e trata 401
+├── guards/          # AuthGuard: só libera rotas internas se a API (/auth/me) confirmar a sessão
 ├── eventos/         # Página de eventos + formulários de cadastro e edição
 ├── detalhes-eventos/# Página de detalhes (ocupação, formulário de inscrição, participantes, lista de espera)
 ├── participantes/   # formularioParticipantes, lista-participantes, lista-espera

@@ -2,10 +2,12 @@
 
     <div>
         <h2 class="text-2xl font-bold text-white text-center">
-            Cadastrar Participante
+            {{ modoListaEspera ? 'Entrar na Lista de Espera' : 'Cadastrar Participante' }}
         </h2>
         <p class="text-slate-400 text-center text-sm mt-1">
-            Preencha seus dados para participar do evento
+            {{ modoListaEspera
+                ? 'O evento está lotado. Se alguém desistir, o primeiro da fila assume a vaga automaticamente.'
+                : 'Preencha seus dados para participar do evento' }}
         </p>
     </div>
 
@@ -56,14 +58,15 @@
 
     <button
         type="submit"
-        [disabled]="participanteForm.invalid || statusEvento === 'LOTADO' || statusEvento === 'ENCERRADO' || enviando"
-        class="w-full mt-2 bg-indigo-500 hover:bg-indigo-400 disabled:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50 transition text-white font-semibold py-3 rounded-xl">
-        {{enviando ? 'Enviando...' : 'Cadastrar'}}
+        [disabled]="participanteForm.invalid || statusEvento === 'ENCERRADO' || enviando"
+        [ngClass]="modoListaEspera ? 'bg-amber-500 hover:bg-amber-400' : 'bg-indigo-500 hover:bg-indigo-400'"
+        class="w-full mt-2 disabled:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50 transition text-white font-semibold py-3 rounded-xl">
+        {{ enviando ? 'Enviando...' : (modoListaEspera ? 'Entrar na lista de espera' : 'Cadastrar') }}
     </button>
 
-    <div *ngIf="statusEvento === 'LOTADO'"
+    <div *ngIf="modoListaEspera"
         class="bg-amber-500/10 border border-amber-500/30 text-amber-400 p-3 rounded-xl text-center text-sm font-medium">
-        Esse evento já está lotado. Não é possível se inscrever.
+        Esse evento já está lotado, mas você pode entrar na lista de espera.
     </div>
 
     <div *ngIf="statusEvento === 'ENCERRADO'"

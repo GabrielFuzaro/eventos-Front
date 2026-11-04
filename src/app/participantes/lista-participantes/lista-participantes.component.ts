@@ -1,4 +1,4 @@
-import { Component, OnChanges } from '@angular/core';
+import { Component, EventEmitter, OnChanges, Output } from '@angular/core';
 import { ActivatedRoute, Route } from '@angular/router';
 import { Participante } from 'src/app/models/participante';
 import { ParticipanteService } from 'src/app/services/participante.service';
@@ -28,6 +28,8 @@ export class ListaParticipantesComponent implements OnChanges{
   @Input()
   eventoId!: number
 
+  @Output() participanteExcluidoOutput = new EventEmitter<void>(); //Avisa o pai: a vaga pode ter sido ocupada pela lista de espera
+
   imagemLixeira = '../../assets/imgs/Lixeira.svg';
 
   mensagemErro = '';
@@ -42,8 +44,19 @@ export class ListaParticipantesComponent implements OnChanges{
     .subscribe({
       next: resposta => {
         //console.log(resposta);
+        if (resposta.content.length === 0 && this.paginaAtual > 0) { //Página ficou vazia após exclusão: volta uma
+          this.paginaAtual--;
+          this.listarParticipantes();
+          return;
+        }
         this.participantes = resposta.content;
         this.totalPaginas = resposta.totalPages;
+      },
+      error: erro => {
+        this.mensagemErro = erro.error?.titulo ?? 'Erro ao listar participantes';
+        setTimeout(() => {
+          this.mensagemErro = ''
+        }, 2500);
       }
     });
   }
@@ -68,6 +81,7 @@ export class ListaParticipantesComponent implements OnChanges{
       next: resposta => {
         //console.log("Participante excluido com sucesso")
         this.listarParticipantes()
+        this.participanteExcluidoOutput.emit()
         this.mensagemSucesso = "Participante excluído com sucesso"
         setTimeout(() => {
           this.mensagemSucesso = ''

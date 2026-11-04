@@ -16,6 +16,7 @@ import { FormularioEdicaoEventosComponent } from './eventos/formulario-edicao-ev
 import { LoginComponent } from './login/login.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { CadastroComponent } from './cadastro/cadastro.component';
+import { ListaEsperaComponent } from './participantes/lista-espera/lista-espera.component';
 
 registerLocaleData(localePt);
 
@@ -30,6 +31,7 @@ registerLocaleData(localePt);
     FormularioEdicaoEventosComponent,
     LoginComponent,
     CadastroComponent,
+    ListaEsperaComponent,
   ],
   imports: [
     BrowserModule,

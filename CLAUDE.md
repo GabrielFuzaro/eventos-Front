@@ -100,10 +100,6 @@ src/app
   Somente `ADMIN` remove pessoas da fila.
 - Um email não pode estar na fila e como participante ao mesmo tempo.
 
-### Emails
-- A API envia emails informativos para o email informado na inscrição (confirmação, entrada na fila com a posição e
-  vaga liberada), só para inscrições novas e só se o SMTP estiver configurado na API. O front não chama nada para isso.
-
 ### Usuários
 - Papéis `ADMIN` e `USER`. O cadastro pela tela sempre cria `USER`.
 - Cadastro: usuário com 3 a 50 caracteres (letras, números, `.`, `-`, `_`) e senha com pelo menos 8 caracteres

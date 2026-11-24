@@ -1,4 +1,4 @@
-import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { EventoService, FiltrosEvento } from '../services/evento.service';
 import { Router } from '@angular/router';
 import { Evento, statusEvento } from '../models/evento';
@@ -41,6 +41,11 @@ export class EventosComponent implements OnInit, OnDestroy {
 
   statusFormulario: boolean = false;
   eventoParaExcluir: Evento | null = null;
+
+  // O foco começa no Cancelar quando o diálogo de exclusão abre
+  @ViewChild('botaoCancelarExclusao') set botaoCancelarExclusao(botao: ElementRef<HTMLButtonElement> | undefined) {
+    botao?.nativeElement.focus();
+  }
 
   private busca$ = new Subject<void>();
   private pesquisa$ = new Subject<string>();
@@ -163,7 +168,7 @@ export class EventosComponent implements OnInit, OnDestroy {
       this.totalLotados = lotados;
       this.totalEncerrados = encerrados;
     } catch (error) {
-      this.mostrarErro('Erro ao carregar estatísticas.');
+      this.mostrarErro('Não foi possível carregar os indicadores.');
     }
   }
 
@@ -185,10 +190,10 @@ export class EventosComponent implements OnInit, OnDestroy {
       next: () => {
         this.carregarEventos()
         this.carregarTotais()
-        this.mostrarSucesso('Evento excluído com sucesso.');
+        this.mostrarSucesso('Evento excluído');
       },
       error: erro => {
-        this.mostrarErro(erro.error?.titulo ?? 'Erro ao excluir evento.');
+        this.mostrarErro(erro.error?.titulo ?? 'Não foi possível excluir o evento. Tente novamente.');
       }
     })
   }
@@ -220,7 +225,7 @@ export class EventosComponent implements OnInit, OnDestroy {
     this.statusFormulario = false;
     this.limparFiltros();
     this.carregarTotais();
-    this.mostrarSucesso('Evento cadastrado com sucesso!');
+    this.mostrarSucesso('Evento cadastrado');
   }
 
   private mostrarSucesso(mensagem: string){

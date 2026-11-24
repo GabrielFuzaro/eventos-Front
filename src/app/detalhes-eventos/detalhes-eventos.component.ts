@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { EventoService } from '../services/evento.service';
-import { Evento } from '../models/evento';
+import { Evento, statusEvento } from '../models/evento';
 import { ViewChild } from '@angular/core';
 import { ListaParticipantesComponent } from '../participantes/lista-participantes/lista-participantes.component';
 import { ParticipanteService } from '../services/participante.service';
@@ -31,6 +31,7 @@ export class DetalhesEventosComponent implements OnInit {
   baixandoExcel = false;
   mensagemErro = '';
   corCategoria = corCategoria;
+  statusEvento = statusEvento;
 
   constructor(private route: ActivatedRoute, private eventoService: EventoService, private participanteService: ParticipanteService, private listaEsperaService: ListaEsperaService, public authService: AuthService) {}
 
@@ -90,9 +91,20 @@ export class DetalhesEventosComponent implements OnInit {
         try {
           titulo = JSON.parse(await (erro.error as Blob).text())?.titulo ?? '';
         } catch (e) {}
-        this.mostrarErro(titulo || 'Erro ao baixar o Excel.');
+        this.mostrarErro(titulo || 'Não foi possível gerar o Excel. Tente novamente.');
       }
     })
+  }
+
+  get vagasRestantes(): number {
+    return this.evento ? Math.max(this.evento.capacidade_maxima - this.quantidadeParticipantes, 0) : 0;
+  }
+
+  get percentualOcupacao(): number {
+    if (!this.evento || this.evento.capacidade_maxima <= 0) {
+      return 0;
+    }
+    return Math.min(Math.round((this.quantidadeParticipantes / this.evento.capacidade_maxima) * 100), 100);
   }
 
   contarParticipantes(eventoId: number){

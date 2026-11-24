@@ -7,7 +7,7 @@ Consome a API Spring Boot do repositório `eventos-API` em `http://localhost:808
 ## Stack e comandos
 
 - Angular 15 (NgModule, **não** standalone components), TypeScript 4.9, RxJS 7.
-- Tailwind CSS 3 (tema escuro) com classes utilitárias próprias em `src/styles.css`.
+- Tailwind CSS 3 com o design CODIUB (preset `tailwind.codiub.preset.js`, tema claro, Open Sans) e classes próprias em `src/styles.css`.
 - Formulários com **Reactive Forms** (`FormGroup` / `FormControl` / `Validators`).
 
 ```bash
@@ -20,6 +20,7 @@ npx ng build      # build; precisa passar sem erros antes de commitar
 
 ```
 src/app
+├── compartilhado/   # AvisoComponent (<app-aviso>): mensagens de sucesso, erro e info com ícone
 ├── models/          # Interfaces (Evento, Participante, ListaEspera, Page<T>, Categoria...) + helpers de exibição
 ├── services/        # Um service por recurso da API (evento, participante, lista-espera, categoria, auth)
 ├── interceptors/    # AuthInterceptor: envia o cookie do token (withCredentials) e trata 401
@@ -53,14 +54,26 @@ src/app
 - Datas enviadas à API em ISO com fuso de Brasília: `valor + ':00-03:00'` (inputs `datetime-local`).
   Exibição com o pipe `date` (locale `pt-BR` já registrado).
 
-### Visual (Tailwind)
+### Visual (design CODIUB)
 
-- Tema escuro: fundos `slate-900/950`, bordas `slate-800`, texto `slate-200/400`, destaque `indigo-500`.
-- Use as classes de `styles.css` antes de criar estilos novos: `card`, `input`, `input-invalid`, `label`,
-  `field-error`, `btn-primary`, `btn-secondary`, `btn-ghost`, `btn-danger`, `btn-icon`, `badge`.
-- Cores de status: Aberto = `emerald`, Lotado = `rose`, Encerrado e lista de espera = `amber`
-  (ver `statusEvento()` em `models/evento.ts`). Cores de categoria em `corCategoria()` (`models/categoria.ts`).
-- Layout responsivo (mobile primeiro, `sm:` / `lg:`). Evite CSS no `.component.css` quando Tailwind resolve.
+- Layout de **sistema**: navbar e footer navy (`bg-codiub-navy`) com o logo CODIUB branco (`src/assets/logo`),
+  sidebar clara (drawer no celular) e conteúdo branco com `p-5`. Login e cadastro usam só navbar e footer.
+- Cada azul tem um papel: `codiub-brand` (#002069) é ação e título (botão primário, `page-title`), `codiub-navy`
+  (#042D62) só superfície (navbar, footer, barra de título de card), `blue-600` é interação secundária (links,
+  botão secundário, paginação ativa). Ciano só como detalhe sobre navy. Não crie outros tons nem hex novos.
+- Use as classes de `styles.css` antes de criar estilos novos: `card`, `page-title`, `card-title`, `eyebrow`,
+  `micro-label`, `label`, `input`, `input-invalid`, `field-error`, `field-help`, `btn-primary`, `btn-secondary`,
+  `btn-ghost` (terciário/link), `btn-danger`, `btn-icon`, `btn-icon-danger`, `link`, `badge`, `badge-navy`,
+  `cabecalho-tabela` / `linha-tabela` / `celula-tabela` / `cell-label` (tabela que vira blocos abaixo de `md`),
+  `page-btn`, `dialog-overlay`, `toast-area`.
+- Botões são pílulas de 42px; um primário por área; na barra de ações o secundário fica à esquerda e o primário à
+  direita (no celular, empilhados com o primário em cima e `w-full sm:w-auto`).
+- Só três raios: `rounded-lg` (padrão), `rounded-panel` (indicadores/KPIs) e `rounded-full` (botões, badges).
+- Feedback com `<app-aviso tipo="sucesso|erro|info" [mensagem]="...">`, sempre com ícone (nunca só cor).
+- Cores de status (`statusEvento()` em `models/evento.ts`): Aberto = `green-50/700`, Lotado = `red-50/700`,
+  Encerrado = `gray-100/700`. Categoria e lista de espera usam a badge navy (`corCategoria()` em `models/categoria.ts`).
+- Mobile primeiro, funcionando em 360px: campos com `text-base sm:text-sm`, botões de ícone com 40px, sem rolagem
+  horizontal. Textos em sentence case, labels sem dois-pontos e botões começando com verbo.
 
 ### Autenticação e segurança
 

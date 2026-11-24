@@ -2,103 +2,188 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Design CODIUB: tokens em tailwind.codiub.preset.js. Use estas classes antes de criar estilos novos. */
+
 @layer base {
   html {
-    color-scheme: dark;
+    color-scheme: light;
   }
 
   body {
-    @apply min-h-screen bg-slate-950 font-sans text-slate-200 antialiased;
-    background-image:
-      radial-gradient(60rem 30rem at 15% -10%, rgb(99 102 241 / 0.12), transparent 60%),
-      radial-gradient(40rem 25rem at 100% 0%, rgb(217 70 239 / 0.07), transparent 60%);
-    background-attachment: fixed;
+    @apply bg-white font-sans text-sm text-gray-900 antialiased;
   }
 
   ::selection {
-    @apply bg-indigo-500/30 text-white;
+    @apply bg-blue-100 text-codiub-ink;
+  }
+
+  /* Scrollbar fina com polegar navy */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #042D62 #F3F4F6;
+  }
+
+  *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: #F3F4F6;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: #042D62;
+    border-radius: 999px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
 @layer components {
   /* Superfícies */
   .card {
-    @apply rounded-2xl border border-slate-800/80 bg-slate-900/70 shadow-xl shadow-black/20 backdrop-blur;
+    @apply rounded-lg border border-gray-200 bg-white shadow-sm;
   }
 
-  /* Formulários */
+  .page-title {
+    @apply text-lg font-bold text-codiub-brand;
+  }
+
+  .card-title {
+    @apply text-base font-bold text-codiub-ink sm:text-lg;
+  }
+
+  .eyebrow {
+    @apply text-eyebrow uppercase text-gray-500;
+  }
+
+  .micro-label {
+    @apply text-micro font-bold uppercase tracking-wider text-gray-500;
+  }
+
+  /* Campos */
   .label {
-    @apply mb-1.5 block text-sm font-medium text-slate-300;
+    @apply mb-1 block text-sm font-medium text-gray-700;
   }
 
   .input {
-    @apply w-full rounded-xl border border-slate-700 bg-slate-950/60 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 transition
-      [color-scheme:dark] hover:border-slate-600 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30;
+    @apply block h-control w-full rounded-lg border border-gray-300 bg-white px-3 text-base text-gray-900 transition-colors
+      placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500
+      disabled:border-transparent disabled:bg-codiub-disabled disabled:text-gray-800 sm:text-sm;
   }
 
   .input-invalid {
-    @apply border-rose-500/70 hover:border-rose-500/70 focus:border-rose-500 focus:ring-rose-500/30;
+    @apply border-red-600 bg-red-50 focus:border-red-600 focus:ring-red-600;
   }
 
   .field-error {
-    @apply mt-1.5 block text-xs text-rose-400;
+    @apply block pt-1 text-xs text-red-700;
   }
 
-  /* Botões */
+  .field-help {
+    @apply mt-1 block text-sm text-gray-600;
+  }
+
+  /* Botões: pílula de 42px, um primário por área */
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition
-      focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400/60 active:scale-[.98]
-      disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100;
+    @apply inline-flex h-control items-center justify-center gap-2 whitespace-nowrap rounded-full border px-6 text-sm font-semibold
+      transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
+      disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .btn-primary {
-    @apply btn bg-indigo-500 text-white shadow-lg shadow-indigo-500/20 hover:bg-indigo-400
-      disabled:bg-slate-700 disabled:shadow-none disabled:hover:bg-slate-700;
+    @apply btn border-transparent bg-codiub-brand text-white hover:bg-codiub-brand-hover active:bg-codiub-brand-active
+      focus-visible:ring-blue-600 disabled:hover:bg-codiub-brand;
   }
 
   .btn-secondary {
-    @apply btn border border-slate-700 bg-slate-800/80 text-slate-200 hover:bg-slate-700 hover:text-white;
-  }
-
-  .btn-ghost {
-    @apply btn text-slate-400 hover:bg-slate-800 hover:text-white;
+    @apply btn border-blue-600 bg-white text-blue-600 hover:bg-blue-100 focus-visible:ring-blue-600 disabled:hover:bg-white;
   }
 
   .btn-danger {
-    @apply btn text-rose-400 hover:bg-rose-500/10 hover:text-rose-300;
+    @apply btn border-transparent bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-600;
   }
 
+  /* Terciário / link */
+  .btn-ghost {
+    @apply btn border-transparent bg-transparent px-4 font-medium text-blue-600 hover:underline focus-visible:ring-blue-600;
+  }
+
+  .link {
+    @apply font-semibold text-blue-600 hover:text-blue-700 hover:underline focus:outline-none focus-visible:rounded focus-visible:ring-2
+      focus-visible:ring-blue-600;
+  }
+
+  /* Botão de ícone: 40px no celular, 32px a partir de md */
   .btn-icon {
-    @apply inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-800 hover:text-white
-      focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400/60;
+    @apply inline-flex items-center justify-center rounded-lg p-2.5 text-gray-600 transition-colors hover:bg-blue-50 hover:text-blue-600
+      focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-40
+      disabled:hover:bg-transparent md:p-1.5;
   }
 
-  /* Badges e avisos */
+  .btn-icon-danger {
+    @apply btn-icon text-red-600 hover:bg-red-50 hover:text-red-700 focus-visible:ring-red-600;
+  }
+
+  /* Badges */
   .badge {
-    @apply inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] font-semibold;
+    @apply inline-flex items-center gap-1.5 self-center whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-medium;
   }
 
-  .alert {
-    @apply rounded-xl border p-3 text-center text-sm font-medium;
+  .badge-navy {
+    @apply badge bg-navy-tint text-codiub-navy;
   }
 
-  .alert-error {
-    @apply alert border-rose-500/30 bg-rose-500/10 text-rose-300;
+  /* Tabela */
+  .cabecalho-tabela {
+    @apply hidden bg-codiub-th text-left text-sm font-semibold text-gray-700 md:table-header-group;
   }
 
-  .alert-success {
-    @apply alert border-emerald-500/30 bg-emerald-500/10 text-emerald-300;
+  .cabecalho-tabela th {
+    @apply px-4 py-3;
   }
 
-  .alert-warning {
-    @apply alert border-amber-500/30 bg-amber-500/10 text-amber-300;
+  .linha-tabela {
+    @apply block border-b border-gray-100 p-4 md:table-row md:border-0 md:p-0 md:even:bg-codiub-zebra;
+  }
+
+  .celula-tabela {
+    @apply block py-0.5 md:table-cell md:px-4 md:py-3 md:align-middle;
+  }
+
+  .cell-label {
+    @apply font-medium text-gray-600 md:hidden;
+  }
+
+  /* Paginação */
+  .page-btn {
+    @apply inline-flex h-10 min-w-[2.5rem] items-center justify-center rounded-full px-3 text-sm font-semibold text-gray-700 transition-colors
+      hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 md:h-8 md:min-w-[2rem];
+  }
+
+  .page-btn-active {
+    @apply bg-blue-600 text-white hover:bg-blue-600;
+  }
+
+  /* Diálogo */
+  .dialog-overlay {
+    @apply fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/50 p-4 sm:items-center;
   }
 
   .toast-area {
-    @apply pointer-events-none fixed right-4 top-20 z-50 flex w-full max-w-sm flex-col gap-3 px-4 sm:px-0;
+    @apply pointer-events-none fixed inset-x-0 top-4 z-[60] flex flex-col items-center gap-3 px-4 sm:inset-x-auto sm:right-4 sm:top-20
+      sm:w-full sm:max-w-sm sm:items-stretch sm:px-0;
   }
 
   .toast-area > * {
-    @apply pointer-events-auto shadow-2xl backdrop-blur;
+    @apply pointer-events-auto w-full shadow-lg;
   }
 }

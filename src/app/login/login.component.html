@@ -1,120 +1,67 @@
-<div class="grid min-h-screen lg:grid-cols-2">
+<div class="grid w-full overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg sm:max-w-3xl md:grid-cols-2">
 
-    <!-- Painel da marca (telas grandes) -->
-    <aside class="relative hidden overflow-hidden border-r border-slate-800/80 lg:flex lg:flex-col lg:justify-between lg:p-12">
-        <div class="absolute inset-0 bg-gradient-to-br from-indigo-600/30 via-slate-950 to-fuchsia-600/20"></div>
-        <div class="absolute -left-24 top-1/3 h-72 w-72 rounded-full bg-indigo-500/20 blur-3xl"></div>
-
-        <div class="relative flex items-center gap-2.5">
-            <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-fuchsia-500 shadow-lg shadow-indigo-500/30">
-                <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-            </span>
-            <span class="text-xl font-bold tracking-tight text-white">Eventos</span>
-        </div>
-
-        <div class="relative max-w-md">
-            <h1 class="text-4xl font-extrabold leading-tight tracking-tight text-white">
-                Organize seus eventos em um só lugar.
-            </h1>
-            <p class="mt-4 text-slate-400">
-                Cadastre eventos, acompanhe a ocupação e gerencie participantes de forma simples.
-            </p>
-
-            <ul class="mt-8 space-y-3 text-sm text-slate-300">
-                <li class="flex items-center gap-3">
-                    <span class="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-300">✓</span>
-                    Controle de vagas e status em tempo real
-                </li>
-                <li class="flex items-center gap-3">
-                    <span class="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-300">✓</span>
-                    Lista de participantes exportável em Excel
-                </li>
-                <li class="flex items-center gap-3">
-                    <span class="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-300">✓</span>
-                    Filtros por status, período e categoria
-                </li>
-            </ul>
-        </div>
-
-        <p class="relative text-xs text-slate-500">Sistema de Eventos</p>
+    <!-- Sobre o produto -->
+    <aside class="hidden bg-codiub-navy p-8 text-white md:block">
+        <img src="assets/logo/codiub-branca-horizontal.png" alt="Codiub" class="h-8 w-auto">
+        <h2 class="mt-8 text-xl font-bold">Sistema de eventos</h2>
+        <ul class="mt-4 text-sm leading-8 text-gray-300">
+            <li class="flex items-center gap-2">
+                <svg class="h-4 w-4 shrink-0 text-codiub-cyan" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7" /></svg>
+                Controle de vagas e status em tempo real
+            </li>
+            <li class="flex items-center gap-2">
+                <svg class="h-4 w-4 shrink-0 text-codiub-cyan" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7" /></svg>
+                Lista de espera automática
+            </li>
+            <li class="flex items-center gap-2">
+                <svg class="h-4 w-4 shrink-0 text-codiub-cyan" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7" /></svg>
+                Participantes exportáveis em Excel
+            </li>
+        </ul>
     </aside>
 
     <!-- Formulário -->
-    <main class="flex items-center justify-center px-4 py-12 sm:px-6">
-        <div class="w-full max-w-sm">
+    <div class="p-6 sm:p-8">
+        <img src="assets/logo/codiub-azul-horizontal.png" alt="Codiub" class="h-8 w-auto md:hidden">
+        <h1 class="mt-6 font-bold text-codiub-brand md:mt-0 md:text-xl">Entrar no sistema</h1>
+        <p class="mt-1 text-sm text-gray-600">Use seu usuário e senha para continuar.</p>
 
-            <div class="mb-8 flex items-center gap-2.5 lg:hidden">
-                <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-fuchsia-500">
-                    <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                </span>
-                <span class="text-lg font-bold text-white">Eventos</span>
+        <form (ngSubmit)="login()" class="mt-6 space-y-4 md:space-y-6">
+            <div>
+                <label for="username" class="label">Usuário</label>
+                <input type="text" id="username" name="username" [(ngModel)]="username" required autocomplete="username"
+                    placeholder="Ex: maria.souza" class="input">
             </div>
 
-            <h2 class="text-2xl font-bold tracking-tight text-white">Bem-vindo de volta</h2>
-            <p class="mt-1 text-sm text-slate-400">Entre na sua conta para continuar.</p>
-
-            <form (ngSubmit)="login()" class="mt-8 space-y-5">
-
-                <div>
-                    <label for="username" class="label">Usuário</label>
-                    <input
-                        type="text"
-                        id="username"
-                        name="username"
-                        [(ngModel)]="username"
-                        required
-                        autocomplete="username"
-                        placeholder="Seu usuário"
-                        class="input">
+            <div>
+                <label for="password" class="label">Senha</label>
+                <div class="relative">
+                    <input [type]="mostrarSenha ? 'text' : 'password'" id="password" name="password" [(ngModel)]="password" required
+                        autocomplete="current-password" class="input pr-10">
+                    <button type="button" (click)="mostrarSenha = !mostrarSenha"
+                        [attr.aria-label]="mostrarSenha ? 'Ocultar senha' : 'Mostrar senha'" [attr.aria-pressed]="mostrarSenha"
+                        class="absolute inset-y-0 right-0 flex w-10 items-center justify-center rounded-r-lg text-gray-500 hover:text-blue-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">
+                        <svg *ngIf="!mostrarSenha" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" /><circle cx="12" cy="12" r="3" />
+                        </svg>
+                        <svg *ngIf="mostrarSenha" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M17.94 17.94A10.07 10.07 0 0112 19c-6.5 0-10-7-10-7a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c6.5 0 10 7 10 7a18.5 18.5 0 01-2.16 3.19M14.12 14.12a3 3 0 11-4.24-4.24M1 1l22 22" />
+                        </svg>
+                    </button>
                 </div>
+            </div>
 
-                <div>
-                    <label for="password" class="label">Senha</label>
-                    <div class="relative">
-                        <input
-                            [type]="mostrarSenha ? 'text' : 'password'"
-                            id="password"
-                            name="password"
-                            [(ngModel)]="password"
-                            required
-                            autocomplete="current-password"
-                            placeholder="Sua senha"
-                            class="input pr-11">
-                        <button
-                            type="button"
-                            (click)="mostrarSenha = !mostrarSenha"
-                            [attr.aria-label]="mostrarSenha ? 'Ocultar senha' : 'Mostrar senha'"
-                            class="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-slate-500 hover:text-slate-300">
-                            <svg *ngIf="!mostrarSenha" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.04 12.32a1 1 0 010-.64C3.42 7.51 7.36 4.5 12 4.5c4.64 0 8.57 3 9.96 7.18.07.2.07.43 0 .64C20.58 16.49 16.64 19.5 12 19.5c-4.64 0-8.57-3-9.96-7.18z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                            <svg *ngIf="mostrarSenha" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.22A10.48 10.48 0 002.04 12c1.38 4.18 5.32 7.5 9.96 7.5 1.99 0 3.86-.55 5.45-1.52M6.23 6.23A10.45 10.45 0 0112 4.5c4.64 0 8.57 3 9.96 7.5a10.52 10.52 0 01-4.29 5.77M6.23 6.23L3 3m3.23 3.23l3.65 3.65m7.89 7.89L21 21m-3.23-3.23l-3.65-3.65m0 0a3 3 0 10-4.24-4.24m4.24 4.24L9.88 9.88" />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
+            <app-aviso *ngIf="mensagemErro" class="block" tipo="erro" [mensagem]="mensagemErro"></app-aviso>
+            <app-aviso *ngIf="mensagemSucesso" class="block" tipo="sucesso" [mensagem]="mensagemSucesso"></app-aviso>
 
-                <button type="submit" [disabled]="enviando || !username || !password" class="btn-primary w-full py-3">
-                    {{ enviando ? 'Entrando...' : 'Entrar' }}
-                </button>
+            <button type="submit" [disabled]="enviando || !username || !password" class="btn-primary w-full">
+                {{ enviando ? 'Entrando...' : 'Entrar' }}
+            </button>
 
-                <div *ngIf="mensagemErro" role="alert" class="alert-error">{{ mensagemErro }}</div>
-                <div *ngIf="mensagemSucesso" role="status" class="alert-success">{{ mensagemSucesso }}</div>
-            </form>
-
-            <p class="mt-8 text-center text-sm text-slate-400">
+            <p class="text-center text-sm text-gray-600">
                 Ainda não tem conta?
-                <button type="button" (click)="irParaCadastro()" class="font-semibold text-indigo-400 hover:text-indigo-300">
-                    Criar conta
-                </button>
+                <a routerLink="/auth/cadastro" class="link">Criar conta</a>
             </p>
-        </div>
-    </main>
-
+        </form>
+    </div>
 </div>

@@ -1,89 +1,46 @@
-<form [formGroup]="participanteForm" (ngSubmit)="onSubmit()" class="bg-slate-900 border border-slate-800 rounded-2xl p-8 flex flex-col gap-5 w-full">
+<form [formGroup]="participanteForm" (ngSubmit)="onSubmit()" class="card w-full p-5" novalidate aria-labelledby="tituloInscricao">
 
-    <div>
-        <h2 class="text-2xl font-bold text-white text-center">
-            {{ modoListaEspera ? 'Entrar na Lista de Espera' : 'Cadastrar Participante' }}
-        </h2>
-        <p class="text-slate-400 text-center text-sm mt-1">
-            {{ modoListaEspera
-                ? 'O evento está lotado. Se alguém desistir, o primeiro da fila assume a vaga automaticamente.'
-                : 'Preencha seus dados para participar do evento' }}
-        </p>
+    <p class="eyebrow mb-1">{{ modoListaEspera ? 'Evento lotado' : 'Inscrição' }}</p>
+    <h2 id="tituloInscricao" class="card-title">
+        {{ modoListaEspera ? 'Entrar na lista de espera' : 'Inscrever participante' }}
+    </h2>
+    <p class="mt-1 text-sm text-gray-600">
+        {{ modoListaEspera
+            ? 'Se alguém desistir, o primeiro da fila assume a vaga automaticamente.'
+            : 'Informe o nome e o email de quem vai participar.' }}
+    </p>
+
+    <app-aviso *ngIf="encerrado" class="mt-4 block" tipo="info" mensagem="Este evento já foi encerrado. Não é possível se inscrever."></app-aviso>
+
+    <fieldset [disabled]="encerrado" class="mt-5 grid grid-cols-1 gap-4">
+        <div>
+            <label for="nomeParticipante" class="label">Nome</label>
+            <input id="nomeParticipante" type="text" formControlName="nome" maxlength="30" autocomplete="name" placeholder="Ex: Maria Souza" class="input"
+                [class.input-invalid]="invalido('nome')" [attr.aria-invalid]="invalido('nome')" aria-describedby="erro-nome-participante">
+            <ng-container *ngIf="invalido('nome')">
+                <p *ngIf="participanteForm.get('nome')?.hasError('required')" id="erro-nome-participante" class="field-error">Informe o nome.</p>
+                <p *ngIf="participanteForm.get('nome')?.hasError('maxlength')" id="erro-nome-participante" class="field-error">Use no máximo 30 caracteres.</p>
+            </ng-container>
+        </div>
+
+        <div>
+            <label for="emailParticipante" class="label">Email</label>
+            <input id="emailParticipante" type="email" formControlName="email" maxlength="40" autocomplete="email" placeholder="Ex: maria@email.com" class="input"
+                [class.input-invalid]="invalido('email')" [attr.aria-invalid]="invalido('email')" aria-describedby="erro-email-participante">
+            <ng-container *ngIf="invalido('email')">
+                <p *ngIf="participanteForm.get('email')?.hasError('required')" id="erro-email-participante" class="field-error">Informe o email.</p>
+                <p *ngIf="participanteForm.get('email')?.hasError('email')" id="erro-email-participante" class="field-error">Informe um email válido, como nome&#64;email.com.</p>
+                <p *ngIf="participanteForm.get('email')?.hasError('maxlength')" id="erro-email-participante" class="field-error">Use no máximo 40 caracteres.</p>
+            </ng-container>
+        </div>
+    </fieldset>
+
+    <app-aviso *ngIf="mensagemErro" class="mt-4 block" tipo="erro" [mensagem]="mensagemErro"></app-aviso>
+    <app-aviso *ngIf="mensagemSucesso" class="mt-4 block" tipo="sucesso" [mensagem]="mensagemSucesso"></app-aviso>
+
+    <div class="mt-5 border-t border-gray-100 pt-4">
+        <button type="submit" [disabled]="participanteForm.invalid || encerrado || enviando" class="btn-primary w-full">
+            {{ enviando ? 'Enviando...' : (modoListaEspera ? 'Entrar na lista de espera' : 'Inscrever') }}
+        </button>
     </div>
-
-    <div class="flex flex-col gap-1">
-        <label for="nome" class="text-sm font-semibold text-slate-300">
-            Nome
-        </label>
-        <input
-            type="text"
-            id="nome"
-            formControlName="nome"
-            placeholder="Digite seu nome"
-            class="w-full rounded-xl bg-slate-800 border px-4 py-3 text-white placeholder-slate-500 outline-none transition hover:border-slate-600"
-            [ngClass]="participanteForm.get('nome')?.invalid && participanteForm.get('nome')?.touched ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500/30'
-            :'border-slate-700 focus:border-indigo-500 focus:ring-indigo-500/30'">
-
-            <span
-                *ngIf="participanteForm.get('nome')?.invalid && participanteForm.get('nome')?.touched"
-                class="text-rose-400 text-xs">
-                Nome é obrigatório
-            </span>
-
-    </div>
-
-    <div class="flex flex-col gap-1">
-        <label for="email" class="text-sm font-semibold text-slate-300">
-            Email
-        </label>
-        <input
-        [ngClass]="participanteForm.get('email')?.invalid && participanteForm.get('email')?.touched ? 'border-rose-500 focus:borderrose-500 focus-within:ring-rose-500-30'
-        : 'border-slate-700 focus:border-indigo-500 focus:ring-indigo-500/30' "
-            type="email"
-            id="email"
-            formControlName="email"
-            placeholder="Digite seu email"
-            class="w-full rounded-xl bg-slate-800 border px-4 py-3 text-white placeholder-slate-500 outline-none transition hover:border-slate-600">
-            
-            <span *ngIf="participanteForm.get('email')?.hasError('required') && participanteForm.get('email')?.touched"
-                class="text-rose-400 text-xs">
-                Email é obrigatório
-            </span>
-
-            <span *ngIf="participanteForm.get('email')?.hasError('email') && participanteForm.get('email')?.touched"
-                class="text-rose-400 text-xs">
-                Email inválido
-            </span>
-    </div>
-
-    <button
-        type="submit"
-        [disabled]="participanteForm.invalid || statusEvento === 'ENCERRADO' || enviando"
-        [ngClass]="modoListaEspera ? 'bg-amber-500 hover:bg-amber-400' : 'bg-indigo-500 hover:bg-indigo-400'"
-        class="w-full mt-2 disabled:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50 transition text-white font-semibold py-3 rounded-xl">
-        {{ enviando ? 'Enviando...' : (modoListaEspera ? 'Entrar na lista de espera' : 'Cadastrar') }}
-    </button>
-
-    <div *ngIf="modoListaEspera"
-        class="bg-amber-500/10 border border-amber-500/30 text-amber-400 p-3 rounded-xl text-center text-sm font-medium">
-        Esse evento já está lotado, mas você pode entrar na lista de espera.
-    </div>
-
-    <div *ngIf="statusEvento === 'ENCERRADO'"
-        class="bg-amber-500/10 border border-amber-500/30 text-amber-400 p-3 rounded-xl text-center text-sm font-medium">
-        Esse evento já foi encerrado. Não é possível se inscrever
-    </div>
-
-    <div
-        *ngIf="mensagemErro"
-        class="bg-rose-500/10 border border-rose-500/30 text-rose-400 p-3 rounded-xl text-center text-sm font-medium">
-        {{mensagemErro}}
-    </div>
-
-    <div
-        *ngIf="mensagemSucesso"
-        class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 p-3 rounded-xl text-center text-sm font-medium">
-        {{mensagemSucesso}}
-    </div>
-
 </form>

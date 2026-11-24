@@ -28,9 +28,19 @@ export class ParticipantesComponent {
   @Output() participanteCadastradoOutput = new EventEmitter<void>();
 
   participanteForm = new FormGroup({
-    nome: new FormControl('', Validators.required),
-    email: new FormControl('', [Validators.required, Validators.email]), 
+    // Mesmos limites da API: nome até 30 e email até 40 caracteres
+    nome: new FormControl('', [Validators.required, Validators.maxLength(30)]),
+    email: new FormControl('', [Validators.required, Validators.email, Validators.maxLength(40)]),
   })
+
+  get encerrado(): boolean {
+    return this.statusEvento === 'ENCERRADO';
+  }
+
+  invalido(campo: string): boolean {
+    const controle = this.participanteForm.get(campo);
+    return !!controle && controle.invalid && controle.touched;
+  }
 
   // Evento lotado (e que ainda não ocorreu): o formulário passa a inscrever na lista de espera
   get modoListaEspera(): boolean {
@@ -60,14 +70,14 @@ export class ParticipantesComponent {
   
   .subscribe({
     next: () => {
-      this.mostrarSucesso('Participante cadastrado com sucesso!');
+      this.mostrarSucesso('Participante inscrito');
       this.participanteCadastradoOutput.emit();
       this.enviando = false
       this.participanteForm.reset();
     },
     error: erro => {
       this.enviando = false
-      this.mostrarErro(this.mensagemDeErro(erro, 'Erro ao cadastrar participante.'));
+      this.mostrarErro(this.mensagemDeErro(erro, 'Não foi possível fazer a inscrição. Tente novamente.'));
       this.participanteCadastradoOutput.emit(); //Recarrega o evento: ele pode ter acabado de lotar
     }
   });
@@ -77,14 +87,14 @@ export class ParticipantesComponent {
     this.listaEsperaService.entrar(inscricao)
     .subscribe({
       next: resposta => {
-        this.mostrarSucesso(`Você entrou na lista de espera na posição ${resposta.posicao}º!`);
+        this.mostrarSucesso(`Inscrição feita na lista de espera, na posição ${resposta.posicao}º`);
         this.participanteCadastradoOutput.emit();
         this.enviando = false
         this.participanteForm.reset();
       },
       error: erro => {
         this.enviando = false
-        this.mostrarErro(this.mensagemDeErro(erro, 'Erro ao entrar na lista de espera.'));
+        this.mostrarErro(this.mensagemDeErro(erro, 'Não foi possível entrar na lista de espera. Tente novamente.'));
         this.participanteCadastradoOutput.emit(); //Recarrega o evento: pode ter aberto uma vaga
       }
     });
@@ -97,13 +107,13 @@ export class ParticipantesComponent {
     }
     switch (erro.status) {
       case 0:
-        return 'Não foi possível conectar à API. Verifique se ela está rodando.';
+        return 'Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.';
       case 401:
         return 'Sua sessão expirou. Faça login novamente.';
       case 403:
         return 'Você não tem permissão para fazer isso.';
       case 404:
-        return 'Recurso não encontrado na API. Verifique se a API está atualizada e foi reiniciada.';
+        return 'Não encontramos esse recurso no servidor. Tente novamente mais tarde.';
       default:
         return padrao;
     }

@@ -30,7 +30,7 @@ export class ListaParticipantesComponent implements OnChanges{
 
   @Output() participanteExcluidoOutput = new EventEmitter<void>(); //Avisa o pai: a vaga pode ter sido ocupada pela lista de espera
 
-  imagemLixeira = '../../assets/imgs/Lixeira.svg';
+  @Input() totalParticipantes = 0;
 
   mensagemErro = '';
   mensagemSucesso = '';
@@ -53,7 +53,7 @@ export class ListaParticipantesComponent implements OnChanges{
         this.totalPaginas = resposta.totalPages;
       },
       error: erro => {
-        this.mensagemErro = erro.error?.titulo ?? 'Erro ao listar participantes';
+        this.mensagemErro = erro.error?.titulo ?? 'Não foi possível carregar os participantes.';
         setTimeout(() => {
           this.mensagemErro = ''
         }, 2500);
@@ -71,8 +71,9 @@ export class ListaParticipantesComponent implements OnChanges{
     this.listarParticipantes();
   }
 
-  excluirParticipante(id: number){
-    if(!confirm("Tem certeza que deseja excluír esse participante?")){
+  excluirParticipante(participante: Participante){
+    const id = participante.id;
+    if(!confirm(`Excluir ${participante.nome}? A vaga é passada para o primeiro da lista de espera, se houver.`)){
       return;
     }
 
@@ -82,14 +83,14 @@ export class ListaParticipantesComponent implements OnChanges{
         //console.log("Participante excluido com sucesso")
         this.listarParticipantes()
         this.participanteExcluidoOutput.emit()
-        this.mensagemSucesso = "Participante excluído com sucesso"
+        this.mensagemSucesso = "Participante excluído"
         setTimeout(() => {
           this.mensagemSucesso = ''
         }, 2500);
       },
       error: erro => {
         //console.log("Erro ao excluir participante", erro)
-        this.mensagemErro = erro.error?.titulo ?? "Erro ao excluír participante"
+        this.mensagemErro = erro.error?.titulo ?? "Não foi possível excluir o participante. Tente novamente."
         setTimeout(() => {
           this.mensagemErro = ''
         }, 2500);

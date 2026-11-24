@@ -1,95 +1,69 @@
-<form [formGroup]="eventoFormulario" (ngSubmit)="onSubmit()" class="card overflow-hidden">
+<form [formGroup]="eventoFormulario" (ngSubmit)="onSubmit()" class="w-full rounded-lg bg-white p-5 shadow-lg sm:p-6" novalidate>
 
-    <div class="flex items-start justify-between gap-4 border-b border-slate-800 px-6 py-5">
+    <div class="mb-5 flex items-start justify-between gap-4">
         <div>
-            <h2 class="text-lg font-bold text-white">Novo evento</h2>
-            <p class="mt-0.5 text-sm text-slate-400">Preencha os dados para cadastrar.</p>
+            <h2 id="tituloNovoEvento" class="text-lg font-bold text-codiub-brand">Cadastrar evento</h2>
+            <p class="mt-0.5 text-sm text-gray-600">O status é calculado automaticamente pela ocupação e pela data.</p>
         </div>
         <button type="button" (click)="fecharOutput.emit()" aria-label="Fechar" class="btn-icon -mr-2 -mt-1">
-            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M6 18L18 6M6 6l12 12" />
             </svg>
         </button>
     </div>
 
-    <div class="space-y-5 px-6 py-6">
-
-        <div>
+    <h3 class="eyebrow mb-4">Dados gerais</h3>
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5">
+        <div class="md:col-span-2">
             <label for="nome" class="label">Nome</label>
-            <input
-                id="nome"
-                type="text"
-                formControlName="nome"
-                placeholder="Ex: Workshop de Angular"
-                class="input"
-                [class.input-invalid]="invalido('nome')">
-            <span *ngIf="invalido('nome')" class="field-error">Nome é obrigatório.</span>
-        </div>
-
-        <div class="grid gap-5 sm:grid-cols-2">
-            <div>
-                <label for="categoriaId" class="label">Categoria</label>
-                <select
-                    id="categoriaId"
-                    formControlName="categoriaId"
-                    class="input"
-                    [class.input-invalid]="invalido('categoriaId')">
-                    <option [ngValue]="null" disabled>Selecione...</option>
-                    <option *ngFor="let categoria of categorias" [ngValue]="categoria.id">{{ categoria.nome }}</option>
-                </select>
-                <span *ngIf="invalido('categoriaId')" class="field-error">Categoria é obrigatória.</span>
-            </div>
-
-            <div>
-                <label for="capacidade_maxima" class="label">Capacidade</label>
-                <input
-                    id="capacidade_maxima"
-                    type="number"
-                    min="1"
-                    formControlName="capacidade_maxima"
-                    placeholder="Ex: 100"
-                    class="input"
-                    [class.input-invalid]="invalido('capacidade_maxima')">
-                <span *ngIf="eventoFormulario.get('capacidade_maxima')?.hasError('required') && eventoFormulario.get('capacidade_maxima')?.touched" class="field-error">
-                    Capacidade é obrigatória.
-                </span>
-                <span *ngIf="eventoFormulario.get('capacidade_maxima')?.hasError('min') && eventoFormulario.get('capacidade_maxima')?.touched" class="field-error">
-                    Deve ser maior que 0.
-                </span>
-            </div>
+            <input id="nome" type="text" formControlName="nome" placeholder="Ex: Workshop de Angular" class="input"
+                [class.input-invalid]="invalido('nome')" [attr.aria-invalid]="invalido('nome')" aria-describedby="erro-nome">
+            <p *ngIf="invalido('nome')" id="erro-nome" class="field-error">Informe o nome do evento.</p>
         </div>
 
         <div>
-            <label for="local" class="label">Local</label>
-            <input
-                id="local"
-                type="text"
-                formControlName="local"
-                placeholder="Ex: Auditório principal"
-                class="input"
-                [class.input-invalid]="invalido('local')">
-            <span *ngIf="invalido('local')" class="field-error">Local é obrigatório.</span>
+            <label for="categoriaId" class="label">Categoria</label>
+            <select id="categoriaId" formControlName="categoriaId" class="input"
+                [class.input-invalid]="invalido('categoriaId')" [attr.aria-invalid]="invalido('categoriaId')" aria-describedby="erro-categoria">
+                <option [ngValue]="null" disabled>Selecione</option>
+                <option *ngFor="let categoria of categorias" [ngValue]="categoria.id">{{ categoria.nome }}</option>
+            </select>
+            <p *ngIf="invalido('categoriaId')" id="erro-categoria" class="field-error">Selecione uma categoria.</p>
         </div>
 
         <div>
-            <label for="data_evento" class="label">Data e hora</label>
-            <input
-                id="data_evento"
-                type="datetime-local"
-                formControlName="data_evento"
-                class="input"
-                [class.input-invalid]="invalido('data_evento')">
-            <span *ngIf="invalido('data_evento')" class="field-error">Data é obrigatória.</span>
+            <label for="capacidade_maxima" class="label">Capacidade</label>
+            <input id="capacidade_maxima" type="number" min="1" inputmode="numeric" formControlName="capacidade_maxima" placeholder="Ex: 100" class="input"
+                [class.input-invalid]="invalido('capacidade_maxima')" [attr.aria-invalid]="invalido('capacidade_maxima')" aria-describedby="erro-capacidade">
+            <p *ngIf="invalido('capacidade_maxima')" id="erro-capacidade" class="field-error">Informe uma capacidade de pelo menos 1 vaga.</p>
         </div>
-
-        <div *ngIf="mensagemErro" role="alert" class="alert-error">{{ mensagemErro }}</div>
     </div>
 
-    <div class="flex justify-end gap-2 border-t border-slate-800 bg-slate-950/30 px-6 py-4">
-        <button type="button" (click)="fecharOutput.emit()" class="btn-secondary">Cancelar</button>
-        <button type="submit" [disabled]="eventoFormulario.invalid || enviando" class="btn-primary">
-            {{ enviando ? 'Salvando...' : 'Cadastrar evento' }}
+    <div class="mt-6 border-t border-gray-100 pt-5">
+        <h3 class="eyebrow mb-4">Data e local</h3>
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5">
+            <div>
+                <label for="local" class="label">Local</label>
+                <input id="local" type="text" formControlName="local" placeholder="Ex: Auditório principal" class="input"
+                    [class.input-invalid]="invalido('local')" [attr.aria-invalid]="invalido('local')" aria-describedby="erro-local">
+                <p *ngIf="invalido('local')" id="erro-local" class="field-error">Informe o local do evento.</p>
+            </div>
+
+            <div>
+                <label for="data_evento" class="label">Data e hora</label>
+                <input id="data_evento" type="datetime-local" formControlName="data_evento" [min]="dataMinima" class="input"
+                    [class.input-invalid]="invalido('data_evento')" [attr.aria-invalid]="invalido('data_evento')" aria-describedby="erro-data">
+                <p *ngIf="invalido('data_evento')" id="erro-data" class="field-error">Informe a data e a hora. Ela não pode estar no passado.</p>
+            </div>
+        </div>
+    </div>
+
+    <app-aviso *ngIf="mensagemErro" class="mt-5 block" tipo="erro" [mensagem]="mensagemErro"></app-aviso>
+
+    <div class="mt-6 flex flex-col-reverse items-stretch justify-end gap-2 border-t border-gray-100 pt-4 sm:flex-row sm:items-center">
+        <button type="button" (click)="fecharOutput.emit()" class="btn-secondary w-full sm:w-auto">Cancelar</button>
+        <button type="submit" [disabled]="eventoFormulario.invalid || enviando" class="btn-primary w-full sm:w-auto">
+            {{ enviando ? 'Cadastrando...' : 'Cadastrar' }}
         </button>
     </div>
-
 </form>

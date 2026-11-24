@@ -1,85 +1,68 @@
-<div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+<section class="card overflow-hidden" aria-labelledby="tituloParticipantes">
 
-    <h1 class="font-bold text-white text-xl mb-4">
-        Participantes do Evento
-    </h1>
+    <div class="flex items-center gap-2 bg-codiub-navy px-5 py-3.5">
+        <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
+        </svg>
+        <h2 id="tituloParticipantes" class="flex-1 text-base font-bold text-white">Participantes</h2>
+        <span class="text-sm font-semibold text-codiub-cyan tabular-nums">{{ totalParticipantes }}</span>
+    </div>
 
-    <div class="overflow-hidden rounded-xl border border-slate-800">
-        <table class="w-full text-sm">
-            <thead>
-                <tr class="bg-slate-800/60 text-slate-400 text-xs uppercase tracking-wide">
-                    <th class="text-left px-4 py-3 font-semibold">Nome</th>
-                    <th class="text-left px-4 py-3 font-semibold">Email</th>
-                    <th *ngIf="authService.isAdmin()" class="px-4 py-3 font-semibold">Excluir</th>
+    <div class="relative overflow-x-auto">
+        <table class="min-w-full text-sm">
+            <caption class="sr-only">Participantes do evento</caption>
+            <thead class="cabecalho-tabela">
+                <tr>
+                    <th scope="col">Nome</th>
+                    <th scope="col">Email</th>
+                    <th *ngIf="authService.isAdmin()" scope="col" class="text-right"><span class="sr-only">Ações</span></th>
                 </tr>
             </thead>
-
-            <tbody>
-                <tr
-                    *ngFor="let participante of participantes"
-                    class="border-t border-slate-800 hover:bg-slate-800/40 transition-colors">
-
-                    <td class="px-4 py-3 text-slate-200 font-medium">
-                        {{ participante.nome }}
+            <tbody class="block md:table-row-group">
+                <tr *ngFor="let participante of participantes" class="linha-tabela">
+                    <td class="celula-tabela font-semibold text-codiub-ink">
+                        <span class="cell-label font-medium">Nome: </span>{{ participante.nome }}
                     </td>
-                    <td class="text-slate-400">
-                        {{ participante.email }}
+                    <td class="celula-tabela break-all text-gray-600">
+                        <span class="cell-label">Email: </span>{{ participante.email }}
                     </td>
-                    <td *ngIf="authService.isAdmin()" class="py-3 text-center">
+                    <td *ngIf="authService.isAdmin()" class="celula-tabela pt-2 md:pt-3 md:text-right">
                         <button
-                            (click)="excluirParticipante(participante.id)" class="p-1.5 rounded-lg hover:bg-slate-700 transition-colors"
-                            [attr.aria-label]="'Excluir ' + participante.nome">
-                            <img [src]="imagemLixeira" class="w-4 h-4 opacity-100 invert" alt="">
+                            type="button"
+                            (click)="excluirParticipante(participante)"
+                            [attr.aria-label]="'Excluir participante ' + participante.nome"
+                            title="Excluir"
+                            class="btn-icon-danger">
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6" />
+                            </svg>
                         </button>
                     </td>
                 </tr>
 
-                <tr *ngIf="participantes.length === 0">
-                    <td [attr.colspan]="authService.isAdmin() ? 3 : 2" class="text-slate-500 font-medium text-center py-8">
-                        Nenhum participante cadastrado
+                <tr *ngIf="participantes.length === 0" class="block md:table-row">
+                    <td [attr.colspan]="authService.isAdmin() ? 3 : 2" class="block py-10 text-center text-sm text-gray-500 md:table-cell">
+                        Nenhum participante inscrito ainda.
                     </td>
                 </tr>
             </tbody>
         </table>
     </div>
 
-    <div
-        *ngIf="totalPaginas > 1"
-        class="flex justify-center items-center gap-2 mt-5">
+    <nav *ngIf="totalPaginas > 1" class="flex items-center justify-between gap-3 border-t border-gray-100 p-3 text-sm text-gray-600" aria-label="Paginação de participantes">
+        <p>Página {{ paginaAtual + 1 }} de {{ totalPaginas }}</p>
+        <div class="flex items-center gap-1">
+            <button type="button" (click)="irParaPagina(paginaAtual - 1)" [disabled]="paginaAtual === 0" aria-label="Página anterior" class="btn-icon">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 19l-7-7 7-7" /></svg>
+            </button>
+            <button type="button" (click)="irParaPagina(paginaAtual + 1)" [disabled]="paginaAtual >= totalPaginas - 1" aria-label="Próxima página" class="btn-icon">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
+            </button>
+        </div>
+    </nav>
 
-        <button
-            (click)="irParaPagina(paginaAtual - 1)"
-            [disabled]="paginaAtual === 0"
-            class="px-3 py-1.5 rounded-lg font-semibold text-sm bg-indigo-500 hover:bg-indigo-400 text-white disabled:bg-slate-800 disabled:text-slate-600 disabled:cursor-not-allowed transition">
-            Anterior
-        </button>
-
-        <button
-            *ngFor="let pagina of [].constructor(totalPaginas); let i = index"
-            (click)="irParaPagina(i)"
-            [ngClass]="paginaAtual === i ? 'bg-indigo-500 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'"
-            class="px-3 py-1.5 rounded-lg font-semibold text-sm transition-colors">
-            {{ i + 1 }}
-        </button>
-
-        <button
-            (click)="irParaPagina(paginaAtual + 1)"
-            [disabled]="paginaAtual === totalPaginas - 1"
-            class="px-3 py-1.5 rounded-lg font-semibold text-sm bg-indigo-500 hover:bg-indigo-400 text-white disabled:bg-slate-800 disabled:text-slate-600 disabled:cursor-not-allowed transition">
-            Próxima
-        </button>
+    <div *ngIf="mensagemErro || mensagemSucesso" class="border-t border-gray-100 p-3">
+        <app-aviso *ngIf="mensagemErro" tipo="erro" [mensagem]="mensagemErro"></app-aviso>
+        <app-aviso *ngIf="mensagemSucesso" tipo="sucesso" [mensagem]="mensagemSucesso"></app-aviso>
     </div>
-
-    <div
-        *ngIf="mensagemErro"
-        class="bg-rose-500/10 border border-rose-500/30 text-rose-400 p-3 rounded-xl text-center text-sm font-medium mt-4 max-w-sm mx-auto">
-        {{mensagemErro}}
-    </div>
-
-    <div
-        *ngIf="mensagemSucesso"
-        class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 p-3 rounded-xl text-center text-sm font-medium mt-4 max-w-sm mx-auto">
-        {{mensagemSucesso}}
-    </div>
-
-</div>
+</section>

@@ -1,96 +1,68 @@
-<div class="grid min-h-screen lg:grid-cols-2">
+<div class="grid w-full overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg sm:max-w-3xl md:grid-cols-2">
 
-    <!-- Painel da marca (telas grandes) -->
-    <aside class="relative hidden overflow-hidden border-r border-slate-800/80 lg:flex lg:flex-col lg:justify-between lg:p-12">
-        <div class="absolute inset-0 bg-gradient-to-br from-fuchsia-600/20 via-slate-950 to-indigo-600/30"></div>
-        <div class="absolute -right-24 top-1/4 h-72 w-72 rounded-full bg-fuchsia-500/15 blur-3xl"></div>
-
-        <div class="relative flex items-center gap-2.5">
-            <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-fuchsia-500 shadow-lg shadow-indigo-500/30">
-                <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-            </span>
-            <span class="text-xl font-bold tracking-tight text-white">Eventos</span>
-        </div>
-
-        <div class="relative max-w-md">
-            <h1 class="text-4xl font-extrabold leading-tight tracking-tight text-white">
-                Comece a gerenciar seus eventos hoje.
-            </h1>
-            <p class="mt-4 text-slate-400">
-                Crie sua conta em segundos e tenha todos os seus eventos e participantes organizados.
-            </p>
-        </div>
-
-        <p class="relative text-xs text-slate-500">Sistema de Eventos</p>
+    <!-- Sobre o produto -->
+    <aside class="hidden bg-codiub-navy p-8 text-white md:block">
+        <img src="assets/logo/codiub-branca-horizontal.png" alt="Codiub" class="h-8 w-auto">
+        <h2 class="mt-8 text-xl font-bold">Sistema de eventos</h2>
+        <p class="mt-4 text-sm leading-8 text-gray-300">
+            Crie sua conta para se inscrever em eventos, acompanhar as vagas e entrar na lista de espera quando um evento lotar.
+        </p>
     </aside>
 
     <!-- Formulário -->
-    <main class="flex items-center justify-center px-4 py-12 sm:px-6">
-        <div class="w-full max-w-sm">
+    <div class="p-6 sm:p-8">
+        <img src="assets/logo/codiub-azul-horizontal.png" alt="Codiub" class="h-8 w-auto md:hidden">
+        <h1 class="mt-6 font-bold text-codiub-brand md:mt-0 md:text-xl">Criar conta</h1>
+        <p class="mt-1 text-sm text-gray-600">Preencha os dados para se cadastrar.</p>
 
-            <div class="mb-8 flex items-center gap-2.5 lg:hidden">
-                <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-fuchsia-500">
-                    <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                </span>
-                <span class="text-lg font-bold text-white">Eventos</span>
+        <form [formGroup]="cadastroFormulario" (ngSubmit)="enviarCadastro()" class="mt-6 space-y-4 md:space-y-6" novalidate>
+            <div>
+                <label for="username" class="label">Usuário</label>
+                <input id="username" type="text" formControlName="username" autocomplete="username" placeholder="Ex: maria.souza" class="input"
+                    [class.input-invalid]="invalido('username')" [attr.aria-invalid]="invalido('username')" aria-describedby="ajuda-usuario">
+                <ng-container *ngIf="invalido('username'); else ajudaUsuario">
+                    <p *ngIf="cadastroFormulario.get('username')?.hasError('required')" id="ajuda-usuario" class="field-error">Informe um usuário.</p>
+                    <p *ngIf="cadastroFormulario.get('username')?.hasError('minlength') || cadastroFormulario.get('username')?.hasError('maxlength')" id="ajuda-usuario" class="field-error">Use de 3 a 50 caracteres.</p>
+                    <p *ngIf="cadastroFormulario.get('username')?.hasError('pattern')" id="ajuda-usuario" class="field-error">Use apenas letras, números, ponto, hífen e sublinhado.</p>
+                </ng-container>
+                <ng-template #ajudaUsuario>
+                    <p id="ajuda-usuario" class="field-help">De 3 a 50 caracteres: letras, números, ponto, hífen e sublinhado.</p>
+                </ng-template>
             </div>
 
-            <h2 class="text-2xl font-bold tracking-tight text-white">Criar conta</h2>
-            <p class="mt-1 text-sm text-slate-400">Preencha os dados para se cadastrar.</p>
-
-            <form [formGroup]="cadastroFormulario" (ngSubmit)="enviarCadastro()" class="mt-8 space-y-5">
-
-                <div>
-                    <label for="username" class="label">Usuário</label>
-                    <input
-                        id="username"
-                        type="text"
-                        formControlName="username"
-                        autocomplete="username"
-                        placeholder="Escolha um usuário"
-                        class="input"
-                        [class.input-invalid]="invalido('username')">
-                    <ng-container *ngIf="invalido('username')">
-                        <span *ngIf="cadastroFormulario.get('username')?.hasError('required')" class="field-error">Informe um usuário.</span>
-                        <span *ngIf="cadastroFormulario.get('username')?.hasError('minlength') || cadastroFormulario.get('username')?.hasError('maxlength')" class="field-error">O usuário deve ter entre 3 e 50 caracteres.</span>
-                        <span *ngIf="cadastroFormulario.get('username')?.hasError('pattern')" class="field-error">Use apenas letras, números, ponto, hífen e sublinhado.</span>
-                    </ng-container>
+            <div>
+                <label for="senha" class="label">Senha</label>
+                <div class="relative">
+                    <input id="senha" [type]="mostrarSenha ? 'text' : 'password'" formControlName="senha" autocomplete="new-password" class="input pr-10"
+                        [class.input-invalid]="invalido('senha')" [attr.aria-invalid]="invalido('senha')" aria-describedby="ajuda-senha">
+                    <button type="button" (click)="mostrarSenha = !mostrarSenha"
+                        [attr.aria-label]="mostrarSenha ? 'Ocultar senha' : 'Mostrar senha'" [attr.aria-pressed]="mostrarSenha"
+                        class="absolute inset-y-0 right-0 flex w-10 items-center justify-center rounded-r-lg text-gray-500 hover:text-blue-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">
+                        <svg *ngIf="!mostrarSenha" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" /><circle cx="12" cy="12" r="3" />
+                        </svg>
+                        <svg *ngIf="mostrarSenha" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M17.94 17.94A10.07 10.07 0 0112 19c-6.5 0-10-7-10-7a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c6.5 0 10 7 10 7a18.5 18.5 0 01-2.16 3.19M14.12 14.12a3 3 0 11-4.24-4.24M1 1l22 22" />
+                        </svg>
+                    </button>
                 </div>
+                <p *ngIf="invalido('senha'); else ajudaSenha" id="ajuda-senha" class="field-error">A senha precisa ter de 8 a 100 caracteres.</p>
+                <ng-template #ajudaSenha>
+                    <p id="ajuda-senha" class="field-help">Mínimo de 8 caracteres.</p>
+                </ng-template>
+            </div>
 
-                <div>
-                    <label for="senha" class="label">Senha</label>
-                    <input
-                        id="senha"
-                        type="password"
-                        formControlName="senha"
-                        autocomplete="new-password"
-                        placeholder="Crie uma senha"
-                        class="input"
-                        [class.input-invalid]="invalido('senha')">
-                    <span *ngIf="invalido('senha') && cadastroFormulario.get('senha')?.hasError('required')" class="field-error">Informe uma senha.</span>
-                    <span *ngIf="invalido('senha') && (cadastroFormulario.get('senha')?.hasError('minlength') || cadastroFormulario.get('senha')?.hasError('maxlength'))" class="field-error">A senha deve ter entre 8 e 100 caracteres.</span>
-                    <span *ngIf="!invalido('senha')" class="mt-1.5 block text-xs text-slate-500">Mínimo de 8 caracteres.</span>
-                </div>
+            <app-aviso *ngIf="mensagemErro" class="block" tipo="erro" [mensagem]="mensagemErro"></app-aviso>
+            <app-aviso *ngIf="mensagemSucesso" class="block" tipo="sucesso" [mensagem]="mensagemSucesso"></app-aviso>
 
-                <button type="submit" [disabled]="cadastroFormulario.invalid || enviando" class="btn-primary w-full py-3">
-                    {{ enviando ? 'Criando conta...' : 'Criar conta' }}
-                </button>
+            <button type="submit" [disabled]="cadastroFormulario.invalid || enviando" class="btn-primary w-full">
+                {{ enviando ? 'Criando conta...' : 'Criar conta' }}
+            </button>
 
-                <div *ngIf="mensagemErro" role="alert" class="alert-error">{{ mensagemErro }}</div>
-                <div *ngIf="mensagemSucesso" role="status" class="alert-success">{{ mensagemSucesso }}</div>
-            </form>
-
-            <p class="mt-8 text-center text-sm text-slate-400">
+            <p class="text-center text-sm text-gray-600">
                 Já tem uma conta?
-                <button type="button" (click)="irParaLogin()" class="font-semibold text-indigo-400 hover:text-indigo-300">
-                    Fazer login
-                </button>
+                <a routerLink="/auth/login" class="link">Entrar</a>
             </p>
-        </div>
-    </main>
-
+        </form>
+    </div>
 </div>

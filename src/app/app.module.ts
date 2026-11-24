@@ -17,6 +17,7 @@ import { LoginComponent } from './login/login.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { CadastroComponent } from './cadastro/cadastro.component';
 import { ListaEsperaComponent } from './participantes/lista-espera/lista-espera.component';
+import { AvisoComponent } from './compartilhado/aviso/aviso.component';
 
 registerLocaleData(localePt);
 
@@ -32,6 +33,7 @@ registerLocaleData(localePt);
     LoginComponent,
     CadastroComponent,
     ListaEsperaComponent,
+    AvisoComponent,
   ],
   imports: [
     BrowserModule,

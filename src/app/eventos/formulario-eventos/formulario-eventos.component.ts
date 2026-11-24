@@ -5,6 +5,7 @@ import { Output, EventEmitter } from '@angular/core';
 import { CategoriaService } from 'src/app/services/categoria.service';
 import { firstValueFrom } from 'rxjs';
 import { Categoria } from 'src/app/models/categoria';
+import { agoraInputDataHora } from 'src/app/models/evento';
 
 @Component({
   selector: 'app-formulario-eventos',
@@ -30,6 +31,7 @@ export class FormularioEventosComponent implements OnInit {
   })
 
   enviando: boolean = false
+  dataMinima = agoraInputDataHora(); // A API não aceita data no passado
 
   ngOnInit(): void{
     this.listarCategorias();
@@ -62,7 +64,7 @@ export class FormularioEventosComponent implements OnInit {
       },
       error: erro => {
         this.enviando = false
-        this.mensagemErro = erro.error?.titulo ?? 'Erro ao cadastrar evento.';
+        this.mensagemErro = erro.error?.titulo ?? 'Não foi possível cadastrar o evento. Tente novamente.';
         setTimeout(() => {
           this.mensagemErro = ''
         }, 3000);
@@ -75,7 +77,7 @@ export class FormularioEventosComponent implements OnInit {
         const response = await firstValueFrom(this.categoriaService.listarCategorias());
         this.categorias = response;
       } catch (error) {
-        this.mensagemErro = "Erro ao listar categorias.";
+        this.mensagemErro = "Não foi possível carregar as categorias.";
         setTimeout(() => {
           this.mensagemErro = "";
         }, 2000);

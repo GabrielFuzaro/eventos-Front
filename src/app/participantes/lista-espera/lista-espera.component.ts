@@ -19,8 +19,6 @@ export class ListaEsperaComponent implements OnChanges {
   inscricoes: ListaEspera[] = [];
   totalNaFila = 0;
 
-  imagemLixeira = '../../assets/imgs/Lixeira.svg';
-
   mensagemErro = '';
   mensagemSucesso = '';
 
@@ -70,7 +68,7 @@ export class ListaEsperaComponent implements OnChanges {
   }
 
   remover(inscricao: ListaEspera) {
-    if (!confirm(`Remover ${inscricao.nome} da lista de espera?`)) {
+    if (!confirm(`Remover ${inscricao.nome} da lista de espera? A pessoa perde a posição na fila.`)) {
       return;
     }
 
@@ -83,7 +81,7 @@ export class ListaEsperaComponent implements OnChanges {
           setTimeout(() => this.mensagemSucesso = '', 2500);
         },
         error: erro => {
-          this.mensagemErro = erro.error?.titulo ?? 'Erro ao remover da lista de espera';
+          this.mensagemErro = erro.error?.titulo ?? 'Não foi possível remover da lista de espera. Tente novamente.';
           setTimeout(() => this.mensagemErro = '', 2500);
         }
       });

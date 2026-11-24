@@ -29,7 +29,7 @@ export class LoginComponent {
     .subscribe({
       next: () => {
         // O token chega num cookie HttpOnly gravado pelo navegador; não é guardado no JavaScript
-        this.mensagemSucesso = 'Login realizado com sucesso! Redirecionando...'
+        this.mensagemSucesso = 'Login realizado. Redirecionando...'
         setTimeout(() => {
           this.router.navigate([
             './eventos'
@@ -40,7 +40,7 @@ export class LoginComponent {
         this.enviando = false;
         this.password = ''; // Não deixa a senha errada no campo
         this.mensagemErro = erro.status === 0
-          ? 'Não foi possível conectar ao servidor.'
+          ? 'Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.'
           : erro.error?.titulo ?? 'Usuário ou senha inválidos.' // Inclui o aviso de bloqueio por muitas tentativas
         setTimeout(() => {
           this.mensagemErro = ''

@@ -16,6 +16,7 @@ export class CadastroComponent {
   mensagemErro: string = '';
   mensagemSucesso: string = '';
   enviando: boolean = false;
+  mostrarSenha: boolean = false;
 
   cadastroFormulario = new FormGroup({
     // Mesmas regras da API (CadastroRequest)
@@ -42,7 +43,7 @@ export class CadastroComponent {
     .subscribe({
       next: resposta => {
         this.cadastroFormulario.reset()
-        this.mensagemSucesso = 'Conta criada com sucesso! Redirecionando para o login...';
+        this.mensagemSucesso = 'Conta criada. Redirecionando para o login...';
         setTimeout(() => {
           this.irParaLogin();
         }, 1500);
@@ -50,7 +51,7 @@ export class CadastroComponent {
       error: erro => {
         this.enviando = false;
         // Erros de validação da API vêm em "campos"; mostra o primeiro, senão o título
-        this.mensagemErro = erro.error?.campos?.[0]?.mensagem ?? erro.error?.titulo ?? 'Erro ao criar conta.';
+        this.mensagemErro = erro.error?.campos?.[0]?.mensagem ?? erro.error?.titulo ?? 'Não foi possível criar a conta. Tente novamente.';
         setTimeout(() => {
           this.mensagemErro = '';
         }, 3000);

@@ -1,115 +1,160 @@
-<main class="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+<!-- Breadcrumb -->
+<nav aria-label="Você está em" class="mb-4">
+    <ol class="flex flex-wrap items-center gap-2 text-sm">
+        <li><a routerLink="/eventos" class="link font-normal">Eventos</a></li>
+        <li aria-hidden="true" class="text-gray-400">›</li>
+        <li aria-current="page" class="max-w-[60vw] truncate text-gray-600">{{ evento ? evento.nome : 'Detalhes' }}</li>
+    </ol>
+</nav>
 
-    <a routerLink="/eventos" class="btn-ghost -ml-3 px-3 py-1.5">
-        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-        </svg>
-        Eventos
-    </a>
+<ng-container *ngIf="evento; else carregando">
 
-    <ng-container *ngIf="evento; else carregando">
+    <!-- Cabeçalho -->
+    <div class="mb-5 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+        <div class="min-w-0">
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="badge" [ngClass]="statusEvento(evento.status).badge">
+                    <span class="h-1.5 w-1.5 rounded-full" [ngClass]="statusEvento(evento.status).dot" aria-hidden="true"></span>
+                    {{ statusEvento(evento.status).label }}
+                </span>
+                <span class="badge" [ngClass]="corCategoria(evento.categoriaId)">{{ evento.categoriaNome || 'Sem categoria' }}</span>
+            </div>
+            <h1 class="mt-2 break-words text-lg font-bold text-codiub-brand sm:text-2xl">{{ evento.nome }}</h1>
+        </div>
 
-        <!-- Cabeçalho -->
-        <header class="mt-4 flex flex-wrap items-end justify-between gap-4">
+        <div *ngIf="authService.isAdmin()" class="flex flex-col-reverse gap-2 sm:flex-row">
+            <button type="button" (click)="baixar()" [disabled]="baixandoExcel" class="btn-secondary w-full sm:w-auto">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
+                </svg>
+                {{ baixandoExcel ? 'Gerando...' : 'Gerar Excel' }}
+            </button>
+            <a [routerLink]="['/eventos', evento.id, 'edição']" class="btn-primary w-full sm:w-auto">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M16.86 4.49l1.69-1.69a1.88 1.88 0 112.65 2.65L10.58 16.07a4.5 4.5 0 01-1.9 1.13L6 18l.8-2.68a4.5 4.5 0 011.13-1.9l8.93-8.93z" />
+                </svg>
+                Editar evento
+            </a>
+        </div>
+    </div>
+
+    <!-- Informações -->
+    <section aria-label="Informações do evento" class="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <div class="card flex items-center gap-3 px-3 py-2.5">
+            <div class="shrink-0 rounded-lg bg-blue-50 p-1.5 text-blue-600">
+                <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="3" y="5" width="18" height="16" rx="2" /><path d="M16 3v4M8 3v4M3 10h18" />
+                </svg>
+            </div>
             <div class="min-w-0">
-                <div class="flex flex-wrap gap-2">
-                    <span
-                        class="badge"
-                        [ngClass]="{
-                            'bg-rose-500/15 text-rose-300': evento.status === 'LOTADO',
-                            'bg-amber-500/15 text-amber-300': evento.status === 'ENCERRADO',
-                            'bg-emerald-500/15 text-emerald-300': evento.status !== 'LOTADO' && evento.status !== 'ENCERRADO'
-                        }">
-                        {{ evento.status === 'LOTADO' ? 'Lotado' : evento.status === 'ENCERRADO' ? 'Encerrado' : 'Aberto' }}
-                    </span>
-                    <span class="badge" [ngClass]="corCategoria(evento.categoriaId)">{{ evento.categoriaNome || 'Sem categoria' }}</span>
+                <p class="micro-label">Data</p>
+                <p class="truncate text-base font-bold leading-tight text-gray-800 tabular-nums">{{ evento.data_evento | date:'dd/MM/yyyy' }}</p>
+            </div>
+        </div>
+        <div class="card flex items-center gap-3 px-3 py-2.5">
+            <div class="shrink-0 rounded-lg bg-blue-50 p-1.5 text-blue-600">
+                <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" />
+                </svg>
+            </div>
+            <div class="min-w-0">
+                <p class="micro-label">Horário</p>
+                <p class="truncate text-base font-bold leading-tight text-gray-800 tabular-nums">{{ evento.data_evento | date:'HH:mm' }}</p>
+            </div>
+        </div>
+        <div class="card flex items-center gap-3 px-3 py-2.5">
+            <div class="shrink-0 rounded-lg bg-red-50 p-1.5 text-red-500">
+                <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M12 21s-7-6.2-7-11a7 7 0 1114 0c0 4.8-7 11-7 11z" /><circle cx="12" cy="10" r="2.5" />
+                </svg>
+            </div>
+            <div class="min-w-0">
+                <p class="micro-label">Local</p>
+                <p class="truncate text-base font-bold leading-tight text-gray-800" [title]="evento.local">{{ evento.local }}</p>
+            </div>
+        </div>
+        <div class="card flex items-center gap-3 px-3 py-2.5">
+            <div class="shrink-0 rounded-lg bg-blue-50 p-1.5 text-blue-600">
+                <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
+                </svg>
+            </div>
+            <div class="min-w-0">
+                <p class="micro-label">Capacidade</p>
+                <p class="truncate text-base font-bold leading-tight text-gray-800 tabular-nums">{{ evento.capacidade_maxima }} vagas</p>
+            </div>
+        </div>
+    </section>
+
+    <app-aviso *ngIf="mensagemErro" class="mb-5 block" tipo="erro" [mensagem]="mensagemErro"></app-aviso>
+
+    <div class="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)]">
+
+        <div class="flex flex-col gap-5">
+
+            <!-- Ocupação -->
+            <section class="grid gap-4 rounded-panel border border-navy-soft bg-white p-4 shadow-sm sm:p-6" aria-labelledby="tituloOcupacao">
+                <div>
+                    <p class="mb-2 text-section-label uppercase text-codiub-navy">Ocupação</p>
+                    <div class="flex items-end justify-between gap-3">
+                        <h2 id="tituloOcupacao" class="text-[clamp(1.6rem,3vw,2.3rem)] font-bold leading-none text-codiub-navy tabular-nums">
+                            {{ quantidadeParticipantes }}<span class="text-base font-semibold text-codiub-muted"> / {{ evento.capacidade_maxima }}</span>
+                        </h2>
+                        <span class="badge-navy px-3 py-1.5 tabular-nums">{{ percentualOcupacao }}% ocupado</span>
+                    </div>
                 </div>
 
-                <h1 class="mt-3 break-words text-3xl font-extrabold tracking-tight text-white">{{ evento.nome }}</h1>
-                <p class="mt-1 text-sm text-slate-400">
-                    {{ evento.data_evento | date:'dd/MM/yyyy' }} às {{ evento.data_evento | date:'HH:mm' }} · {{ evento.local }}
-                </p>
-            </div>
+                <div class="h-2.5 overflow-hidden rounded-full bg-navy-tint" role="progressbar"
+                    [attr.aria-valuenow]="quantidadeParticipantes" aria-valuemin="0" [attr.aria-valuemax]="evento.capacidade_maxima"
+                    [attr.aria-label]="quantidadeParticipantes + ' de ' + evento.capacidade_maxima + ' vagas ocupadas'">
+                    <div class="h-full rounded-full bg-codiub-bar transition-all duration-300" [style.width.%]="percentualOcupacao"></div>
+                </div>
 
-            <button *ngIf="authService.isAdmin()" type="button" (click)="baixar()" [disabled]="baixandoExcel" class="btn-secondary">
-                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                </svg>
-                {{ baixandoExcel ? 'Baixando...' : 'Baixar Excel' }}
-            </button>
-        </header>
-
-        <div
-            *ngIf="mensagemErro"
-            class="mt-4 bg-rose-500/10 border border-rose-500/30 text-rose-400 p-3 rounded-xl text-center text-sm font-medium">
-            {{ mensagemErro }}
-        </div>
-
-        <div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-
-            <div class="flex flex-col gap-6">
-
-                <!-- Ocupação -->
-                <section class="card p-6">
-                    <div class="flex items-baseline justify-between">
-                        <h2 class="text-sm font-medium text-slate-400">Ocupação</h2>
-                        <p class="text-sm text-slate-400">
-                            <span class="text-lg font-bold text-white">{{ quantidadeParticipantes }}</span> de {{ evento.capacidade_maxima }} vagas
-                        </p>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="rounded-panel border border-navy-soft bg-codiub-panel-bg px-4 py-3">
+                        <p class="text-sm text-codiub-muted">Vagas restantes</p>
+                        <p class="text-2xl font-bold text-codiub-navy tabular-nums">{{ vagasRestantes }}</p>
                     </div>
-
-                    <div class="mt-3 h-2 overflow-hidden rounded-full bg-slate-800" aria-hidden="true">
-                        <div
-                            class="h-full rounded-full transition-all duration-500"
-                            [style.width.%]="evento.capacidade_maxima > 0 ? (quantidadeParticipantes / evento.capacidade_maxima) * 100 : 0"
-                            [ngClass]="{
-                                'bg-rose-400': evento.status === 'LOTADO',
-                                'bg-amber-400': evento.status === 'ENCERRADO',
-                                'bg-emerald-400': evento.status !== 'LOTADO' && evento.status !== 'ENCERRADO'
-                            }">
-                        </div>
+                    <div class="rounded-panel border border-navy-soft bg-codiub-panel-bg px-4 py-3">
+                        <p class="text-sm text-codiub-muted">Lista de espera</p>
+                        <p class="text-2xl font-bold text-codiub-navy tabular-nums">{{ quantidadeListaEspera }}</p>
                     </div>
+                </div>
+            </section>
 
-                    <div class="mt-3 flex flex-wrap items-center justify-between gap-2 text-sm">
-                        <p class="text-slate-500">
-                            {{ evento.capacidade_maxima - quantidadeParticipantes > 0 ? evento.capacidade_maxima - quantidadeParticipantes : 0 }} vagas restantes
-                        </p>
-                        <p *ngIf="quantidadeListaEspera > 0" class="font-medium text-amber-300">
-                            {{ quantidadeListaEspera }} na lista de espera
-                        </p>
-                    </div>
-                </section>
-
-                <app-participantes [eventoId]="evento.id" [statusEvento]="evento.status" (participanteCadastradoOutput)="atualizarParticipantes()"></app-participantes>
-            </div>
-
-            <div class="flex flex-col gap-6">
-                <app-lista-participantes [eventoId]="evento.id" (participanteExcluidoOutput)="atualizarParticipantes()"></app-lista-participantes>
-
-                <app-lista-espera [eventoId]="evento.id" [statusEvento]="evento.status" (listaAlteradaOutput)="atualizarParticipantes()"></app-lista-espera>
-            </div>
+            <app-participantes [eventoId]="evento.id" [statusEvento]="evento.status" (participanteCadastradoOutput)="atualizarParticipantes()"></app-participantes>
         </div>
 
-    </ng-container>
+        <div class="flex min-w-0 flex-col gap-5">
+            <app-lista-participantes [eventoId]="evento.id" [totalParticipantes]="quantidadeParticipantes" (participanteExcluidoOutput)="atualizarParticipantes()"></app-lista-participantes>
 
-    <ng-template #carregando>
-        <div *ngIf="eventoNaoEncontrado; else esqueleto" class="card mt-6 p-8 text-center">
-            <p class="text-lg font-semibold text-white">Evento não encontrado</p>
-            <p class="mt-1 text-sm text-slate-400">Ele pode ter sido excluído ou a API está fora do ar.</p>
-            <a routerLink="/eventos" class="btn-primary mt-5">Voltar para eventos</a>
+            <app-lista-espera [eventoId]="evento.id" [statusEvento]="evento.status" (listaAlteradaOutput)="atualizarParticipantes()"></app-lista-espera>
         </div>
-    </ng-template>
+    </div>
 
-    <ng-template #esqueleto>
-        <div class="mt-4 animate-pulse">
-            <div class="h-5 w-32 rounded bg-slate-800"></div>
-            <div class="mt-4 h-8 w-2/3 rounded bg-slate-800"></div>
-            <div class="mt-3 h-4 w-1/3 rounded bg-slate-800"></div>
-            <div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-                <div class="card h-40"></div>
-                <div class="card h-40"></div>
-            </div>
+</ng-container>
+
+<ng-template #carregando>
+    <div *ngIf="eventoNaoEncontrado; else esqueleto" class="card flex flex-col items-center p-8 text-center">
+        <svg class="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" /><path d="M21 21l-4.35-4.35M8.5 11h5" />
+        </svg>
+        <p class="mt-3 text-base font-semibold text-gray-800">Evento não encontrado</p>
+        <p class="mt-1 text-sm text-gray-600">Ele pode ter sido excluído ou o servidor está fora do ar.</p>
+        <a routerLink="/eventos" class="btn-primary mt-5">Voltar para eventos</a>
+    </div>
+</ng-template>
+
+<ng-template #esqueleto>
+    <div aria-label="Carregando evento">
+        <div class="h-5 w-32 animate-pulse rounded-lg bg-gray-100"></div>
+        <div class="mt-3 h-7 w-2/3 animate-pulse rounded-lg bg-gray-100"></div>
+        <div class="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <div *ngFor="let item of [1, 2, 3, 4]" class="h-14 animate-pulse rounded-lg bg-gray-100"></div>
         </div>
-    </ng-template>
-
-</main>
+        <div class="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-2">
+            <div class="h-48 animate-pulse rounded-panel bg-gray-100"></div>
+            <div class="h-48 animate-pulse rounded-lg bg-gray-100"></div>
+        </div>
+    </div>
+</ng-template>

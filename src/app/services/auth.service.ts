@@ -3,6 +3,7 @@ import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import { Observable, catchError, map, of, tap } from "rxjs";
 import { Usuario } from "../models/Usuario";
+import { environment } from "src/environments/environment";
 
 @Injectable({
     providedIn: 'root'
@@ -10,7 +11,7 @@ import { Usuario } from "../models/Usuario";
 
 export class AuthService {
 
-    private apiUrl = 'http://localhost:8080/auth'
+    private apiUrl = `${environment.apiUrl}/auth`;
 
     // O token fica num cookie HttpOnly que o JavaScript não consegue ler (protege contra roubo por XSS).
     // Aqui guardamos só os dados públicos do usuário, em memória.

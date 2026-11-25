@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Design CODIUB: tokens em tailwind.codiub.preset.js. Use estas classes antes de criar estilos novos. */
+/* Design CODIUB (Modo Prefeitura): tokens em tailwind.codiub.preset.js. Use estas classes antes de criar estilos novos. */
 
 @layer base {
   html {
@@ -45,6 +45,76 @@
       scroll-behavior: auto !important;
     }
   }
+}
+
+/* Opção da barra de acessibilidade: desabilitar animações */
+html.a11y-sem-animacao *,
+html.a11y-sem-animacao *::before,
+html.a11y-sem-animacao *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+
+/* Modo alto contraste governamental (única exceção permitida à paleta: #000000 / #FFFFFF / #FFFF00) */
+html.a11y-contraste,
+html.a11y-contraste body {
+  background-color: #000000 !important;
+  color: #FFFFFF !important;
+}
+
+html.a11y-contraste header,
+html.a11y-contraste footer,
+html.a11y-contraste nav,
+html.a11y-contraste aside,
+html.a11y-contraste section,
+html.a11y-contraste form,
+html.a11y-contraste table,
+html.a11y-contraste thead,
+html.a11y-contraste tr,
+html.a11y-contraste .card,
+html.a11y-contraste .a11y-panel {
+  background-color: #000000 !important;
+  color: #FFFFFF !important;
+  border-color: #FFFF00 !important;
+}
+
+html.a11y-contraste h1,
+html.a11y-contraste h2,
+html.a11y-contraste h3,
+html.a11y-contraste h4,
+html.a11y-contraste p,
+html.a11y-contraste span,
+html.a11y-contraste label,
+html.a11y-contraste th,
+html.a11y-contraste td {
+  color: #FFFFFF !important;
+}
+
+html.a11y-contraste a,
+html.a11y-contraste .link,
+html.a11y-contraste .btn-ghost {
+  color: #FFFF00 !important;
+  text-decoration: underline !important;
+}
+
+html.a11y-contraste button,
+html.a11y-contraste .btn,
+html.a11y-contraste .btn-primary,
+html.a11y-contraste .btn-secondary,
+html.a11y-contraste .btn-danger,
+html.a11y-contraste input,
+html.a11y-contraste select,
+html.a11y-contraste textarea,
+html.a11y-contraste .badge {
+  background-color: #000000 !important;
+  color: #FFFF00 !important;
+  border: 1px solid #FFFF00 !important;
+}
+
+html.a11y-contraste *:focus-visible {
+  outline: 2px solid #FFFF00 !important;
+  outline-offset: 2px !important;
 }
 
 @layer components {

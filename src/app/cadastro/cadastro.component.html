@@ -1,18 +1,31 @@
 <div class="grid w-full overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg sm:max-w-3xl md:grid-cols-2">
 
-    <!-- Sobre o produto -->
-    <aside class="hidden bg-codiub-navy p-8 text-white md:block">
-        <img src="assets/logo/codiub-branca-horizontal.png" alt="Codiub" class="h-8 w-auto">
-        <h2 class="mt-8 text-xl font-bold">Sistema de eventos</h2>
-        <p class="mt-4 text-sm leading-8 text-gray-300">
-            Crie sua conta para se inscrever em eventos, acompanhar as vagas e entrar na lista de espera quando um evento lotar.
-        </p>
+    <!-- Sobre o produto (Modo Prefeitura) -->
+    <aside class="hidden flex-col justify-between bg-codiub-navy p-8 text-white md:flex">
+        <div>
+            <img
+                src="assets/logo/prefeitura/pmu-branca-horizontal.png"
+                alt="Prefeitura de Uberaba"
+                class="h-9 w-auto object-contain">
+            <h2 class="mt-8 text-xl font-bold">Gestão de Eventos</h2>
+            <p class="mt-4 text-sm leading-8 text-gray-300">
+                Crie sua conta para se inscrever em eventos municipais, acompanhar as vagas disponíveis e entrar na lista de espera quando um evento lotar.
+            </p>
+        </div>
+
+        <div class="mt-8 flex items-center gap-2 border-t border-white/15 pt-4 text-xs text-gray-300">
+            <span>Tecnologia</span>
+            <img src="assets/logo/codiub-branca-horizontal.png" alt="Codiub" class="h-5 w-auto object-contain">
+        </div>
     </aside>
 
     <!-- Formulário -->
     <div class="p-6 sm:p-8">
-        <img src="assets/logo/codiub-azul-horizontal.png" alt="Codiub" class="h-8 w-auto md:hidden">
-        <h1 class="mt-6 font-bold text-codiub-brand md:mt-0 md:text-xl">Criar conta</h1>
+        <img
+            src="assets/logo/prefeitura/pmu-colorida-horizontal.png"
+            alt="Prefeitura de Uberaba"
+            class="h-10 w-auto object-contain md:hidden">
+        <h1 class="mt-6 text-lg font-bold text-codiub-brand md:mt-0 md:text-xl">Criar conta</h1>
         <p class="mt-1 text-sm text-gray-600">Preencha os dados para se cadastrar.</p>
 
         <form [formGroup]="cadastroFormulario" (ngSubmit)="enviarCadastro()" class="mt-6 space-y-4 md:space-y-6" novalidate>

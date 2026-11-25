@@ -3,18 +3,19 @@ import { Injectable } from "@angular/core";
 import { Participante, ParticipanteInput } from "../models/participante";
 import { Page } from "../models/paginacao";
 import { Observable } from "rxjs";
+import { environment } from "src/environments/environment";
 
 @Injectable({
     providedIn: 'root'
 })
 export class ParticipanteService {
 
-    private apiUrl = "http://localhost:8080/participantes"  //Declara a URL para fazer a requisição
+    private apiUrl = `${environment.apiUrl}/participantes`;
 
     constructor( private http: HttpClient) {}
 
-    listarParticipantes(page: number, size: number){         //Método para listar os participantes com paginação
-        return this.http.get<Participante>(`${this.apiUrl}?page=${page}&size=${size}`);
+    listarParticipantes(page: number, size: number): Observable<Page<Participante>> {
+        return this.http.get<Page<Participante>>(`${this.apiUrl}?page=${page}&size=${size}`);
     }
 
     listarParticipantesEvento(id: number, page: number, size: number){ //Método para listar os participantes de um evento com paginação
@@ -36,7 +37,7 @@ export class ParticipanteService {
         });
     }
 
-    contarParticipantes(eventoId: number):Observable<Object> {
-        return this.http.get(`${this.apiUrl}/quantidade/${eventoId}`);
+    contarParticipantes(eventoId: number): Observable<number> {
+        return this.http.get<number>(`${this.apiUrl}/quantidade/${eventoId}`);
     }
 }

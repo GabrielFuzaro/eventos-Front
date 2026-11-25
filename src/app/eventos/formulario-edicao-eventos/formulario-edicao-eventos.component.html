@@ -1,6 +1,12 @@
-<!-- Breadcrumb -->
+<!-- Breadcrumb institucional (Modo Prefeitura) -->
 <nav aria-label="Você está em" class="mb-4">
     <ol class="flex flex-wrap items-center gap-2 text-sm">
+        <li>
+            <a href="https://portal.uberaba.mg.gov.br/" target="_blank" rel="noopener noreferrer" aria-label="Portal da Prefeitura de Uberaba" title="Portal da Prefeitura de Uberaba" class="inline-flex items-center">
+                <img src="assets/icons/blue-home.svg" alt="Portal da Prefeitura" class="h-4 w-4">
+            </a>
+        </li>
+        <li aria-hidden="true" class="text-gray-400">›</li>
         <li><a routerLink="/eventos" class="link font-normal">Eventos</a></li>
         <ng-container *ngIf="evento">
             <li aria-hidden="true" class="text-gray-400">›</li>

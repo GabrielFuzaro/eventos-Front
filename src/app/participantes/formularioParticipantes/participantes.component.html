@@ -7,7 +7,7 @@
     <p class="mt-1 text-sm text-gray-600">
         {{ modoListaEspera
             ? 'Se alguém desistir, o primeiro da fila assume a vaga automaticamente.'
-            : 'Informe o nome e o email de quem vai participar.' }}
+            : 'Informe o nome e o e-mail de quem vai participar.' }}
     </p>
 
     <app-aviso *ngIf="encerrado" class="mt-4 block" tipo="info" mensagem="Este evento já foi encerrado. Não é possível se inscrever."></app-aviso>
@@ -24,12 +24,12 @@
         </div>
 
         <div>
-            <label for="emailParticipante" class="label">Email</label>
+            <label for="emailParticipante" class="label">E-mail</label>
             <input id="emailParticipante" type="email" formControlName="email" maxlength="40" autocomplete="email" placeholder="Ex: maria@email.com" class="input"
                 [class.input-invalid]="invalido('email')" [attr.aria-invalid]="invalido('email')" aria-describedby="erro-email-participante">
             <ng-container *ngIf="invalido('email')">
-                <p *ngIf="participanteForm.get('email')?.hasError('required')" id="erro-email-participante" class="field-error">Informe o email.</p>
-                <p *ngIf="participanteForm.get('email')?.hasError('email')" id="erro-email-participante" class="field-error">Informe um email válido, como nome&#64;email.com.</p>
+                <p *ngIf="participanteForm.get('email')?.hasError('required')" id="erro-email-participante" class="field-error">Informe o e-mail.</p>
+                <p *ngIf="participanteForm.get('email')?.hasError('email')" id="erro-email-participante" class="field-error">Informe um e-mail válido, como nome&#64;email.com.</p>
                 <p *ngIf="participanteForm.get('email')?.hasError('maxlength')" id="erro-email-participante" class="field-error">Use no máximo 40 caracteres.</p>
             </ng-container>
         </div>

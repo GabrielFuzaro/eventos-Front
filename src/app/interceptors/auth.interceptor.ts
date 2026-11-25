@@ -2,8 +2,9 @@ import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest
 import { Injectable } from "@angular/core";
 import { AuthService } from "../services/auth.service";
 import { Observable, catchError, throwError } from "rxjs";
+import { environment } from "src/environments/environment";
 
-const API_URL = 'http://localhost:8080';
+const API_URL = environment.apiUrl;
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {

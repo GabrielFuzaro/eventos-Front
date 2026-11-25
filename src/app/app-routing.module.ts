@@ -5,9 +5,10 @@ import { DetalhesEventosComponent } from './detalhes-eventos/detalhes-eventos.co
 import { FormularioEdicaoEventosComponent } from './eventos/formulario-edicao-eventos/formulario-edicao-eventos.component';
 import { LoginComponent } from './login/login.component';
 import { CadastroComponent } from './cadastro/cadastro.component';
+import { PaginaNaoEncontradaComponent } from './compartilhado/pagina-nao-encontrada/pagina-nao-encontrada.component';
 import { AuthGuard } from './guards/auth.guard';
 
-const routes: Routes = [ //Declara as rotas para exibir as páginas
+const routes: Routes = [
   {
     canActivate: [AuthGuard],
     path: 'eventos',
@@ -20,10 +21,15 @@ const routes: Routes = [ //Declara as rotas para exibir as páginas
   },
   {
     canActivate: [AuthGuard],
+    path: 'eventos/:id/edicao',
+    component: FormularioEdicaoEventosComponent
+  },
+  {
+    canActivate: [AuthGuard],
     path: 'eventos/:id/edição',
     component: FormularioEdicaoEventosComponent
   },
-   {
+  {
     path: '',
     redirectTo: 'eventos',
     pathMatch: 'full'
@@ -35,6 +41,10 @@ const routes: Routes = [ //Declara as rotas para exibir as páginas
   {
     path: 'auth/cadastro',
     component: CadastroComponent
+  },
+  {
+    path: '**',
+    component: PaginaNaoEncontradaComponent
   }
 ];
 

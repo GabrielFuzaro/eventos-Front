@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, OnDestroy, Output, ViewChild } from '@angular/core';
 import { ListaEspera } from 'src/app/models/lista-espera';
 import { AuthService } from 'src/app/services/auth.service';
 import { ListaEsperaService } from 'src/app/services/lista-espera.service';
@@ -8,7 +8,7 @@ import { ListaEsperaService } from 'src/app/services/lista-espera.service';
   templateUrl: './lista-espera.component.html',
   styleUrls: ['./lista-espera.component.css']
 })
-export class ListaEsperaComponent implements OnChanges {
+export class ListaEsperaComponent implements OnChanges, OnDestroy {
 
   constructor(private listaEsperaService: ListaEsperaService, public authService: AuthService) {}
 
@@ -16,20 +16,30 @@ export class ListaEsperaComponent implements OnChanges {
   @Input() statusEvento!: string;
   @Output() listaAlteradaOutput = new EventEmitter<void>();
 
+  @ViewChild('botaoCancelarFila') set botaoCancelarFila(botao: ElementRef<HTMLButtonElement> | undefined) {
+    botao?.nativeElement.focus();
+  }
+
   inscricoes: ListaEspera[] = [];
+  inscricaoParaRemover: ListaEspera | null = null;
   totalNaFila = 0;
 
   mensagemErro = '';
   mensagemSucesso = '';
+  private timerMensagem?: ReturnType<typeof setTimeout>;
 
   paginaAtual = 0;
   tamanhoPagina = 5;
   totalPaginas = 0;
 
-  ngOnChanges() {
+  ngOnChanges(): void {
     if (this.eventoId) {
       this.listar();
     }
+  }
+
+  ngOnDestroy(): void {
+    clearTimeout(this.timerMensagem);
   }
 
   // A fila só aparece quando o evento está lotado ou quando ainda há gente esperando
@@ -37,11 +47,10 @@ export class ListaEsperaComponent implements OnChanges {
     return this.statusEvento === 'LOTADO' || this.totalNaFila > 0;
   }
 
-  listar() {
+  listar(): void {
     this.listaEsperaService.listarDoEvento(this.eventoId, this.paginaAtual, this.tamanhoPagina)
       .subscribe({
         next: resposta => {
-          // Se a página atual ficou vazia (ex.: pessoas promovidas), volta para a anterior
           if (resposta.content.length === 0 && this.paginaAtual > 0) {
             this.paginaAtual--;
             this.listar();
@@ -67,23 +76,47 @@ export class ListaEsperaComponent implements OnChanges {
     this.listar();
   }
 
-  remover(inscricao: ListaEspera) {
-    if (!confirm(`Remover ${inscricao.nome} da lista de espera? A pessoa perde a posição na fila.`)) {
+  remover(inscricao: ListaEspera): void {
+    this.inscricaoParaRemover = inscricao;
+  }
+
+  confirmarRemocao(): void {
+    if (!this.inscricaoParaRemover) {
       return;
     }
 
-    this.listaEsperaService.remover(inscricao.id)
+    const id = this.inscricaoParaRemover.id;
+    this.inscricaoParaRemover = null;
+
+    this.listaEsperaService.remover(id)
       .subscribe({
         next: () => {
           this.listar();
           this.listaAlteradaOutput.emit();
-          this.mensagemSucesso = 'Removido da lista de espera';
-          setTimeout(() => this.mensagemSucesso = '', 2500);
+          this.mostrarSucesso('Removido da lista de espera');
         },
         error: erro => {
-          this.mensagemErro = erro.error?.titulo ?? 'Não foi possível remover da lista de espera. Tente novamente.';
-          setTimeout(() => this.mensagemErro = '', 2500);
+          this.mostrarErro(erro.error?.titulo ?? 'Não foi possível remover da lista de espera. Tente novamente.');
         }
       });
+  }
+
+  @HostListener('document:keydown.escape')
+  fecharDialogo(): void {
+    this.inscricaoParaRemover = null;
+  }
+
+  private mostrarSucesso(mensagem: string): void {
+    clearTimeout(this.timerMensagem);
+    this.mensagemErro = '';
+    this.mensagemSucesso = mensagem;
+    this.timerMensagem = setTimeout(() => { this.mensagemSucesso = ''; }, 2500);
+  }
+
+  private mostrarErro(mensagem: string): void {
+    clearTimeout(this.timerMensagem);
+    this.mensagemSucesso = '';
+    this.mensagemErro = mensagem;
+    this.timerMensagem = setTimeout(() => { this.mensagemErro = ''; }, 3000);
   }
 }

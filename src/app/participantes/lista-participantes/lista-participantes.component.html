@@ -14,7 +14,7 @@
             <thead class="cabecalho-tabela">
                 <tr>
                     <th scope="col">Nome</th>
-                    <th scope="col">Email</th>
+                    <th scope="col">E-mail</th>
                     <th *ngIf="authService.isAdmin()" scope="col" class="text-right"><span class="sr-only">Ações</span></th>
                 </tr>
             </thead>
@@ -24,7 +24,7 @@
                         <span class="cell-label font-medium">Nome: </span>{{ participante.nome }}
                     </td>
                     <td class="celula-tabela break-all text-gray-600">
-                        <span class="cell-label">Email: </span>{{ participante.email }}
+                        <span class="cell-label">E-mail: </span>{{ participante.email }}
                     </td>
                     <td *ngIf="authService.isAdmin()" class="celula-tabela pt-2 md:pt-3 md:text-right">
                         <button
@@ -66,3 +66,18 @@
         <app-aviso *ngIf="mensagemSucesso" tipo="sucesso" [mensagem]="mensagemSucesso"></app-aviso>
     </div>
 </section>
+
+<!-- Diálogo de confirmação CODIUB (components.md §12) -->
+<div *ngIf="participanteParaExcluir" class="dialog-overlay">
+    <div role="alertdialog" aria-modal="true" aria-labelledby="tituloExcluirParticipante" aria-describedby="textoExcluirParticipante" class="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
+        <h2 id="tituloExcluirParticipante" class="text-lg font-bold text-gray-800">Excluir participante?</h2>
+        <p id="textoExcluirParticipante" class="mt-2 text-sm text-gray-600">
+            <span class="font-semibold text-codiub-ink">{{ participanteParaExcluir.nome }}</span> perderá a vaga neste evento.
+            Se houver pessoas na lista de espera, o primeiro da fila assumirá a vaga automaticamente.
+        </p>
+        <div class="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+            <button #botaoCancelarParticipante type="button" (click)="participanteParaExcluir = null" class="btn-secondary w-full sm:w-auto">Cancelar</button>
+            <button type="button" (click)="confirmarExclusao()" class="btn-danger w-full sm:w-auto">Excluir participante</button>
+        </div>
+    </div>
+</div>

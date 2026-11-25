@@ -4,13 +4,14 @@ import { Observable } from "rxjs";
 import { ListaEspera } from "../models/lista-espera";
 import { Page } from "../models/paginacao";
 import { ParticipanteInput } from "../models/participante";
+import { environment } from "src/environments/environment";
 
 @Injectable({
     providedIn: 'root'
 })
 export class ListaEsperaService {
 
-    private apiUrl = "http://localhost:8080/lista-espera"
+    private apiUrl = `${environment.apiUrl}/lista-espera`;
 
     constructor(private http: HttpClient) {}
 

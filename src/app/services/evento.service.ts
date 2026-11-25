@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Evento } from "../models/evento";
 import { Page } from "../models/paginacao";
+import { environment } from "src/environments/environment";
 
 export interface FiltrosEvento {
     nome?: string;
@@ -15,7 +16,7 @@ export interface FiltrosEvento {
 })
 export class EventoService{
 
-    private apiUrl = "http://localhost:8080/eventos"  //Declara a URl para fazer a requisição
+    private apiUrl = `${environment.apiUrl}/eventos`;
 
     constructor(private http: HttpClient) { }
 

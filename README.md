@@ -1,91 +1,92 @@
-# 🎟️ Eventos Front
+# Gestão de Eventos — Front-end (Prefeitura de Uberaba · CODIUB)
 
-Interface web desenvolvida em **Angular** para o gerenciamento de eventos e participantes, consumindo a [Eventos API](https://github.com/GabrielFuzaro/eventos-API).
-
-> Projeto de estudo/portfólio construído para aplicar na prática Angular com Reactive Forms, comunicação entre componentes, paginação e consumo de API REST.
+Interface web desenvolvida em **Angular 15** e **Tailwind CSS 3**, padronizada com o **Design System CODIUB no Modo Prefeitura**, para gerenciamento de eventos municipais, inscrições de participantes e lista de espera automática, consumindo a [Eventos API](https://github.com/GabrielFuzaro/eventos-API).
 
 ---
 
-## 📋 Funcionalidades
+## Funcionalidades
 
-- **Listagem de eventos** em grid responsivo, com paginação
-- **Busca de eventos por nome** em tempo real
-- **Filtro de eventos por status** (Aberto, Lotado, Encerrado), integrado com paginação do back-end
-- **Cadastro e edição de eventos**, com formulários reativos e validação
-- **Página de detalhes do evento**, exibindo informações completas
-- **Cadastro de participantes** vinculado ao evento, com bloqueio automático quando o evento está lotado ou encerrado
-- **Listagem paginada de participantes** por evento
-- **Feedback visual de estado**: mensagens de sucesso/erro com desaparecimento automático, e indicação de carregamento durante o envio de formulários
-
----
-
-## 🛠️ Tecnologias
-
-| Categoria      | Tecnologia          |
-|-----------------|-----------------------|
-| Framework        | Angular 15            |
-| Linguagem         | TypeScript 4.9        |
-| Estilização       | Tailwind CSS 3         |
-| Formulários       | Angular Reactive Forms |
-| HTTP              | Angular HttpClient     |
-| Roteamento        | Angular Router         |
+- **Identidade Institucional Municipal (Modo Prefeitura):** cabeçalho com marca oficial da Prefeitura de Uberaba em versão branca sobre superfície navy (`#042D62`), assinatura tecnológica CODIUB no rodapé e breadcrumb integrado ao Portal da Prefeitura.
+- **Acessibilidade Governamental (WCAG AA + eMAG):** barra de ferramentas de acessibilidade (`A+`, `A-`, modo **Alto Contraste** `#000000`/`#FFFFFF`/`#FFFF00`, desativação de animações e reset persistidos em `localStorage`), navegação por teclado, diálogos acessíveis (`role="alertdialog"`) e integração com o widget **VLibras**.
+- **Listagem de eventos** responsiva (tabela no desktop e blocos rotulados abaixo de `md`), com indicadores de status, busca com *debounce*, filtro por período/status, seletor de ocultação de colunas e distinção clara entre estado carregando, vazio e erro.
+- **Cadastro e edição de eventos** com *Reactive Forms* e validação de campos.
+- **Detalhes do evento e localização:** painel de ocupação em tempo real, exportação de participantes em Excel e **modal de rota integrado com Google Maps e Waze**.
+- **Inscrição e lista de espera automática:** bloqueio automático para eventos encerrados e transição automática para fila de espera quando o evento atinge a capacidade máxima.
+- **Página 404 padronizada** para rotas inexistentes.
 
 ---
 
-## 🏗️ Arquitetura
+## Tecnologias
 
-O projeto segue a estrutura padrão do Angular CLI, organizada por funcionalidade (*feature-based*):
+| Categoria | Tecnologia |
+|---|---|
+| Framework | Angular 15 (NgModule) |
+| Linguagem | TypeScript 4.9 (`strict` + `strictTemplates`) |
+| Estilização | Tailwind CSS 3 + Preset Oficial `codiub-design` |
+| Formulários | Angular Reactive Forms |
+| HTTP & Segurança | Angular HttpClient + Cookie `HttpOnly` (`withCredentials`) |
+| Testes | Jasmine + Karma |
 
+---
+
+## Arquitetura e Organização
+
+```text
+src/
+├── app/
+│   ├── compartilhado/
+│   │   ├── aviso/                     # Feedback visual acessível (sucesso, erro, info)
+│   │   ├── barra-acessibilidade/      # Painel A+, A-, Alto Contraste e Redução de Movimento
+│   │   ├── modal-rota/                # Modal de localização e rota (Google Maps e Waze)
+│   │   └── pagina-nao-encontrada/     # Tela 404 padronizada
+│   ├── eventos/                       # Listagem, indicadores, criação e edição de eventos
+│   ├── detalhes-eventos/              # Ocupação, metadados, Excel e gestão de inscritos
+│   ├── participantes/                 # Formulário de inscrição, lista de participantes e lista de espera
+│   ├── login/ & cadastro/             # Autenticação com Reactive Forms e co-branding Prefeitura/CODIUB
+│   ├── guards/ & interceptors/        # Proteção de rotas e envio seguro do cookie HttpOnly
+│   ├── models/                        # Contratos TypeScript e helpers de domínio
+│   └── services/                      # Comunicação HTTP centralizada por recurso
+├── assets/
+│   ├── icons/                         # Ícones institucionais e de navegação (Google Maps, Waze, Home)
+│   └── logo/                          # Logos oficiais CODIUB e Prefeitura de Uberaba (recorte 4%)
+└── environments/                      # Configuração de API separada entre desenvolvimento e produção
 ```
-src/app
-├── eventos/                      # Listagem, cadastro e edição de eventos
-│   ├── formulario-eventos/
-│   └── formulario-edicao-eventos/
-├── detalhes-eventos/             # Página de detalhes de um evento específico
-├── participantes/                # Cadastro e listagem de participantes
-│   ├── formularioParticipantes/
-│   └── lista-participantes/
-├── models/                       # Interfaces TypeScript (Evento, Participante, Page)
-└── services/                     # Comunicação com a API (HttpClient)
-```
-
-Cada funcionalidade principal (eventos, participantes) tem seus componentes de formulário e listagem separados, comunicando-se com o componente pai através de `@Input`/`@Output`.
 
 ---
 
-## ▶️ Como executar
+## Configuração de Ambientes
+
+As URLs da API ficam centralizadas em `src/environments/`:
+
+- **Desenvolvimento (`src/environments/environment.ts`):** `http://localhost:8080`
+- **Produção (`src/environments/environment.prod.ts`):** substituído automaticamente no build `production` via `fileReplacements` em `angular.json`.
+
+---
+
+## Como Executar e Validar
 
 ### Pré-requisitos
+- Node.js 18+ e npm
+- [Eventos API](https://github.com/GabrielFuzaro/eventos-API) em execução em `http://localhost:8080`
 
-- Node.js e npm
-- Angular CLI (`npm install -g @angular/cli`)
-- [Eventos API](https://github.com/GabrielFuzaro/eventos-API) rodando localmente em `http://localhost:8080`
+### Comandos
 
-### Passos
+```bash
+# Instalar dependências exatas do lockfile
+npm ci
 
-1. Clone o repositório:
-   ```bash
-   git clone https://github.com/GabrielFuzaro/eventos-Front.git
-   cd eventos-Front
-   ```
+# Servidor de desenvolvimento (http://localhost:4200)
+npm start
 
-2. Instale as dependências:
-   ```bash
-   npm install
-   ```
+# Build de produção (validação de tipos, templates e orçamentos de bundle)
+npx ng build
 
-3. Execute o servidor de desenvolvimento:
-   ```bash
-   ng serve
-   ```
-
-4. Acesse `http://localhost:4200` no navegador
+# Testes unitários
+npx ng test --watch=false --browsers=ChromeHeadless
+```
 
 ---
 
-## 👤 Autor
+## Autor
 
-**Gabriel Fuzaro**
-[GitHub](https://github.com/GabrielFuzaro)
-
-> Este é o front-end do sistema. A API (Spring Boot) está disponível em [eventos-API](https://github.com/GabrielFuzaro/eventos-API).
+**Gabriel Fuzaro** — [GitHub](https://github.com/GabrielFuzaro)

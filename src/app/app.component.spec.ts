@@ -1,35 +1,50 @@
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { AppComponent } from './app.component';
+import { BarraAcessibilidadeComponent } from './compartilhado/barra-acessibilidade/barra-acessibilidade.component';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        RouterTestingModule
+        RouterTestingModule,
+        HttpClientTestingModule
       ],
       declarations: [
-        AppComponent
+        AppComponent,
+        BarraAcessibilidadeComponent
       ],
     }).compileComponents();
   });
 
-  it('should create the app', () => {
+  it('deve criar o componente raiz', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'sistema-eventos-front'`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app.title).toEqual('sistema-eventos-front');
-  });
-
-  it('should render title', () => {
+  it('deve renderizar o logo branco da Prefeitura na navbar e a assinatura CODIUB no rodapé', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.content span')?.textContent).toContain('sistema-eventos-front app is running!');
+    const el = fixture.nativeElement as HTMLElement;
+
+    const logoNavbar = el.querySelector('header img') as HTMLImageElement | null;
+    const logoFooter = el.querySelector('footer img') as HTMLImageElement | null;
+
+    expect(logoNavbar?.getAttribute('src')).toContain('assets/logo/prefeitura/pmu-branca-horizontal.png');
+    expect(logoFooter?.getAttribute('src')).toContain('assets/logo/codiub-branca-horizontal.png');
+  });
+
+  it('deve alternar o menu lateral e fechá-lo ao acionar fecharMenu', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    expect(app.menuAberto).toBeFalse();
+
+    app.alternarMenu();
+    expect(app.menuAberto).toBeTrue();
+
+    app.fecharMenu();
+    expect(app.menuAberto).toBeFalse();
   });
 });

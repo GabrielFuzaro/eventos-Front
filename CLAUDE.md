@@ -20,9 +20,9 @@ npx ng build      # build; precisa passar sem erros antes de commitar
 
 ```
 src/app
-├── compartilhado/   # AvisoComponent (<app-aviso>): mensagens de sucesso, erro e info com ícone
+├── compartilhado/   # AvisoComponent, BarraAcessibilidadeComponent, ModalRotaComponent e PaginaNaoEncontradaComponent
 ├── models/          # Interfaces (Evento, Participante, ListaEspera, Page<T>, Categoria...) + helpers de exibição
-├── services/        # Um service por recurso da API (evento, participante, lista-espera, categoria, auth)
+├── services/        # Um service por recurso da API (evento, participante, lista-espera, categoria, auth) usando environment.apiUrl
 ├── interceptors/    # AuthInterceptor: envia o cookie do token (withCredentials) e trata 401
 ├── guards/          # AuthGuard: só libera rotas internas se a API (/auth/me) confirmar a sessão
 ├── eventos/         # Página de eventos + formulários de cadastro e edição
@@ -36,7 +36,7 @@ src/app
 
 - **Todo componente novo deve ser declarado em `app.module.ts`.**
 - **Chamadas HTTP só nos services** (`services/*.service.ts`), nunca direto no componente.
-  Cada service tem seu `apiUrl` (`http://localhost:8080/<recurso>`).
+  Cada service usa `environment.apiUrl` (`src/environments/environment.ts`).
 - Tipos de dados em `models/`. Respostas paginadas usam `Page<T>` (`content`, `totalPages`, `totalElements`...).
 - Comunicação entre componentes: `@Input()` para dados, `@Output() EventEmitter` para avisar o pai,
   com o padrão de nome `algoAconteceuOutput` (ex.: `participanteCadastradoOutput`).
@@ -46,7 +46,7 @@ src/app
 - Mensagens de erro: mostrar `erro.error?.titulo ?? 'mensagem padrão'`. O `titulo` vem da API, já em português.
   Mensagens de sucesso e erro somem com `setTimeout` (2 a 3,5s).
 - Botões de envio ficam desabilitados enquanto `enviando` é true ou o formulário é inválido.
-- Ações de exclusão pedem `confirm(...)` antes.
+- Ações de exclusão ou remoção usam o diálogo acessível de confirmação CODIUB (`role="alertdialog"`, foco inicial no Cancelar e fechamento com `Esc`), nunca `window.confirm`.
 - Ações restritas a admin são escondidas com `*ngIf="authService.isAdmin()"`. A API também valida;
   esconder no front é só UX.
 - Nomes de componentes, variáveis, métodos e textos da interface em **português**.
@@ -54,10 +54,9 @@ src/app
 - Datas enviadas à API em ISO com fuso de Brasília: `valor + ':00-03:00'` (inputs `datetime-local`).
   Exibição com o pipe `date` (locale `pt-BR` já registrado).
 
-### Visual (design CODIUB)
+### Visual (design CODIUB — Modo Prefeitura)
 
-- Layout de **sistema**: navbar e footer navy (`bg-codiub-navy`) com o logo CODIUB branco (`src/assets/logo`),
-  sidebar clara (drawer no celular) e conteúdo branco com `p-5`. Login e cadastro usam só navbar e footer.
+- **Modo Prefeitura ativo:** navbar navy (`bg-codiub-navy`) com logo branco da Prefeitura (`assets/logo/prefeitura/pmu-branca-horizontal.png`), drawer mobile e coluna clara de login/cadastro com logo colorido (`pmu-colorida-horizontal.png`), barra de acessibilidade (`<app-barra-acessibilidade>`) + VLibras, breadcrumb iniciando no Portal da Prefeitura (`assets/icons/blue-home.svg`) e footer navy assinando com `codiub-branca-horizontal.png` e texto em `gray-300`.
 - Cada azul tem um papel: `codiub-brand` (#002069) é ação e título (botão primário, `page-title`), `codiub-navy`
   (#042D62) só superfície (navbar, footer, barra de título de card), `blue-600` é interação secundária (links,
   botão secundário, paginação ativa). Ciano só como detalhe sobre navy. Não crie outros tons nem hex novos.

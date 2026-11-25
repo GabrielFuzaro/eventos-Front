@@ -2,15 +2,14 @@ import { LOCALE_ID, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { registerLocaleData } from '@angular/common';
 import localePt from '@angular/common/locales/pt';
-import { FormsModule } from '@angular/forms'
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http'
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { EventosComponent } from './eventos/eventos.component';
 import { ParticipantesComponent } from './participantes/formularioParticipantes/participantes.component';
 import { DetalhesEventosComponent } from './detalhes-eventos/detalhes-eventos.component';
 import { ListaParticipantesComponent } from './participantes/lista-participantes/lista-participantes.component';
-import { ReactiveFormsModule } from '@angular/forms';
 import { FormularioEventosComponent } from './eventos/formulario-eventos/formulario-eventos.component';
 import { FormularioEdicaoEventosComponent } from './eventos/formulario-edicao-eventos/formulario-edicao-eventos.component';
 import { LoginComponent } from './login/login.component';
@@ -18,6 +17,9 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { CadastroComponent } from './cadastro/cadastro.component';
 import { ListaEsperaComponent } from './participantes/lista-espera/lista-espera.component';
 import { AvisoComponent } from './compartilhado/aviso/aviso.component';
+import { BarraAcessibilidadeComponent } from './compartilhado/barra-acessibilidade/barra-acessibilidade.component';
+import { PaginaNaoEncontradaComponent } from './compartilhado/pagina-nao-encontrada/pagina-nao-encontrada.component';
+import { ModalRotaComponent } from './compartilhado/modal-rota/modal-rota.component';
 
 registerLocaleData(localePt);
 
@@ -34,6 +36,9 @@ registerLocaleData(localePt);
     CadastroComponent,
     ListaEsperaComponent,
     AvisoComponent,
+    BarraAcessibilidadeComponent,
+    PaginaNaoEncontradaComponent,
+    ModalRotaComponent,
   ],
   imports: [
     BrowserModule,
@@ -43,7 +48,7 @@ registerLocaleData(localePt);
     ReactiveFormsModule
   ],
   providers: [
-    { provide: LOCALE_ID, useValue: 'pt-BR' }, // Datas em português (ex: "out", "28/10/2026")
+    { provide: LOCALE_ID, useValue: 'pt-BR' },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,

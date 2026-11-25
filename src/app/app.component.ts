@@ -10,7 +10,7 @@ import { AuthService } from './services/auth.service';
 })
 export class AppComponent {
 
-  // Telas internas mostram a sidebar; login e cadastro mostram só navbar e footer
+  // Rotas de eventos mostram a sidebar; login, cadastro e 404 mostram só navbar e footer
   areaInterna = false;
   menuAberto = false;
   readonly ano = new Date().getFullYear();
@@ -19,7 +19,8 @@ export class AppComponent {
     this.router.events
       .pipe(filter(evento => evento instanceof NavigationEnd))
       .subscribe(evento => {
-        this.areaInterna = !(evento as NavigationEnd).urlAfterRedirects.startsWith('/auth');
+        const url = (evento as NavigationEnd).urlAfterRedirects;
+        this.areaInterna = url.startsWith('/eventos');
         this.menuAberto = false;
       });
   }

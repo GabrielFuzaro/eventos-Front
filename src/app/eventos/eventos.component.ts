@@ -14,7 +14,7 @@ import { Page } from '../models/paginacao';
 })
 export class EventosComponent implements OnInit, OnDestroy {
 
-  eventos: Evento[] = []
+  eventos: Evento[] = [];
 
   constructor(private eventoService: EventoService, private router: Router, public authService: AuthService) {}
 
@@ -23,15 +23,24 @@ export class EventosComponent implements OnInit, OnDestroy {
 
   mensagemSucesso = '';
   mensagemErro = '';
+  erroCarregamento = '';
 
-  carregando: boolean = true;
+  carregando = true;
   paginaAtual = 0;
   tamanhoPagina = 8;
   totalPaginas = 0;
-  totalAbertos: number = 0;
-  totalLotados: number = 0;
-  totalEncerrados: number = 0;
-  mostrarEstatisticas: boolean = true;
+  totalAbertos = 0;
+  totalLotados = 0;
+  totalEncerrados = 0;
+  mostrarEstatisticas = true;
+
+  // Seletor de ocultação de colunas (components.md §22)
+  mostrarSeletorColunas = false;
+  colunasOcultas: { categoria: boolean; vagas: boolean; status: boolean } = {
+    categoria: false,
+    vagas: false,
+    status: false
+  };
 
   // Filtros: todos são enviados juntos para a API, sempre com paginação
   pesquisaEvento = '';
@@ -39,8 +48,11 @@ export class EventosComponent implements OnInit, OnDestroy {
   dataInicial = '';
   dataFinal = '';
 
-  statusFormulario: boolean = false;
+  statusFormulario = false;
   eventoParaExcluir: Evento | null = null;
+  eventoRota: Evento | null = null;
+
+  private timerMensagem?: ReturnType<typeof setTimeout>;
 
   // O foco começa no Cancelar quando o diálogo de exclusão abre
   @ViewChild('botaoCancelarExclusao') set botaoCancelarExclusao(botao: ElementRef<HTMLButtonElement> | undefined) {
@@ -51,14 +63,18 @@ export class EventosComponent implements OnInit, OnDestroy {
   private pesquisa$ = new Subject<string>();
   private inscricoes = new Subscription();
 
-  ngOnInit(): void{
+  ngOnInit(): void {
     // switchMap descarta respostas antigas, então a lista sempre reflete os filtros atuais
     this.inscricoes.add(
       this.busca$.pipe(
-        tap(() => this.carregando = true),
+        tap(() => {
+          this.carregando = true;
+          this.erroCarregamento = '';
+        }),
         switchMap(() => this.eventoService.listarEventos(this.paginaAtual, this.tamanhoPagina, this.filtros).pipe(
           catchError(erro => {
-            this.mostrarErro(erro.error?.titulo ?? 'Não foi possível carregar os eventos.');
+            const msg = erro.error?.titulo ?? 'Não foi possível carregar os eventos. Verifique sua conexão e tente novamente.';
+            this.erroCarregamento = msg;
             return of(null);
           })
         ))
@@ -72,10 +88,11 @@ export class EventosComponent implements OnInit, OnDestroy {
     );
 
     this.carregarEventos();
-    this.carregarTotais()
+    this.carregarTotais();
   }
 
   ngOnDestroy(): void {
+    clearTimeout(this.timerMensagem);
     this.inscricoes.unsubscribe();
   }
 
@@ -123,13 +140,17 @@ export class EventosComponent implements OnInit, OnDestroy {
     this.carregando = false;
   }
 
-  toogleEstatisticas(): boolean{
-    const toogle = this.mostrarEstatisticas = !this.mostrarEstatisticas;
-    return toogle
+  toogleEstatisticas(): boolean {
+    this.mostrarEstatisticas = !this.mostrarEstatisticas;
+    return this.mostrarEstatisticas;
   }
 
-  irParaPagina(pagina: number): void{
-    if(pagina < 0 || pagina >= this.totalPaginas){
+  alternarSeletorColunas(): void {
+    this.mostrarSeletorColunas = !this.mostrarSeletorColunas;
+  }
+
+  irParaPagina(pagina: number): void {
+    if (pagina < 0 || pagina >= this.totalPaginas) {
       return;
     }
 
@@ -167,17 +188,17 @@ export class EventosComponent implements OnInit, OnDestroy {
       this.totalAbertos = abertos;
       this.totalLotados = lotados;
       this.totalEncerrados = encerrados;
-    } catch (error) {
+    } catch {
       this.mostrarErro('Não foi possível carregar os indicadores.');
     }
   }
 
   // Abre o diálogo de confirmação; a exclusão acontece em confirmarExclusao()
-  excluirEvento(evento: Evento){
+  excluirEvento(evento: Evento): void {
     this.eventoParaExcluir = evento;
   }
 
-  confirmarExclusao(){
+  confirmarExclusao(): void {
     if (!this.eventoParaExcluir) {
       return;
     }
@@ -186,41 +207,43 @@ export class EventosComponent implements OnInit, OnDestroy {
     this.eventoParaExcluir = null;
 
     this.eventoService.excluirEvento(id)
-    .subscribe({
-      next: () => {
-        this.carregarEventos()
-        this.carregarTotais()
-        this.mostrarSucesso('Evento excluído');
-      },
-      error: erro => {
-        this.mostrarErro(erro.error?.titulo ?? 'Não foi possível excluir o evento. Tente novamente.');
-      }
-    })
+      .subscribe({
+        next: () => {
+          this.carregarEventos();
+          this.carregarTotais();
+          this.mostrarSucesso('Evento excluído');
+        },
+        error: erro => {
+          this.mostrarErro(erro.error?.titulo ?? 'Não foi possível excluir o evento. Tente novamente.');
+        }
+      });
   }
 
-  botaoEditarEvento(id: number){
-    this.router.navigate(['./eventos', id, 'edição'])
+  botaoEditarEvento(id: number): void {
+    this.router.navigate(['./eventos', id, 'edicao']);
   }
 
-  cadastrarEventoFormulario(){
+  cadastrarEventoFormulario(): void {
     this.statusFormulario = !this.statusFormulario;
+  }
+
+  abrirModalRota(evento: Evento): void {
+    this.eventoRota = evento;
   }
 
   // Fecha o modal ou o diálogo de exclusão com a tecla Esc
   @HostListener('document:keydown.escape')
-  fecharModais(){
+  fecharModais(): void {
     this.statusFormulario = false;
     this.eventoParaExcluir = null;
+    this.eventoRota = null;
   }
 
-  abrirEvento(id: number){
-    this.router.navigate([
-      './eventos',
-      id
-    ]);
+  abrirEvento(id: number): void {
+    this.router.navigate(['./eventos', id]);
   }
 
-  atualizarEventos(){
+  atualizarEventos(): void {
     // Volta para a primeira página sem filtros, onde o evento recém-cadastrado aparece primeiro
     this.statusFormulario = false;
     this.limparFiltros();
@@ -228,13 +251,17 @@ export class EventosComponent implements OnInit, OnDestroy {
     this.mostrarSucesso('Evento cadastrado');
   }
 
-  private mostrarSucesso(mensagem: string){
+  private mostrarSucesso(mensagem: string): void {
+    clearTimeout(this.timerMensagem);
+    this.mensagemErro = '';
     this.mensagemSucesso = mensagem;
-    setTimeout(() => { this.mensagemSucesso = ''; }, 2500);
+    this.timerMensagem = setTimeout(() => { this.mensagemSucesso = ''; }, 2500);
   }
 
-  private mostrarErro(mensagem: string){
+  private mostrarErro(mensagem: string): void {
+    clearTimeout(this.timerMensagem);
+    this.mensagemSucesso = '';
     this.mensagemErro = mensagem;
-    setTimeout(() => { this.mensagemErro = ''; }, 3000);
+    this.timerMensagem = setTimeout(() => { this.mensagemErro = ''; }, 3500);
   }
 }

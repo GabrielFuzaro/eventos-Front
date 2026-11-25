@@ -29,6 +29,7 @@ export class DetalhesEventosComponent implements OnInit {
   quantidadeListaEspera: number = 0;
   eventoNaoEncontrado = false;
   baixandoExcel = false;
+  mostrarModalRota = false;
   mensagemErro = '';
   corCategoria = corCategoria;
   statusEvento = statusEvento;

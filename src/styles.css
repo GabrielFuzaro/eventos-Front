@@ -192,12 +192,19 @@
     @apply fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/50 p-4 sm:items-center;
   }
 
-  .toast-area {
-    @apply pointer-events-none fixed inset-x-0 top-4 z-[60] flex flex-col items-center gap-3 px-4 sm:inset-x-auto sm:right-4 sm:top-20
-      sm:w-full sm:max-w-sm sm:items-stretch sm:px-0;
+  /* Animação discreta de entrada do Toast (tokens.md §14: 0.25s ease, respeita prefers-reduced-motion) */
+  @keyframes toastSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
-  .toast-area > * {
-    @apply pointer-events-auto w-full shadow-lg;
+  .toast-enter {
+    animation: toastSlideIn 0.25s ease-out;
   }
 }

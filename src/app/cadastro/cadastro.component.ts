@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { AuthService } from '../services/auth.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-
+import { AuthService } from '../services/auth.service';
+import { NotifierService } from '../services/notifier.service';
 
 @Component({
   selector: 'app-cadastro',
@@ -11,57 +11,65 @@ import { Router } from '@angular/router';
 })
 export class CadastroComponent {
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private notifier: NotifierService
+  ) {}
 
-  mensagemErro: string = '';
-  mensagemSucesso: string = '';
-  enviando: boolean = false;
-  mostrarSenha: boolean = false;
+  enviando = false;
+  mostrarSenha = false;
 
   cadastroFormulario = new FormGroup({
     // Mesmas regras da API (CadastroRequest)
-    username: new FormControl<string>('', { nonNullable: true, validators: [
-      Validators.required, Validators.minLength(3), Validators.maxLength(50), Validators.pattern(/^[a-zA-Z0-9._-]+$/)
-    ]}),
-    senha: new FormControl<string>('', {nonNullable: true, validators: [
-      Validators.required, Validators.minLength(8), Validators.maxLength(100)
-    ]})
-  })
+    username: new FormControl<string>('', {
+      nonNullable: true,
+      validators: [
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(50),
+        Validators.pattern(/^[a-zA-Z0-9._-]+$/)
+      ]
+    }),
+    senha: new FormControl<string>('', {
+      nonNullable: true,
+      validators: [
+        Validators.required,
+        Validators.minLength(8),
+        Validators.maxLength(100)
+      ]
+    })
+  });
 
   invalido(campo: string): boolean {
     const controle = this.cadastroFormulario.get(campo);
     return !!controle && controle.invalid && controle.touched;
   }
 
-  enviarCadastro() {
-    const usuario = this.cadastroFormulario.getRawValue();
+  enviarCadastro(): void {
+    if (this.cadastroFormulario.invalid) {
+      this.cadastroFormulario.markAllAsTouched();
+      return;
+    }
 
-    this.mensagemErro = '';
+    const usuario = this.cadastroFormulario.getRawValue();
     this.enviando = true;
 
     this.authService.cadatrar(usuario.username, usuario.senha)
-    .subscribe({
-      next: resposta => {
-        this.cadastroFormulario.reset()
-        this.mensagemSucesso = 'Conta criada. Redirecionando para o login...';
-        setTimeout(() => {
+      .subscribe({
+        next: () => {
+          this.cadastroFormulario.reset();
+          this.notifier.sucesso('Conta criada com sucesso');
           this.irParaLogin();
-        }, 1500);
-      },
-      error: erro => {
-        this.enviando = false;
-        // Erros de validação da API vêm em "campos"; mostra o primeiro, senão o título
-        this.mensagemErro = erro.error?.campos?.[0]?.mensagem ?? erro.error?.titulo ?? 'Não foi possível criar a conta. Tente novamente.';
-        setTimeout(() => {
-          this.mensagemErro = '';
-        }, 3000);
-      }
-    })
+        },
+        error: erro => {
+          this.enviando = false;
+          this.notifier.erroApi(erro, 'Não foi possível criar a conta. Tente novamente.');
+        }
+      });
   }
 
   irParaLogin(): void {
-    this.router.navigate([
-      './auth/login'
-    ])
+    this.router.navigate(['/auth/login']);
   }
 }

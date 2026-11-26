@@ -1,17 +1,22 @@
-import { Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, OnDestroy, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, Output, ViewChild } from '@angular/core';
 import { ListaEspera } from 'src/app/models/lista-espera';
 import { OPCOES_TAMANHO_PAGINA, calcularPaginasVisiveis } from 'src/app/models/paginacao';
 import { AuthService } from 'src/app/services/auth.service';
 import { ListaEsperaService } from 'src/app/services/lista-espera.service';
+import { NotifierService } from 'src/app/services/notifier.service';
 
 @Component({
   selector: 'app-lista-espera',
   templateUrl: './lista-espera.component.html',
   styleUrls: ['./lista-espera.component.css']
 })
-export class ListaEsperaComponent implements OnChanges, OnDestroy {
+export class ListaEsperaComponent implements OnChanges {
 
-  constructor(private listaEsperaService: ListaEsperaService, public authService: AuthService) {}
+  constructor(
+    private listaEsperaService: ListaEsperaService,
+    public authService: AuthService,
+    private notifier: NotifierService
+  ) {}
 
   @Input() eventoId!: number;
   @Input() statusEvento!: string;
@@ -24,10 +29,6 @@ export class ListaEsperaComponent implements OnChanges, OnDestroy {
   inscricoes: ListaEspera[] = [];
   inscricaoParaRemover: ListaEspera | null = null;
   totalNaFila = 0;
-
-  mensagemErro = '';
-  mensagemSucesso = '';
-  private timerMensagem?: ReturnType<typeof setTimeout>;
 
   paginaAtual = 0;
   tamanhoPagina = 5;
@@ -42,10 +43,6 @@ export class ListaEsperaComponent implements OnChanges, OnDestroy {
     if (this.eventoId) {
       this.listar();
     }
-  }
-
-  ngOnDestroy(): void {
-    clearTimeout(this.timerMensagem);
   }
 
   // A fila só aparece quando o evento está lotado ou quando ainda há gente esperando
@@ -105,10 +102,10 @@ export class ListaEsperaComponent implements OnChanges, OnDestroy {
         next: () => {
           this.listar();
           this.listaAlteradaOutput.emit();
-          this.mostrarSucesso('Removido da lista de espera');
+          this.notifier.sucesso('Removido da lista de espera');
         },
         error: erro => {
-          this.mostrarErro(erro.error?.titulo ?? 'Não foi possível remover da lista de espera. Tente novamente.');
+          this.notifier.erroApi(erro, 'Não foi possível remover da lista de espera. Tente novamente.');
         }
       });
   }
@@ -116,19 +113,5 @@ export class ListaEsperaComponent implements OnChanges, OnDestroy {
   @HostListener('document:keydown.escape')
   fecharDialogo(): void {
     this.inscricaoParaRemover = null;
-  }
-
-  private mostrarSucesso(mensagem: string): void {
-    clearTimeout(this.timerMensagem);
-    this.mensagemErro = '';
-    this.mensagemSucesso = mensagem;
-    this.timerMensagem = setTimeout(() => { this.mensagemSucesso = ''; }, 2500);
-  }
-
-  private mostrarErro(mensagem: string): void {
-    clearTimeout(this.timerMensagem);
-    this.mensagemSucesso = '';
-    this.mensagemErro = mensagem;
-    this.timerMensagem = setTimeout(() => { this.mensagemErro = ''; }, 3000);
   }
 }

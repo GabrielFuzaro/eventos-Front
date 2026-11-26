@@ -3,6 +3,7 @@ import { EventoService, FiltrosEvento } from '../services/evento.service';
 import { Router } from '@angular/router';
 import { Evento, statusEvento } from '../models/evento';
 import { AuthService } from '../services/auth.service';
+import { NotifierService } from '../services/notifier.service';
 import { Subject, Subscription, catchError, debounceTime, firstValueFrom, of, switchMap, tap } from 'rxjs';
 import { corCategoria } from '../models/categoria';
 import { OPCOES_TAMANHO_PAGINA, Page, calcularPaginasVisiveis } from '../models/paginacao';
@@ -16,13 +17,16 @@ export class EventosComponent implements OnInit, OnDestroy {
 
   eventos: Evento[] = [];
 
-  constructor(private eventoService: EventoService, private router: Router, public authService: AuthService) {}
+  constructor(
+    private eventoService: EventoService,
+    private router: Router,
+    public authService: AuthService,
+    private notifier: NotifierService
+  ) {}
 
   corCategoria = corCategoria;
   statusEvento = statusEvento;
 
-  mensagemSucesso = '';
-  mensagemErro = '';
   erroCarregamento = '';
 
   carregando = true;
@@ -53,8 +57,6 @@ export class EventosComponent implements OnInit, OnDestroy {
   statusFormulario = false;
   eventoParaExcluir: Evento | null = null;
   eventoRota: Evento | null = null;
-
-  private timerMensagem?: ReturnType<typeof setTimeout>;
 
   // O foco começa no Cancelar quando o diálogo de exclusão abre
   @ViewChild('botaoCancelarExclusao') set botaoCancelarExclusao(botao: ElementRef<HTMLButtonElement> | undefined) {
@@ -94,7 +96,6 @@ export class EventosComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    clearTimeout(this.timerMensagem);
     this.inscricoes.unsubscribe();
   }
 
@@ -121,7 +122,7 @@ export class EventosComponent implements OnInit, OnDestroy {
 
   carregarEventos(): void {
     if (this.dataInicial && this.dataFinal && this.dataInicial > this.dataFinal) {
-      this.mostrarErro('A data inicial não pode ser depois da data final.');
+      this.notifier.aviso('A data inicial não pode ser posterior à data final');
       return;
     }
     this.busca$.next();
@@ -198,7 +199,7 @@ export class EventosComponent implements OnInit, OnDestroy {
       this.totalLotados = lotados;
       this.totalEncerrados = encerrados;
     } catch {
-      this.mostrarErro('Não foi possível carregar os indicadores.');
+      this.notifier.erro('Não foi possível carregar os indicadores');
     }
   }
 
@@ -220,10 +221,10 @@ export class EventosComponent implements OnInit, OnDestroy {
         next: () => {
           this.carregarEventos();
           this.carregarTotais();
-          this.mostrarSucesso('Evento excluído');
+          this.notifier.sucesso('Evento excluído');
         },
         error: erro => {
-          this.mostrarErro(erro.error?.titulo ?? 'Não foi possível excluir o evento. Tente novamente.');
+          this.notifier.erroApi(erro, 'Não foi possível excluir o evento. Tente novamente.');
         }
       });
   }
@@ -257,20 +258,6 @@ export class EventosComponent implements OnInit, OnDestroy {
     this.statusFormulario = false;
     this.limparFiltros();
     this.carregarTotais();
-    this.mostrarSucesso('Evento cadastrado');
-  }
-
-  private mostrarSucesso(mensagem: string): void {
-    clearTimeout(this.timerMensagem);
-    this.mensagemErro = '';
-    this.mensagemSucesso = mensagem;
-    this.timerMensagem = setTimeout(() => { this.mensagemSucesso = ''; }, 2500);
-  }
-
-  private mostrarErro(mensagem: string): void {
-    clearTimeout(this.timerMensagem);
-    this.mensagemSucesso = '';
-    this.mensagemErro = mensagem;
-    this.timerMensagem = setTimeout(() => { this.mensagemErro = ''; }, 3500);
+    this.notifier.sucesso('Evento cadastrado');
   }
 }

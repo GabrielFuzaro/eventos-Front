@@ -83,11 +83,6 @@
             </button>
         </div>
     </nav>
-
-    <div *ngIf="mensagemErro || mensagemSucesso" class="border-t border-gray-100 p-3">
-        <app-aviso *ngIf="mensagemErro" tipo="erro" [mensagem]="mensagemErro"></app-aviso>
-        <app-aviso *ngIf="mensagemSucesso" tipo="sucesso" [mensagem]="mensagemSucesso"></app-aviso>
-    </div>
 </section>
 
 <!-- Diálogo de confirmação CODIUB (components.md §12) -->

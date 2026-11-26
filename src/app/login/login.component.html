@@ -83,9 +83,6 @@
                 <p *ngIf="invalido('password')" id="erro-login-senha" class="field-error">Informe sua senha.</p>
             </div>
 
-            <app-aviso *ngIf="mensagemErro" class="block" tipo="erro" [mensagem]="mensagemErro"></app-aviso>
-            <app-aviso *ngIf="mensagemSucesso" class="block" tipo="sucesso" [mensagem]="mensagemSucesso"></app-aviso>
-
             <button type="submit" [disabled]="enviando || loginFormulario.invalid" class="btn-primary w-full">
                 {{ enviando ? 'Entrando...' : 'Entrar' }}
             </button>

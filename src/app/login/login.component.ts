@@ -1,34 +1,29 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
+import { NotifierService } from '../services/notifier.service';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnDestroy {
+export class LoginComponent {
 
   loginFormulario = new FormGroup({
     username: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     password: new FormControl('', { nonNullable: true, validators: [Validators.required] })
   });
 
-  mensagemErro = '';
-  mensagemSucesso = '';
-
   enviando = false;
   mostrarSenha = false;
-  private timerMensagem?: ReturnType<typeof setTimeout>;
-  private timerRedirecionamento?: ReturnType<typeof setTimeout>;
 
-  constructor(private authService: AuthService, private router: Router) {}
-
-  ngOnDestroy(): void {
-    clearTimeout(this.timerMensagem);
-    clearTimeout(this.timerRedirecionamento);
-  }
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private notifier: NotifierService
+  ) {}
 
   invalido(campo: 'username' | 'password'): boolean {
     const controle = this.loginFormulario.get(campo);
@@ -42,28 +37,22 @@ export class LoginComponent implements OnDestroy {
     }
 
     const { username, password } = this.loginFormulario.getRawValue();
-    clearTimeout(this.timerMensagem);
-    this.mensagemErro = '';
     this.enviando = true;
 
     this.authService.login(username, password)
       .subscribe({
         next: () => {
-          // O token chega num cookie HttpOnly gravado pelo navegador; não é guardado no JavaScript
-          this.mensagemSucesso = 'Login realizado. Redirecionando...';
-          this.timerRedirecionamento = setTimeout(() => {
-            this.router.navigate(['./eventos']);
-          }, 1000);
+          // O token chega num cookie HttpOnly gravado pelo navegador; o toast global permanece visível na tela destino
+          this.notifier.sucesso('Acesso realizado');
+          this.router.navigate(['/eventos']);
         },
         error: erro => {
           this.enviando = false;
-          this.loginFormulario.controls.password.reset(''); // Não deixa a senha errada no campo
-          this.mensagemErro = erro.status === 0
+          this.loginFormulario.controls.password.reset('');
+          const mensagem = erro.status === 0
             ? 'Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.'
             : erro.error?.titulo ?? 'Usuário ou senha inválidos.';
-          this.timerMensagem = setTimeout(() => {
-            this.mensagemErro = '';
-          }, 3500);
+          this.notifier.erro(mensagem);
         }
       });
   }

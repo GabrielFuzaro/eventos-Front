@@ -35,9 +35,6 @@
         </div>
     </fieldset>
 
-    <app-aviso *ngIf="mensagemErro" class="mt-4 block" tipo="erro" [mensagem]="mensagemErro"></app-aviso>
-    <app-aviso *ngIf="mensagemSucesso" class="mt-4 block" tipo="sucesso" [mensagem]="mensagemSucesso"></app-aviso>
-
     <div class="mt-5 border-t border-gray-100 pt-4">
         <button type="submit" [disabled]="participanteForm.invalid || encerrado || enviando" class="btn-primary w-full">
             {{ enviando ? 'Enviando...' : (modoListaEspera ? 'Entrar na lista de espera' : 'Inscrever') }}

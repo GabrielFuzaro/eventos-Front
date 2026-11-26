@@ -19,6 +19,7 @@ import { ListaEsperaComponent } from './participantes/lista-espera/lista-espera.
 import { AvisoComponent } from './compartilhado/aviso/aviso.component';
 import { PaginaNaoEncontradaComponent } from './compartilhado/pagina-nao-encontrada/pagina-nao-encontrada.component';
 import { ModalRotaComponent } from './compartilhado/modal-rota/modal-rota.component';
+import { NotifierComponent } from './compartilhado/notifier/notifier.component';
 import { MinhaContaComponent } from './minha-conta/minha-conta.component';
 
 registerLocaleData(localePt);
@@ -38,6 +39,7 @@ registerLocaleData(localePt);
     AvisoComponent,
     PaginaNaoEncontradaComponent,
     ModalRotaComponent,
+    NotifierComponent,
     MinhaContaComponent,
   ],
   imports: [

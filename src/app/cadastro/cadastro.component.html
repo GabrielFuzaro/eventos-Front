@@ -61,9 +61,6 @@
                 </ng-template>
             </div>
 
-            <app-aviso *ngIf="mensagemErro" class="block" tipo="erro" [mensagem]="mensagemErro"></app-aviso>
-            <app-aviso *ngIf="mensagemSucesso" class="block" tipo="sucesso" [mensagem]="mensagemSucesso"></app-aviso>
-
             <button type="submit" [disabled]="cadastroFormulario.invalid || enviando" class="btn-primary w-full">
                 {{ enviando ? 'Criando conta...' : 'Criar conta' }}
             </button>

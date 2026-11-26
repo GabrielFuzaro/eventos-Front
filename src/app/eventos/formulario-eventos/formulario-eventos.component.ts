@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { EventoService } from 'src/app/services/evento.service';
-import { Output, EventEmitter } from '@angular/core';
-import { CategoriaService } from 'src/app/services/categoria.service';
 import { firstValueFrom } from 'rxjs';
 import { Categoria } from 'src/app/models/categoria';
 import { agoraInputDataHora } from 'src/app/models/evento';
+import { CategoriaService } from 'src/app/services/categoria.service';
+import { EventoService } from 'src/app/services/evento.service';
+import { NotifierService } from 'src/app/services/notifier.service';
 
 @Component({
   selector: 'app-formulario-eventos',
@@ -14,13 +14,18 @@ import { agoraInputDataHora } from 'src/app/models/evento';
 })
 export class FormularioEventosComponent implements OnInit {
 
-  constructor(private eventoService: EventoService, private categoriaService: CategoriaService) {}
+  constructor(
+    private eventoService: EventoService,
+    private categoriaService: CategoriaService,
+    private notifier: NotifierService
+  ) {}
 
   @Output() eventoCadastradoOutput = new EventEmitter<void>();
   @Output() fecharOutput = new EventEmitter<void>();
 
-  mensagemErro: string = '';
   categorias: Categoria[] = [];
+  enviando = false;
+  dataMinima = agoraInputDataHora(); // A API não aceita data no passado
 
   eventoFormulario = new FormGroup({
     nome: new FormControl('', Validators.required),
@@ -28,12 +33,9 @@ export class FormularioEventosComponent implements OnInit {
     capacidade_maxima: new FormControl(null, [Validators.required, Validators.min(1)]),
     data_evento: new FormControl(null, Validators.required),
     categoriaId: new FormControl(null, Validators.required)
-  })
+  });
 
-  enviando: boolean = false
-  dataMinima = agoraInputDataHora(); // A API não aceita data no passado
-
-  ngOnInit(): void{
+  ngOnInit(): void {
     this.listarCategorias();
   }
 
@@ -42,7 +44,12 @@ export class FormularioEventosComponent implements OnInit {
     return !!controle && controle.invalid && controle.touched;
   }
 
-  onSubmit(){
+  onSubmit(): void {
+    if (this.eventoFormulario.invalid) {
+      this.eventoFormulario.markAllAsTouched();
+      return;
+    }
+
     const evento = {
       nome: this.eventoFormulario.value.nome!,
       local: this.eventoFormulario.value.local!,
@@ -51,37 +58,28 @@ export class FormularioEventosComponent implements OnInit {
       categoriaId: this.eventoFormulario.value.categoriaId!
     };
 
-    this.mensagemErro = '';
-    this.enviando = true
+    this.enviando = true;
 
     this.eventoService.cadastrarEvento(evento)
-    .subscribe({
-      next: () => {
-        // A página de eventos fecha o modal e mostra a mensagem de sucesso
-        this.enviando = false
-        this.eventoFormulario.reset();
-        this.eventoCadastradoOutput.emit()
-      },
-      error: erro => {
-        this.enviando = false
-        this.mensagemErro = erro.error?.titulo ?? 'Não foi possível cadastrar o evento. Tente novamente.';
-        setTimeout(() => {
-          this.mensagemErro = ''
-        }, 3000);
-      }
-    })
+      .subscribe({
+        next: () => {
+          // A página de eventos fecha o modal e dispara a notificação de sucesso
+          this.enviando = false;
+          this.eventoFormulario.reset();
+          this.eventoCadastradoOutput.emit();
+        },
+        error: erro => {
+          this.enviando = false;
+          this.notifier.erroApi(erro, 'Não foi possível cadastrar o evento. Tente novamente.');
+        }
+      });
   }
 
-  async listarCategorias(){
-      try {
-        const response = await firstValueFrom(this.categoriaService.listarCategorias());
-        this.categorias = response;
-      } catch (error) {
-        this.mensagemErro = "Não foi possível carregar as categorias.";
-        setTimeout(() => {
-          this.mensagemErro = "";
-        }, 2000);
-      }
+  async listarCategorias(): Promise<void> {
+    try {
+      this.categorias = await firstValueFrom(this.categoriaService.listarCategorias());
+    } catch {
+      this.notifier.erro('Não foi possível carregar as categorias');
+    }
   }
-
 }

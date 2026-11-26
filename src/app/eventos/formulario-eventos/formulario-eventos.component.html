@@ -58,8 +58,6 @@
         </div>
     </div>
 
-    <app-aviso *ngIf="mensagemErro" class="mt-5 block" tipo="erro" [mensagem]="mensagemErro"></app-aviso>
-
     <div class="mt-6 flex flex-col-reverse items-stretch justify-end gap-2 border-t border-gray-100 pt-4 sm:flex-row sm:items-center">
         <button type="button" (click)="fecharOutput.emit()" class="btn-secondary w-full sm:w-auto">Cancelar</button>
         <button type="submit" [disabled]="eventoFormulario.invalid || enviando" class="btn-primary w-full sm:w-auto">

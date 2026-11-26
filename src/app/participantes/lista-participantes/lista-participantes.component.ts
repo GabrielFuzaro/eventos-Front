@@ -1,21 +1,25 @@
-import { Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, OnDestroy, Output, ViewChild } from '@angular/core';
-import { Participante } from 'src/app/models/participante';
+import { Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, Output, ViewChild } from '@angular/core';
 import { OPCOES_TAMANHO_PAGINA, calcularPaginasVisiveis } from 'src/app/models/paginacao';
-import { ParticipanteService } from 'src/app/services/participante.service';
+import { Participante } from 'src/app/models/participante';
 import { AuthService } from 'src/app/services/auth.service';
+import { NotifierService } from 'src/app/services/notifier.service';
+import { ParticipanteService } from 'src/app/services/participante.service';
 
 @Component({
   selector: 'app-lista-participantes',
   templateUrl: './lista-participantes.component.html',
   styleUrls: ['./lista-participantes.component.css']
 })
-export class ListaParticipantesComponent implements OnChanges, OnDestroy {
+export class ListaParticipantesComponent implements OnChanges {
 
-  constructor(private participantesService: ParticipanteService, public authService: AuthService) {}
+  constructor(
+    private participantesService: ParticipanteService,
+    public authService: AuthService,
+    private notifier: NotifierService
+  ) {}
 
   participantes: Participante[] = [];
   participanteParaExcluir: Participante | null = null;
-  private timerMensagem?: ReturnType<typeof setTimeout>;
 
   @Input() eventoId!: number;
   @Input() totalParticipantes = 0;
@@ -24,9 +28,6 @@ export class ListaParticipantesComponent implements OnChanges, OnDestroy {
   @ViewChild('botaoCancelarParticipante') set botaoCancelarParticipante(botao: ElementRef<HTMLButtonElement> | undefined) {
     botao?.nativeElement.focus();
   }
-
-  mensagemErro = '';
-  mensagemSucesso = '';
 
   paginaAtual = 0;
   tamanhoPagina = 10;
@@ -43,10 +44,6 @@ export class ListaParticipantesComponent implements OnChanges, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {
-    clearTimeout(this.timerMensagem);
-  }
-
   listarParticipantes(): void {
     this.participantesService.listarParticipantesEvento(this.eventoId, this.paginaAtual, this.tamanhoPagina)
       .subscribe({
@@ -60,7 +57,7 @@ export class ListaParticipantesComponent implements OnChanges, OnDestroy {
           this.totalPaginas = resposta.totalPages;
         },
         error: erro => {
-          this.mostrarErro(erro.error?.titulo ?? 'Não foi possível carregar os participantes.');
+          this.notifier.erroApi(erro, 'Não foi possível carregar os participantes.');
         }
       });
   }
@@ -97,10 +94,10 @@ export class ListaParticipantesComponent implements OnChanges, OnDestroy {
         next: () => {
           this.listarParticipantes();
           this.participanteExcluidoOutput.emit();
-          this.mostrarSucesso('Participante excluído');
+          this.notifier.sucesso('Participante excluído');
         },
         error: erro => {
-          this.mostrarErro(erro.error?.titulo ?? 'Não foi possível excluir o participante. Tente novamente.');
+          this.notifier.erroApi(erro, 'Não foi possível excluir o participante. Tente novamente.');
         }
       });
   }
@@ -108,19 +105,5 @@ export class ListaParticipantesComponent implements OnChanges, OnDestroy {
   @HostListener('document:keydown.escape')
   fecharDialogo(): void {
     this.participanteParaExcluir = null;
-  }
-
-  private mostrarSucesso(mensagem: string): void {
-    clearTimeout(this.timerMensagem);
-    this.mensagemErro = '';
-    this.mensagemSucesso = mensagem;
-    this.timerMensagem = setTimeout(() => { this.mensagemSucesso = ''; }, 2500);
-  }
-
-  private mostrarErro(mensagem: string): void {
-    clearTimeout(this.timerMensagem);
-    this.mensagemSucesso = '';
-    this.mensagemErro = mensagem;
-    this.timerMensagem = setTimeout(() => { this.mensagemErro = ''; }, 3000);
   }
 }

@@ -3,6 +3,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { AppComponent } from './app.component';
 import { AuthService } from './services/auth.service';
+import { NotifierComponent } from './compartilhado/notifier/notifier.component';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
@@ -12,7 +13,8 @@ describe('AppComponent', () => {
         HttpClientTestingModule
       ],
       declarations: [
-        AppComponent
+        AppComponent,
+        NotifierComponent
       ],
     }).compileComponents();
   });

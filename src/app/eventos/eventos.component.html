@@ -32,6 +32,31 @@
         </button>
     </div>
 
+    
+    <div class="grid grid-cols-1 gap-3 sm:grid-cols-4 mb-8" *ngIf="!authService.isAdmin()" aria-label="Resumo de eventos">
+        <div class="rounded-panel border border-navy-soft bg-codiub-panel-bg p-4">
+            <p class="text-sm text-codiub-muted">Eventos abertos</p>
+            <p class="mt-1 text-2xl font-bold text-codiub-navy tabular-nums">{{ totalAbertos }}</p>
+            <p class="mt-1 text-xs text-slate-500">Inscrições liberadas no momento</p>
+        </div>
+        <div class="rounded-panel border border-navy-soft bg-codiub-panel-bg p-4">
+            <p class="text-sm text-codiub-muted">Em lista de espera</p>
+            <p class="mt-1 text-2xl font-bold text-codiub-navy tabular-nums">{{ totalLotados }}</p>
+            <p class="mt-1 text-xs text-slate-500">Eventos com fila automática ativa</p>
+        </div>
+        <div class="rounded-panel border border-navy-soft bg-codiub-panel-bg p-4">
+            <p class="text-sm text-codiub-muted">Total no recorte</p>
+            <p class="mt-1 text-2xl font-bold text-codiub-navy tabular-nums">{{ totalEventos }}</p>
+            <p class="mt-1 text-xs text-slate-500">Eventos registrados no município</p>
+        </div>
+        <div class="rounded-panel border border-navy-soft bg-codiub-panel-bg p-4">
+            <p class="text-sm text-codiub-muted">Vagas ofertadas</p>
+            <p class="mt-1 text-2xl font-bold text-codiub-navy tabular-nums">{{ totalVagas }}</p>
+            <p class="mt-1 text-xs text-slate-500">Capacidade total disponível</p>
+        </div>
+    </div>
+
+
     <!-- Barra única de filtros da Área Pública (labels uppercase + controles 48px + botão Aplicar filtros) -->
     <div class="mb-6 flex flex-wrap items-end justify-start gap-4 border-y border-gray-200 bg-white py-4 sm:gap-5 sm:py-6">
         <div class="flex w-full flex-col gap-1.5 sm:w-44">
@@ -170,6 +195,7 @@
 
 <!-- Card de resultados / tabela -->
 <section class="card overflow-hidden">
+    
 
     <!-- Barra de título navy na Área Pública (igual ao bloco de resultados de layouts.md §6) -->
     <div *ngIf="!authService.isAdmin()" class="flex items-center justify-between gap-2 bg-codiub-navy px-5 py-3.5">
@@ -184,6 +210,7 @@
             {{ totalElementos }} {{ totalElementos === 1 ? 'evento' : 'eventos' }}
         </span>
     </div>
+    
 
     <!-- Filtros internos da tabela do CMS (visíveis apenas para Admin) -->
     <div *ngIf="authService.isAdmin()" class="border-b border-gray-100 p-4">
@@ -435,31 +462,6 @@
     </nav>
 </section>
 
-<!-- Indicadores resumidos na Área Pública (abaixo dos resultados, conforme layouts.md §6) -->
-<section *ngIf="!authService.isAdmin()" aria-label="Resumo de eventos" class="mt-6 rounded-panel border border-navy-soft bg-white p-4 shadow-sm sm:p-5">
-    <div class="grid grid-cols-1 gap-3 sm:grid-cols-4">
-        <div class="rounded-panel border border-navy-soft bg-codiub-panel-bg p-4">
-            <p class="text-sm text-codiub-muted">Eventos abertos</p>
-            <p class="mt-1 text-2xl font-bold text-codiub-navy tabular-nums">{{ totalAbertos }}</p>
-            <p class="mt-1 text-xs text-slate-500">Inscrições liberadas no momento</p>
-        </div>
-        <div class="rounded-panel border border-navy-soft bg-codiub-panel-bg p-4">
-            <p class="text-sm text-codiub-muted">Em lista de espera</p>
-            <p class="mt-1 text-2xl font-bold text-codiub-navy tabular-nums">{{ totalLotados }}</p>
-            <p class="mt-1 text-xs text-slate-500">Eventos com fila automática ativa</p>
-        </div>
-        <div class="rounded-panel border border-navy-soft bg-codiub-panel-bg p-4">
-            <p class="text-sm text-codiub-muted">Total no recorte</p>
-            <p class="mt-1 text-2xl font-bold text-codiub-navy tabular-nums">{{ totalEventos }}</p>
-            <p class="mt-1 text-xs text-slate-500">Eventos registrados no município</p>
-        </div>
-        <div class="rounded-panel border border-navy-soft bg-codiub-panel-bg p-4">
-            <p class="text-sm text-codiub-muted">Vagas ofertadas</p>
-            <p class="mt-1 text-2xl font-bold text-codiub-navy tabular-nums">{{ totalVagas }}</p>
-            <p class="mt-1 text-xs text-slate-500">Capacidade total disponível</p>
-        </div>
-    </div>
-</section>
 
 <!-- Diálogo: novo evento -->
 <div *ngIf="statusFormulario" class="dialog-overlay">

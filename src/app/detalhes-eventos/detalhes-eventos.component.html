@@ -1,17 +1,33 @@
-<!-- Breadcrumb institucional (Modo Prefeitura) -->
-<nav aria-label="Você está em" class="mb-4">
+<!-- Navegação: Breadcrumb público (FacilitaTudo) para Usuário comum; retorno direto no CMS -->
+<nav *ngIf="!authService.isAdmin(); else voltarCms" aria-label="Você está em" class="mb-5">
     <ol class="flex flex-wrap items-center gap-2 text-sm">
         <li>
             <a href="https://portal.uberaba.mg.gov.br/" target="_blank" rel="noopener noreferrer" aria-label="Portal da Prefeitura de Uberaba" title="Portal da Prefeitura de Uberaba" class="inline-flex items-center">
-                <img src="assets/icons/blue-home.svg" alt="Portal da Prefeitura" class="h-4 w-4">
+                <img src="assets/icons/blue-home.svg" alt="Início" class="h-4 w-4">
             </a>
         </li>
         <li aria-hidden="true" class="text-gray-400">›</li>
-        <li><a routerLink="/eventos" class="link font-normal">Eventos</a></li>
+        <li>
+            <a href="http://www.uberaba.mg.gov.br/facilitatudo/principal" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">
+                FacilitaTudo
+            </a>
+        </li>
+        <li aria-hidden="true" class="text-gray-400">›</li>
+        <li><a routerLink="/eventos" class="text-blue-600 hover:underline">Eventos</a></li>
         <li aria-hidden="true" class="text-gray-400">›</li>
         <li aria-current="page" class="max-w-[60vw] truncate text-gray-600">{{ evento ? evento.nome : 'Detalhes' }}</li>
     </ol>
 </nav>
+<ng-template #voltarCms>
+    <div class="mb-4">
+        <a routerLink="/eventos" class="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:underline">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M15 19l-7-7 7-7" />
+            </svg>
+            Voltar para eventos
+        </a>
+    </div>
+</ng-template>
 
 <ng-container *ngIf="evento; else carregando">
 

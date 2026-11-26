@@ -4,10 +4,10 @@
     <aside class="hidden flex-col justify-between bg-codiub-navy p-8 text-white md:flex">
         <div>
             <img
-                src="assets/logo/prefeitura/pmu-branca-horizontal.png"
+                src="assets/logo/prefeitura/pmu-colorida-texto-branco-horizontal.png"
                 alt="Prefeitura de Uberaba"
-                class="h-9 w-auto object-contain">
-            <h2 class="mt-8 text-xl font-bold">Gestão de Eventos</h2>
+                class="h-10 w-auto object-contain">
+            <h2 class="mt-8 text-xl font-bold">Eventos</h2>
             <p class="mt-4 text-sm leading-8 text-gray-300">
                 Crie sua conta para se inscrever em eventos municipais, acompanhar as vagas disponíveis e entrar na lista de espera quando um evento lotar.
             </p>
@@ -21,11 +21,7 @@
 
     <!-- Formulário -->
     <div class="p-6 sm:p-8">
-        <img
-            src="assets/logo/prefeitura/pmu-colorida-horizontal.png"
-            alt="Prefeitura de Uberaba"
-            class="h-10 w-auto object-contain md:hidden">
-        <h1 class="mt-6 text-lg font-bold text-codiub-brand md:mt-0 md:text-xl">Criar conta</h1>
+        <h1 class="text-lg font-bold text-codiub-brand md:text-xl">Criar conta</h1>
         <p class="mt-1 text-sm text-gray-600">Preencha os dados para se cadastrar.</p>
 
         <form [formGroup]="cadastroFormulario" (ngSubmit)="enviarCadastro()" class="mt-6 space-y-4 md:space-y-6" novalidate>

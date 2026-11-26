@@ -47,76 +47,6 @@
   }
 }
 
-/* Opção da barra de acessibilidade: desabilitar animações */
-html.a11y-sem-animacao *,
-html.a11y-sem-animacao *::before,
-html.a11y-sem-animacao *::after {
-  animation: none !important;
-  transition: none !important;
-  scroll-behavior: auto !important;
-}
-
-/* Modo alto contraste governamental (única exceção permitida à paleta: #000000 / #FFFFFF / #FFFF00) */
-html.a11y-contraste,
-html.a11y-contraste body {
-  background-color: #000000 !important;
-  color: #FFFFFF !important;
-}
-
-html.a11y-contraste header,
-html.a11y-contraste footer,
-html.a11y-contraste nav,
-html.a11y-contraste aside,
-html.a11y-contraste section,
-html.a11y-contraste form,
-html.a11y-contraste table,
-html.a11y-contraste thead,
-html.a11y-contraste tr,
-html.a11y-contraste .card,
-html.a11y-contraste .a11y-panel {
-  background-color: #000000 !important;
-  color: #FFFFFF !important;
-  border-color: #FFFF00 !important;
-}
-
-html.a11y-contraste h1,
-html.a11y-contraste h2,
-html.a11y-contraste h3,
-html.a11y-contraste h4,
-html.a11y-contraste p,
-html.a11y-contraste span,
-html.a11y-contraste label,
-html.a11y-contraste th,
-html.a11y-contraste td {
-  color: #FFFFFF !important;
-}
-
-html.a11y-contraste a,
-html.a11y-contraste .link,
-html.a11y-contraste .btn-ghost {
-  color: #FFFF00 !important;
-  text-decoration: underline !important;
-}
-
-html.a11y-contraste button,
-html.a11y-contraste .btn,
-html.a11y-contraste .btn-primary,
-html.a11y-contraste .btn-secondary,
-html.a11y-contraste .btn-danger,
-html.a11y-contraste input,
-html.a11y-contraste select,
-html.a11y-contraste textarea,
-html.a11y-contraste .badge {
-  background-color: #000000 !important;
-  color: #FFFF00 !important;
-  border: 1px solid #FFFF00 !important;
-}
-
-html.a11y-contraste *:focus-visible {
-  outline: 2px solid #FFFF00 !important;
-  outline-offset: 2px !important;
-}
-
 @layer components {
   /* Superfícies */
   .card {
@@ -150,6 +80,11 @@ html.a11y-contraste *:focus-visible {
       disabled:border-transparent disabled:bg-codiub-disabled disabled:text-gray-800 sm:text-sm;
   }
 
+  .input-lg {
+    @apply block h-control-lg w-full rounded-lg border border-gray-300 bg-white px-4 text-base text-codiub-ink transition-colors
+      placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500;
+  }
+
   .input-invalid {
     @apply border-red-600 bg-red-50 focus:border-red-600 focus:ring-red-600;
   }
@@ -172,6 +107,10 @@ html.a11y-contraste *:focus-visible {
   .btn-primary {
     @apply btn border-transparent bg-codiub-brand text-white hover:bg-codiub-brand-hover active:bg-codiub-brand-active
       focus-visible:ring-blue-600 disabled:hover:bg-codiub-brand;
+  }
+
+  .btn-primary-lg {
+    @apply btn-primary h-control-lg px-8 font-bold;
   }
 
   .btn-secondary {

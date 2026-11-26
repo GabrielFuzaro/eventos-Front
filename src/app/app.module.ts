@@ -17,7 +17,6 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { CadastroComponent } from './cadastro/cadastro.component';
 import { ListaEsperaComponent } from './participantes/lista-espera/lista-espera.component';
 import { AvisoComponent } from './compartilhado/aviso/aviso.component';
-import { BarraAcessibilidadeComponent } from './compartilhado/barra-acessibilidade/barra-acessibilidade.component';
 import { PaginaNaoEncontradaComponent } from './compartilhado/pagina-nao-encontrada/pagina-nao-encontrada.component';
 import { ModalRotaComponent } from './compartilhado/modal-rota/modal-rota.component';
 
@@ -36,7 +35,6 @@ registerLocaleData(localePt);
     CadastroComponent,
     ListaEsperaComponent,
     AvisoComponent,
-    BarraAcessibilidadeComponent,
     PaginaNaoEncontradaComponent,
     ModalRotaComponent,
   ],

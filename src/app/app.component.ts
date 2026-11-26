@@ -10,9 +10,11 @@ import { AuthService } from './services/auth.service';
 })
 export class AppComponent {
 
-  // Rotas de eventos mostram a sidebar; login, cadastro e 404 mostram só navbar e footer
-  areaInterna = false;
+  // Rotas de eventos (/eventos*); login, cadastro e 404 ficam fora da área de eventos
+  areaEventos = false;
   menuAberto = false;
+  sidebarAberta = true;
+  cadastrosAberto = true;
   readonly ano = new Date().getFullYear();
 
   constructor(private router: Router, public authService: AuthService) {
@@ -20,9 +22,15 @@ export class AppComponent {
       .pipe(filter(evento => evento instanceof NavigationEnd))
       .subscribe(evento => {
         const url = (evento as NavigationEnd).urlAfterRedirects;
-        this.areaInterna = url.startsWith('/eventos');
+        this.areaEventos = url.startsWith('/eventos');
         this.menuAberto = false;
       });
+  }
+
+  // Administradores nas telas de eventos usam o Layout CMS (Print 1);
+  // Usuários comuns e telas de autenticação usam o Layout Público (Print 2)
+  get modoCms(): boolean {
+    return this.areaEventos && this.authService.isAdmin();
   }
 
   get primeiroNome(): string {
@@ -31,6 +39,19 @@ export class AppComponent {
 
   alternarMenu(): void {
     this.menuAberto = !this.menuAberto;
+  }
+
+  alternarSidebar(): void {
+    this.sidebarAberta = !this.sidebarAberta;
+  }
+
+  alternarGrupoCadastros(): void {
+    if (!this.sidebarAberta) {
+      this.sidebarAberta = true;
+      this.cadastrosAberto = true;
+      return;
+    }
+    this.cadastrosAberto = !this.cadastrosAberto;
   }
 
   @HostListener('document:keydown.escape')

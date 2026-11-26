@@ -20,7 +20,7 @@ npx ng build      # build; precisa passar sem erros antes de commitar
 
 ```
 src/app
-├── compartilhado/   # AvisoComponent, BarraAcessibilidadeComponent, ModalRotaComponent e PaginaNaoEncontradaComponent
+├── compartilhado/   # AvisoComponent, ModalRotaComponent e PaginaNaoEncontradaComponent
 ├── models/          # Interfaces (Evento, Participante, ListaEspera, Page<T>, Categoria...) + helpers de exibição
 ├── services/        # Um service por recurso da API (evento, participante, lista-espera, categoria, auth) usando environment.apiUrl
 ├── interceptors/    # AuthInterceptor: envia o cookie do token (withCredentials) e trata 401
@@ -56,7 +56,9 @@ src/app
 
 ### Visual (design CODIUB — Modo Prefeitura)
 
-- **Modo Prefeitura ativo:** navbar navy (`bg-codiub-navy`) com logo branco da Prefeitura (`assets/logo/prefeitura/pmu-branca-horizontal.png`), drawer mobile e coluna clara de login/cadastro com logo colorido (`pmu-colorida-horizontal.png`), barra de acessibilidade (`<app-barra-acessibilidade>`) + VLibras, breadcrumb iniciando no Portal da Prefeitura (`assets/icons/blue-home.svg`) e footer navy assinando com `codiub-branca-horizontal.png` e texto em `gray-300`.
+- **Modo Prefeitura em duas faces:**
+  - **CMS (`ADMIN`):** navbar navy (`bg-codiub-navy`) com `assets/logo/prefeitura/pmu-colorida-texto-branco-horizontal.png`, sidebar clara recolhível com `☰`, sem breadcrumb e painel agrupado de indicadores.
+  - **Área Pública (`USER`, Login e Cadastro):** barra branca com `pmu-colorida-horizontal.png` + faixa navy `"Eventos"` + breadcrumb `Portal da Prefeitura › FacilitaTudo › Início` + barra única de filtros com controles `h-control-lg` (`48px`), widget VLibras e footer navy assinando com `codiub-branca-horizontal.png` em `gray-300`.
 - Cada azul tem um papel: `codiub-brand` (#002069) é ação e título (botão primário, `page-title`), `codiub-navy`
   (#042D62) só superfície (navbar, footer, barra de título de card), `blue-600` é interação secundária (links,
   botão secundário, paginação ativa). Ciano só como detalhe sobre navy. Não crie outros tons nem hex novos.

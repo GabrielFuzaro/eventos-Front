@@ -6,8 +6,10 @@ Interface web desenvolvida em **Angular 15** e **Tailwind CSS 3**, padronizada c
 
 ## Funcionalidades
 
-- **Identidade Institucional Municipal (Modo Prefeitura):** cabeçalho com marca oficial da Prefeitura de Uberaba em versão branca sobre superfície navy (`#042D62`), assinatura tecnológica CODIUB no rodapé e breadcrumb integrado ao Portal da Prefeitura.
-- **Acessibilidade Governamental (WCAG AA + eMAG):** barra de ferramentas de acessibilidade (`A+`, `A-`, modo **Alto Contraste** `#000000`/`#FFFFFF`/`#FFFF00`, desativação de animações e reset persistidos em `localStorage`), navegação por teclado, diálogos acessíveis (`role="alertdialog"`) e integração com o widget **VLibras**.
+- **Duas Faces Institucionais (Modo Prefeitura):**
+  - **Área Administrativa / CMS (`ADMIN`):** navbar navy (`#042D62`) com brasão colorido da Prefeitura + texto branco (`pmu-colorida-texto-branco-horizontal.png`), sidebar clara recolhível no desktop (`GE` + botão `☰`) e painel agrupado de indicadores.
+  - **Área Pública / Cidadão (`USER`, Login e Cadastro):** barra superior branca com `pmu-colorida-horizontal.png` + faixa navy `"Eventos"` + breadcrumb `Portal da Prefeitura › FacilitaTudo › Início` + barra única de filtros com controles grandes (`48px`).
+- **Acessibilidade Governamental (WCAG AA + VLibras):** contraste validado em todas as combinações, navegação por teclado, diálogos acessíveis (`role="alertdialog"`) e widget oficial **VLibras**.
 - **Listagem de eventos** responsiva (tabela no desktop e blocos rotulados abaixo de `md`), com indicadores de status, busca com *debounce*, filtro por período/status, seletor de ocultação de colunas e distinção clara entre estado carregando, vazio e erro.
 - **Cadastro e edição de eventos** com *Reactive Forms* e validação de campos.
 - **Detalhes do evento e localização:** painel de ocupação em tempo real, exportação de participantes em Excel e **modal de rota integrado com Google Maps e Waze**.
@@ -36,7 +38,6 @@ src/
 ├── app/
 │   ├── compartilhado/
 │   │   ├── aviso/                     # Feedback visual acessível (sucesso, erro, info)
-│   │   ├── barra-acessibilidade/      # Painel A+, A-, Alto Contraste e Redução de Movimento
 │   │   ├── modal-rota/                # Modal de localização e rota (Google Maps e Waze)
 │   │   └── pagina-nao-encontrada/     # Tela 404 padronizada
 │   ├── eventos/                       # Listagem, indicadores, criação e edição de eventos

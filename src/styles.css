@@ -172,7 +172,12 @@
     @apply font-medium text-gray-600 md:hidden;
   }
 
-  /* Paginação */
+  /* Paginação (padrão CODIUB: 5 / 10 / 20 itens por página) */
+  .select-page-size {
+    @apply h-9 rounded-lg border border-gray-300 bg-white px-2.5 text-sm font-medium text-gray-900 transition-colors
+      focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500;
+  }
+
   .page-btn {
     @apply inline-flex h-10 min-w-[2.5rem] items-center justify-center rounded-full px-3 text-sm font-semibold text-gray-700 transition-colors
       hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 md:h-8 md:min-w-[2rem];

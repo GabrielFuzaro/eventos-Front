@@ -6,6 +6,7 @@ import { FormularioEdicaoEventosComponent } from './eventos/formulario-edicao-ev
 import { LoginComponent } from './login/login.component';
 import { CadastroComponent } from './cadastro/cadastro.component';
 import { PaginaNaoEncontradaComponent } from './compartilhado/pagina-nao-encontrada/pagina-nao-encontrada.component';
+import { MinhaContaComponent } from './minha-conta/minha-conta.component';
 import { AuthGuard } from './guards/auth.guard';
 
 const routes: Routes = [
@@ -13,6 +14,11 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     path: 'eventos',
     component: EventosComponent
+  },
+  {
+    canActivate: [AuthGuard],
+    path: 'minha-conta',
+    component: MinhaContaComponent
   },
   {
     canActivate: [AuthGuard],

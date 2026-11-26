@@ -1,5 +1,6 @@
 import { Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, OnDestroy, Output, ViewChild } from '@angular/core';
 import { ListaEspera } from 'src/app/models/lista-espera';
+import { OPCOES_TAMANHO_PAGINA, calcularPaginasVisiveis } from 'src/app/models/paginacao';
 import { AuthService } from 'src/app/services/auth.service';
 import { ListaEsperaService } from 'src/app/services/lista-espera.service';
 
@@ -30,7 +31,12 @@ export class ListaEsperaComponent implements OnChanges, OnDestroy {
 
   paginaAtual = 0;
   tamanhoPagina = 5;
+  readonly opcoesTamanhoPagina = OPCOES_TAMANHO_PAGINA;
   totalPaginas = 0;
+
+  get paginas(): number[] {
+    return calcularPaginasVisiveis(this.paginaAtual, this.totalPaginas);
+  }
 
   ngOnChanges(): void {
     if (this.eventoId) {
@@ -73,6 +79,12 @@ export class ListaEsperaComponent implements OnChanges, OnDestroy {
       return;
     }
     this.paginaAtual = pagina;
+    this.listar();
+  }
+
+  alterarTamanhoPagina(novoTamanho: number): void {
+    this.tamanhoPagina = Number(novoTamanho);
+    this.paginaAtual = 0;
     this.listar();
   }
 

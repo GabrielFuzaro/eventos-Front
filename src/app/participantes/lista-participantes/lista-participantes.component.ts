@@ -1,5 +1,6 @@
 import { Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, OnDestroy, Output, ViewChild } from '@angular/core';
 import { Participante } from 'src/app/models/participante';
+import { OPCOES_TAMANHO_PAGINA, calcularPaginasVisiveis } from 'src/app/models/paginacao';
 import { ParticipanteService } from 'src/app/services/participante.service';
 import { AuthService } from 'src/app/services/auth.service';
 
@@ -28,8 +29,13 @@ export class ListaParticipantesComponent implements OnChanges, OnDestroy {
   mensagemSucesso = '';
 
   paginaAtual = 0;
-  tamanhoPagina = 9;
+  tamanhoPagina = 10;
+  readonly opcoesTamanhoPagina = OPCOES_TAMANHO_PAGINA;
   totalPaginas = 0;
+
+  get paginas(): number[] {
+    return calcularPaginasVisiveis(this.paginaAtual, this.totalPaginas);
+  }
 
   ngOnChanges(): void {
     if (this.eventoId) {
@@ -65,6 +71,12 @@ export class ListaParticipantesComponent implements OnChanges, OnDestroy {
     }
 
     this.paginaAtual = pagina;
+    this.listarParticipantes();
+  }
+
+  alterarTamanhoPagina(novoTamanho: number): void {
+    this.tamanhoPagina = Number(novoTamanho);
+    this.paginaAtual = 0;
     this.listarParticipantes();
   }
 

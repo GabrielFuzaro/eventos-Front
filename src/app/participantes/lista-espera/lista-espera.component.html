@@ -63,11 +63,34 @@
         </table>
     </div>
 
-    <nav *ngIf="totalPaginas > 1" class="flex items-center justify-between gap-3 border-t border-gray-100 p-3 text-sm text-gray-600" aria-label="Paginação da lista de espera">
-        <p>Página {{ paginaAtual + 1 }} de {{ totalPaginas }}</p>
+    <nav *ngIf="inscricoes.length > 0" class="flex flex-col items-center justify-between gap-3 border-t border-gray-100 p-3 text-sm text-gray-600 sm:flex-row" aria-label="Paginação da lista de espera">
+        <div class="flex flex-wrap items-center justify-center gap-3 sm:justify-start">
+            <div class="flex items-center gap-2">
+                <label for="tamanhoPaginaFila" class="text-sm text-gray-600">Itens por página</label>
+                <select
+                    id="tamanhoPaginaFila"
+                    [ngModel]="tamanhoPagina"
+                    (ngModelChange)="alterarTamanhoPagina($event)"
+                    class="select-page-size">
+                    <option *ngFor="let opcao of opcoesTamanhoPagina" [ngValue]="opcao">{{ opcao }}</option>
+                </select>
+            </div>
+            <span class="text-gray-400" aria-hidden="true">·</span>
+            <p class="tabular-nums">Página {{ paginaAtual + 1 }} de {{ totalPaginas || 1 }}</p>
+        </div>
         <div class="flex items-center gap-1">
             <button type="button" (click)="irParaPagina(paginaAtual - 1)" [disabled]="paginaAtual === 0" aria-label="Página anterior" class="btn-icon">
                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 19l-7-7 7-7" /></svg>
+            </button>
+            <button
+                *ngFor="let pagina of paginas"
+                type="button"
+                (click)="irParaPagina(pagina)"
+                [attr.aria-current]="pagina === paginaAtual ? 'page' : null"
+                [attr.aria-label]="'Página ' + (pagina + 1)"
+                [class.page-btn-active]="pagina === paginaAtual"
+                class="page-btn tabular-nums">
+                {{ pagina + 1 }}
             </button>
             <button type="button" (click)="irParaPagina(paginaAtual + 1)" [disabled]="paginaAtual >= totalPaginas - 1" aria-label="Próxima página" class="btn-icon">
                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>

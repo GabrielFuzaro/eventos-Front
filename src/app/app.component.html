@@ -141,6 +141,22 @@
                     </div>
                 </div>
 
+                <!-- Item direto: Minha conta (padrão CMS Print 1) -->
+                <a
+                    routerLink="/minha-conta"
+                    routerLinkActive="bg-navy-tint font-bold text-codiub-brand shadow-[inset_3px_0_0_#002069]"
+                    ariaCurrentWhenActive="page"
+                    title="Minha conta"
+                    aria-label="Minha conta"
+                    class="mb-1.5 flex min-h-[44px] items-center gap-3 rounded-lg px-3 text-sm text-gray-800 transition-colors hover:bg-navy-hover-tint focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+                    [class.md:justify-center]="!sidebarAberta">
+                    <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="8" r="4" />
+                        <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+                    </svg>
+                    <span [class.md:hidden]="!sidebarAberta">Minha conta</span>
+                </a>
+
                 <!-- Link institucional -->
                 <a
                     href="https://portal.uberaba.mg.gov.br/"
@@ -165,39 +181,49 @@
 
     <!-- ========================================================================= -->
     <!-- FACE 2: LAYOUT ÁREA PÚBLICA / CIDADÃO (Usuário comum, Login, Cadastro)     -->
-    <!-- Barra branca com logo colorido + faixa navy com nome do sistema (Print 2)  -->
+    <!-- Barra branca com logo colorido + faixa navy alinhados ao grid max-w-6xl    -->
     <!-- ========================================================================= -->
     <ng-template #topoPublico>
         <header>
-            <!-- Barra superior branca com logo colorido da Prefeitura -->
-            <div class="flex items-center justify-between gap-4 bg-white px-4 py-3 sm:px-8">
-                <a routerLink="/eventos" class="inline-flex items-center rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">
-                    <img
-                        src="assets/logo/prefeitura/pmu-colorida-horizontal.png"
-                        alt="Prefeitura de Uberaba"
-                        class="h-10 w-auto object-contain sm:h-12">
-                </a>
+            <!-- Barra superior branca com logo colorido da Prefeitura alinhado ao max-w-6xl -->
+            <div class="bg-white">
+                <div class="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
+                    <a routerLink="/eventos" class="inline-flex items-center rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">
+                        <img
+                            src="assets/logo/prefeitura/pmu-colorida-horizontal.png"
+                            alt="Prefeitura de Uberaba"
+                            class="h-10 w-auto object-contain sm:h-12">
+                    </a>
 
-                <div *ngIf="areaEventos && authService.estaLogado()" class="flex items-center gap-3">
-                    <span class="hidden text-sm text-gray-700 sm:inline">
-                        Bem-vindo(a), <span class="font-semibold text-codiub-ink">{{ primeiroNome }}</span>
-                    </span>
-                    <button
-                        type="button"
-                        (click)="logout()"
-                        aria-label="Sair"
-                        title="Sair"
-                        class="inline-flex h-10 w-10 items-center justify-center rounded-full text-codiub-navy transition-colors hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
-                        </svg>
-                    </button>
+                    <div *ngIf="areaEventos && authService.estaLogado()" class="flex items-center gap-3">
+                        <span class="hidden text-sm text-gray-700 sm:inline">
+                            Bem-vindo(a), <span class="font-semibold text-codiub-ink">{{ primeiroNome }}</span>
+                        </span>
+                        <a
+                            routerLink="/minha-conta"
+                            routerLinkActive="underline font-bold"
+                            class="text-sm font-medium text-blue-600 hover:underline focus:outline-none focus-visible:rounded focus-visible:ring-2 focus-visible:ring-blue-600">
+                            Minha conta
+                        </a>
+                        <button
+                            type="button"
+                            (click)="logout()"
+                            aria-label="Sair"
+                            title="Sair"
+                            class="inline-flex h-10 w-10 items-center justify-center rounded-full text-codiub-navy transition-colors hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            <!-- Faixa navy com o nome do produto -->
-            <div class="bg-codiub-navy px-5 py-5 md:px-10 md:py-7">
-                <p class="text-2xl font-bold text-white">Eventos</p>
+            <!-- Faixa navy com o nome do produto alinhado à coluna max-w-6xl -->
+            <div class="bg-codiub-navy py-5 md:py-8">
+                <div class="mx-auto w-full max-w-6xl px-4 sm:px-6">
+                    <p class="text-2xl font-bold text-white">Eventos</p>
+                </div>
             </div>
         </header>
 

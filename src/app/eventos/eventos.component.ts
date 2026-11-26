@@ -5,7 +5,7 @@ import { Evento, statusEvento } from '../models/evento';
 import { AuthService } from '../services/auth.service';
 import { Subject, Subscription, catchError, debounceTime, firstValueFrom, of, switchMap, tap } from 'rxjs';
 import { corCategoria } from '../models/categoria';
-import { Page } from '../models/paginacao';
+import { OPCOES_TAMANHO_PAGINA, Page, calcularPaginasVisiveis } from '../models/paginacao';
 
 @Component({
   selector: 'app-eventos',
@@ -27,8 +27,10 @@ export class EventosComponent implements OnInit, OnDestroy {
 
   carregando = true;
   paginaAtual = 0;
-  tamanhoPagina = 8;
+  tamanhoPagina = 10;
+  readonly opcoesTamanhoPagina = OPCOES_TAMANHO_PAGINA;
   totalPaginas = 0;
+  totalElementos = 0;
   totalAbertos = 0;
   totalLotados = 0;
   totalEncerrados = 0;
@@ -101,7 +103,7 @@ export class EventosComponent implements OnInit, OnDestroy {
   }
 
   get paginas(): number[] {
-    return Array.from({ length: this.totalPaginas }, (_, i) => i);
+    return calcularPaginasVisiveis(this.paginaAtual, this.totalPaginas);
   }
 
   get filtroAtivo(): boolean {
@@ -129,6 +131,7 @@ export class EventosComponent implements OnInit, OnDestroy {
     if (resposta) {
       this.eventos = resposta.content;
       this.totalPaginas = resposta.totalPages;
+      this.totalElementos = resposta.totalElements;
 
       // A página atual ficou vazia (ex.: último evento dela foi excluído): volta para a última que existe
       if (this.eventos.length === 0 && this.paginaAtual > 0) {
@@ -155,6 +158,12 @@ export class EventosComponent implements OnInit, OnDestroy {
     }
 
     this.paginaAtual = pagina;
+    this.carregarEventos();
+  }
+
+  alterarTamanhoPagina(novoTamanho: number): void {
+    this.tamanhoPagina = Number(novoTamanho);
+    this.paginaAtual = 0;
     this.carregarEventos();
   }
 

@@ -21,11 +21,11 @@
         </ol>
     </nav>
 
-    <!-- Título grande + subtítulo da Área Pública -->
+    <!-- Título grande + subtítulo da Área Pública (sentence case e sem repetir o título da faixa navy) -->
     <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-            <h1 class="text-2xl font-bold text-codiub-brand sm:text-3xl">Consulta de Eventos</h1>
-            <p class="mt-1 text-sm text-gray-600">Consulte os eventos disponíveis em Uberaba e realize sua inscrição</p>
+            <h1 class="text-2xl font-bold text-codiub-brand sm:text-3xl">Consulte os eventos disponíveis</h1>
+            <p class="mt-1 text-sm text-gray-600">Confira datas, locais e vagas em Uberaba e realize sua inscrição</p>
         </div>
         <button type="button" (click)="cadastrarEventoFormulario()" class="btn-secondary w-full sm:w-auto">
             Adicionar evento
@@ -56,7 +56,15 @@
 
         <div class="flex w-full flex-1 flex-col gap-1.5 sm:min-w-[220px]">
             <label for="pesquisaPublico" class="text-xs font-semibold uppercase tracking-wide text-gray-500">Evento</label>
-            <input id="pesquisaPublico" type="search" [(ngModel)]="pesquisaEvento" (keyup.enter)="aplicarFiltros()" placeholder="Pesquisar evento..." class="input-lg">
+            <div class="relative">
+                <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5">
+                    <svg class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="7" />
+                        <path d="M21 21l-4.35-4.35" />
+                    </svg>
+                </span>
+                <input id="pesquisaPublico" type="search" [(ngModel)]="pesquisaEvento" (keyup.enter)="aplicarFiltros()" placeholder="Nome do evento" class="input-lg pl-11">
+            </div>
         </div>
 
         <div class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
@@ -83,7 +91,7 @@
                 <rect x="14" y="14" width="7" height="7" rx="1" />
                 <rect x="3" y="14" width="7" height="7" rx="1" />
             </svg>
-            <h1 class="page-title">Dashboard de Eventos</h1>
+            <h1 class="page-title">Dashboard de eventos</h1>
         </div>
 
         <div class="flex flex-col-reverse gap-2 sm:flex-row sm:items-center">
@@ -138,7 +146,9 @@
             </svg>
             <h2 class="text-base font-bold text-white">Eventos encontrados</h2>
         </div>
-        <span class="text-sm font-semibold text-codiub-cyan tabular-nums">{{ eventos.length }} nesta página</span>
+        <span class="text-sm font-semibold text-codiub-cyan tabular-nums">
+            {{ totalElementos }} {{ totalElementos === 1 ? 'evento' : 'eventos' }}
+        </span>
     </div>
 
     <!-- Filtros internos do CMS (visíveis apenas para Admin, pois o Público já usa a barra única de cima) -->
@@ -321,9 +331,23 @@
         </table>
     </div>
 
-    <!-- Paginação -->
-    <nav *ngIf="totalPaginas > 1" class="flex flex-col items-center justify-between gap-3 border-t border-gray-100 p-3 text-sm text-gray-600 sm:flex-row" aria-label="Paginação">
-        <p>Página {{ paginaAtual + 1 }} de {{ totalPaginas }}</p>
+    <!-- Paginação padrão CODIUB: 5 / 10 / 20 itens por página (components.md §5) -->
+    <nav *ngIf="eventos.length > 0" class="flex flex-col items-center justify-between gap-3 border-t border-gray-100 p-3 text-sm text-gray-600 sm:flex-row" aria-label="Paginação de eventos">
+        <div class="flex flex-wrap items-center justify-center gap-3 sm:justify-start">
+            <div class="flex items-center gap-2">
+                <label for="tamanhoPaginaEventos" class="text-sm text-gray-600">Itens por página</label>
+                <select
+                    id="tamanhoPaginaEventos"
+                    [ngModel]="tamanhoPagina"
+                    (ngModelChange)="alterarTamanhoPagina($event)"
+                    class="select-page-size">
+                    <option *ngFor="let opcao of opcoesTamanhoPagina" [ngValue]="opcao">{{ opcao }}</option>
+                </select>
+            </div>
+            <span class="text-gray-400" aria-hidden="true">·</span>
+            <p class="tabular-nums">Página {{ paginaAtual + 1 }} de {{ totalPaginas || 1 }}</p>
+        </div>
+
         <div class="flex items-center gap-1">
             <button type="button" (click)="irParaPagina(paginaAtual - 1)" [disabled]="paginaAtual === 0" aria-label="Página anterior" class="btn-icon">
                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -337,7 +361,7 @@
                 [attr.aria-current]="pagina === paginaAtual ? 'page' : null"
                 [attr.aria-label]="'Página ' + (pagina + 1)"
                 [class.page-btn-active]="pagina === paginaAtual"
-                class="page-btn">
+                class="page-btn tabular-nums">
                 {{ pagina + 1 }}
             </button>
             <button type="button" (click)="irParaPagina(paginaAtual + 1)" [disabled]="paginaAtual >= totalPaginas - 1" aria-label="Próxima página" class="btn-icon">

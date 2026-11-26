@@ -1,0 +1,122 @@
+<!-- Navegação: Breadcrumb público para Cidadão; cabeçalho direto no CMS -->
+<ng-container *ngIf="!authService.isAdmin(); else cabecalhoCmsConta">
+    <nav aria-label="Você está em" class="mb-6">
+        <ol class="flex flex-wrap items-center gap-2 text-sm">
+            <li>
+                <a href="https://portal.uberaba.mg.gov.br/" target="_blank" rel="noopener noreferrer" aria-label="Portal da Prefeitura de Uberaba" title="Portal da Prefeitura de Uberaba" class="inline-flex items-center">
+                    <img src="assets/icons/blue-home.svg" alt="Início" class="h-4 w-4">
+                </a>
+            </li>
+            <li aria-hidden="true" class="text-gray-400">›</li>
+            <li>
+                <a href="http://www.uberaba.mg.gov.br/facilitatudo/principal" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">
+                    FacilitaTudo
+                </a>
+            </li>
+            <li aria-hidden="true" class="text-gray-400">›</li>
+            <li>
+                <a routerLink="/eventos" class="text-blue-600 hover:underline">Eventos</a>
+            </li>
+            <li aria-hidden="true" class="text-gray-400">›</li>
+            <li aria-current="page" class="text-gray-600">Minha conta</li>
+        </ol>
+    </nav>
+
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-codiub-brand sm:text-3xl">Minha conta</h1>
+        <p class="mt-1 text-sm text-gray-600">Consulte seus dados de acesso e o nível de permissão da sessão atual</p>
+    </div>
+</ng-container>
+
+<ng-template #cabecalhoCmsConta>
+    <div class="mb-5 flex items-center gap-2.5">
+        <svg class="h-5 w-5 text-codiub-ink" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="8" r="4" />
+            <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+        </svg>
+        <h1 class="page-title">Minha conta</h1>
+    </div>
+</ng-template>
+
+<section class="card w-full max-w-3xl p-5 sm:p-6" aria-labelledby="secaoDadosConta">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+        <h2 id="secaoDadosConta" class="eyebrow">Informações sobre a conta</h2>
+        <span class="badge" [ngClass]="authService.isAdmin() ? 'bg-navy-tint text-codiub-navy' : 'bg-green-50 text-green-700'">
+            <span class="h-1.5 w-1.5 rounded-full" [ngClass]="authService.isAdmin() ? 'bg-codiub-navy' : 'bg-green-700'" aria-hidden="true"></span>
+            Sessão ativa
+        </span>
+    </div>
+
+    <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-4 md:gap-5">
+        <div class="md:col-span-1">
+            <label for="perfilSigla" class="label">Código de perfil</label>
+            <input
+                id="perfilSigla"
+                type="text"
+                [value]="siglaPerfil"
+                readonly
+                class="input border-transparent bg-codiub-disabled text-center font-semibold text-gray-800">
+        </div>
+
+        <div class="md:col-span-3">
+            <label for="usuarioLogado" class="label">Usuário</label>
+            <input
+                id="usuarioLogado"
+                type="text"
+                [value]="nomeUsuario"
+                readonly
+                class="input border-transparent bg-codiub-disabled text-gray-800">
+        </div>
+
+        <div class="md:col-span-2">
+            <label for="nivelAcesso" class="label">Nível de acesso</label>
+            <input
+                id="nivelAcesso"
+                type="text"
+                [value]="rotuloPerfil"
+                readonly
+                class="input border-transparent bg-codiub-disabled text-gray-800">
+        </div>
+
+        <div class="md:col-span-2">
+            <label for="modoAutenticacao" class="label">Segurança da sessão</label>
+            <input
+                id="modoAutenticacao"
+                type="text"
+                value="Cookie HttpOnly protegido"
+                readonly
+                class="input border-transparent bg-codiub-disabled text-gray-800">
+        </div>
+    </div>
+
+    <div class="mt-6 border-t border-gray-100 pt-5">
+        <h2 class="eyebrow mb-3">Permissões disponíveis</h2>
+        <ul class="space-y-2 text-sm text-gray-700">
+            <li class="flex items-center gap-2">
+                <svg class="h-4 w-4 shrink-0 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M5 12l5 5L20 7" />
+                </svg>
+                Consultar eventos municipais, vagas restantes e rotas de localização
+            </li>
+            <li class="flex items-center gap-2">
+                <svg class="h-4 w-4 shrink-0 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M5 12l5 5L20 7" />
+                </svg>
+                Realizar inscrições em eventos abertos e acompanhar a lista de espera
+            </li>
+            <li *ngIf="authService.isAdmin()" class="flex items-center gap-2">
+                <svg class="h-4 w-4 shrink-0 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M5 12l5 5L20 7" />
+                </svg>
+                Editar e excluir eventos, gerenciar participantes e exportar relatórios em Excel
+            </li>
+        </ul>
+    </div>
+
+    <div class="mt-6 flex flex-col-reverse items-stretch justify-end gap-2 border-t border-gray-100 pt-4 sm:flex-row sm:items-center">
+        <a routerLink="/eventos" class="btn-secondary w-full sm:w-auto">Voltar para eventos</a>
+        <button type="button" (click)="encerrarSessao()" class="btn-primary w-full sm:w-auto">
+            Encerrar sessão
+        </button>
+    </div>
+</section>

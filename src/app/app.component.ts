@@ -10,7 +10,7 @@ import { AuthService } from './services/auth.service';
 })
 export class AppComponent {
 
-  // Rotas de eventos (/eventos*); login, cadastro e 404 ficam fora da área de eventos
+  // Rotas autenticadas internas (/eventos* e /minha-conta); login, cadastro e 404 ficam fora
   areaEventos = false;
   menuAberto = false;
   sidebarAberta = true;
@@ -22,7 +22,7 @@ export class AppComponent {
       .pipe(filter(evento => evento instanceof NavigationEnd))
       .subscribe(evento => {
         const url = (evento as NavigationEnd).urlAfterRedirects;
-        this.areaEventos = url.startsWith('/eventos');
+        this.areaEventos = url.startsWith('/eventos') || url.startsWith('/minha-conta');
         this.menuAberto = false;
       });
   }

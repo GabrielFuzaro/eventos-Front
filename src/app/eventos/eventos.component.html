@@ -3,7 +3,7 @@
 <!-- ========================================================================= -->
 <ng-container *ngIf="!authService.isAdmin(); else cabecalhoCms">
     <!-- Breadcrumb público: Portal da Prefeitura › FacilitaTudo › Início -->
-    <nav aria-label="Você está em" class="mb-6">
+    <nav aria-label="Você está em" class="mt-1 mb-8">
         <ol class="flex flex-wrap items-center gap-2 text-sm">
             <li>
                 <a href="https://portal.uberaba.mg.gov.br/" target="_blank" rel="noopener noreferrer" aria-label="Portal da Prefeitura de Uberaba" title="Portal da Prefeitura de Uberaba" class="inline-flex items-center">
@@ -22,7 +22,7 @@
     </nav>
 
     <!-- Título grande + subtítulo da Área Pública (sentence case e sem repetir o título da faixa navy) -->
-    <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <div class="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
             <h1 class="text-2xl font-bold text-codiub-brand sm:text-3xl">Consulte os eventos disponíveis</h1>
             <p class="mt-1 text-sm text-gray-600">Confira datas, locais e vagas em Uberaba e realize sua inscrição</p>
@@ -58,7 +58,7 @@
 
 
     <!-- Barra única de filtros da Área Pública (labels uppercase + controles 48px + botão Aplicar filtros) -->
-    <div class="mb-6 flex flex-wrap items-end justify-start gap-4 border-y border-gray-200 bg-white py-4 sm:gap-5 sm:py-6">
+    <div class="mb-6 flex w-full flex-wrap items-end justify-start gap-4 border-y border-gray-200 bg-white px-4 py-4 sm:gap-6 sm:px-6 sm:py-6">
         <div class="flex w-full flex-col gap-1.5 sm:w-44">
             <label for="filtroCategoriaPublico" class="text-xs font-semibold uppercase tracking-wide text-gray-500">Categoria</label>
             <select id="filtroCategoriaPublico" [(ngModel)]="categoriaId" class="input-lg">

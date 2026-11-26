@@ -1,0 +1,30 @@
+name: CI - Eventos Front
+
+on:
+  push:
+    branches: [ main, feat/*, claude/* ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: npm
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Build de produção Angular
+        run: npx ng build --configuration=production
+
+      - name: Executar testes unitários (ChromeHeadless)
+        run: npx ng test --watch=false --browsers=ChromeHeadless

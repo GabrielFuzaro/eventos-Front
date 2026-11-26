@@ -30,6 +30,10 @@ export class AuthService {
         return this.http.post<Usuario>(`${this.apiUrl}/cadastro`, { username, senha })
     }
 
+    alterarSenha(senhaAtual: string, novaSenha: string): Observable<void> {
+        return this.http.put<void>(`${this.apiUrl}/alterar-senha`, { senhaAtual, novaSenha });
+    }
+
     // Pergunta à API quem está logado (usa o cookie). Retorna false se não houver sessão válida.
     carregarUsuario(): Observable<boolean> {
         if (this.usuario) {

@@ -1,20 +1,24 @@
 # Gestão de Eventos — Front-end (Prefeitura de Uberaba · CODIUB)
 
-Interface web desenvolvida em **Angular 15** e **Tailwind CSS 3**, padronizada com o **Design System CODIUB no Modo Prefeitura**, para gerenciamento de eventos municipais, inscrições de participantes e lista de espera automática, consumindo a [Eventos API](https://github.com/GabrielFuzaro/eventos-API).
+Interface web desenvolvida em **Angular 15** e **Tailwind CSS 3**, padronizada com o **Design System CODIUB (Modo Prefeitura)** e diretrizes corporativas de engenharia de software, para gerenciamento de eventos municipais, inscrições de participantes e lista de espera automática em integração direta com a [Eventos API](https://github.com/GabrielFuzaro/eventos-API).
 
 ---
 
 ## Funcionalidades
 
 - **Duas Faces Institucionais (Modo Prefeitura):**
-  - **Área Administrativa / CMS (`ADMIN`):** navbar navy (`#042D62`) com brasão colorido da Prefeitura + texto branco (`pmu-colorida-texto-branco-horizontal.png`), sidebar clara recolhível no desktop (`GE` + botão `☰`) e painel agrupado de indicadores.
-  - **Área Pública / Cidadão (`USER`, Login e Cadastro):** barra superior branca com `pmu-colorida-horizontal.png` + faixa navy `"Eventos"` + breadcrumb `Portal da Prefeitura › FacilitaTudo › Início` + barra única de filtros com controles grandes (`48px`).
-- **Acessibilidade Governamental (WCAG AA + VLibras):** contraste validado em todas as combinações, navegação por teclado, diálogos acessíveis (`role="alertdialog"`) e widget oficial **VLibras**.
-- **Listagem de eventos** responsiva (tabela no desktop e blocos rotulados abaixo de `md`), com indicadores de status, busca com *debounce*, filtro por período/status, seletor de ocultação de colunas e distinção clara entre estado carregando, vazio e erro.
-- **Cadastro e edição de eventos** com *Reactive Forms* e validação de campos.
-- **Detalhes do evento e localização:** painel de ocupação em tempo real, exportação de participantes em Excel e **modal de rota integrado com Google Maps e Waze**.
-- **Inscrição e lista de espera automática:** bloqueio automático para eventos encerrados e transição automática para fila de espera quando o evento atinge a capacidade máxima.
-- **Página 404 padronizada** para rotas inexistentes.
+  - **Área Administrativa / CMS (`ADMIN`):** navbar navy (`#042D62`) com brasão colorido da Prefeitura + texto branco (`pmu-colorida-texto-branco-horizontal.png`), sidebar clara recolhível no desktop (`GE` + botão `☰`) com acesso direto a **Eventos**, **Minha conta** e **Portal da Prefeitura**, além de painel agrupado com **5 indicadores dinâmicos** filtráveis por **Data inicial**, **Data final** e **Categoria**.
+  - **Área Pública / Cidadão (`USER`, Login e Cadastro):** barra superior branca com `pmu-colorida-horizontal.png` + faixa navy `"Eventos"` alinhados ao grid `max-w-6xl`, breadcrumb `Portal da Prefeitura › FacilitaTudo › Início` e barra única de filtros com controles grandes (`48px`).
+- **Listagem Avançada, Ordenação e Exportação Excel:**
+  - Tabela responsiva (colunas ordenáveis com `aria-sort` no desktop e blocos rotulados abaixo de `md`), paginação corporativa **5 / 10 / 20 itens por página**, seletor de ocultação de colunas e **exportação para Excel** (`GET /eventos/excel`) respeitando os filtros ativos e as colunas visíveis.
+- **Notificações Globais (`NotifierService` + `NotifierComponent`):**
+  - Toasts centralizados de `3s` no canto superior direito com pausa automática no hover/foco e contraste WCAG AA para `sucesso`, `erro`, `aviso` e `info`.
+- **Minha Conta e Alteração de Senha (`/minha-conta`):**
+  - Consulta dos dados da sessão, perfil de acesso e alteração segura de senha integrada ao endpoint `PUT /auth/alterar-senha`.
+- **Detalhes, Inscrição e Localização:**
+  - Painel de ocupação em tempo real, lista de espera automática, exportação de participantes em Excel e **modal de rota integrado com Google Maps e Waze**.
+- **Acessibilidade Governamental (WCAG AA + VLibras):**
+  - Widget oficial **VLibras**, foco gerenciado em modais/diálogos (`role="alertdialog"`), página `404` padronizada e suporte a `prefers-reduced-motion`.
 
 ---
 
@@ -27,7 +31,8 @@ Interface web desenvolvida em **Angular 15** e **Tailwind CSS 3**, padronizada c
 | Estilização | Tailwind CSS 3 + Preset Oficial `codiub-design` |
 | Formulários | Angular Reactive Forms |
 | HTTP & Segurança | Angular HttpClient + Cookie `HttpOnly` (`withCredentials`) |
-| Testes | Jasmine + Karma |
+| Testes | Jasmine + Karma (`ChromeHeadless`) |
+| CI/CD | GitHub Actions (build e testes automatizados) |
 
 ---
 
@@ -37,20 +42,22 @@ Interface web desenvolvida em **Angular 15** e **Tailwind CSS 3**, padronizada c
 src/
 ├── app/
 │   ├── compartilhado/
-│   │   ├── aviso/                     # Feedback visual acessível (sucesso, erro, info)
+│   │   ├── aviso/                     # Alerta inline acessível (sucesso, erro, aviso, info)
 │   │   ├── modal-rota/                # Modal de localização e rota (Google Maps e Waze)
+│   │   ├── notifier/                  # Container global de Toasts CODIUB (3s, WCAG AA)
 │   │   └── pagina-nao-encontrada/     # Tela 404 padronizada
-│   ├── eventos/                       # Listagem, indicadores, criação e edição de eventos
-│   ├── detalhes-eventos/              # Ocupação, metadados, Excel e gestão de inscritos
-│   ├── participantes/                 # Formulário de inscrição, lista de participantes e lista de espera
-│   ├── login/ & cadastro/             # Autenticação com Reactive Forms e co-branding Prefeitura/CODIUB
-│   ├── guards/ & interceptors/        # Proteção de rotas e envio seguro do cookie HttpOnly
-│   ├── models/                        # Contratos TypeScript e helpers de domínio
-│   └── services/                      # Comunicação HTTP centralizada por recurso
+│   ├── eventos/                       # Dashboard, filtros, ordenação, Excel e formulários
+│   ├── detalhes-eventos/              # Ocupação, metadados, Excel de inscritos e rota
+│   ├── minha-conta/                   # Dados da sessão e formulário de alteração de senha
+│   ├── participantes/                 # Inscrição, listagem paginada e fila de espera
+│   ├── login/ & cadastro/             # Autenticação com co-branding Prefeitura/CODIUB
+│   ├── guards/ & interceptors/        # Proteção de rotas e interceptor HttpOnly/401
+│   ├── models/                        # Contratos TypeScript e paginação 5/10/20
+│   └── services/                      # Serviços HTTP e NotifierService global
 ├── assets/
-│   ├── icons/                         # Ícones institucionais e de navegação (Google Maps, Waze, Home)
-│   └── logo/                          # Logos oficiais CODIUB e Prefeitura de Uberaba (recorte 4%)
-└── environments/                      # Configuração de API separada entre desenvolvimento e produção
+│   ├── icons/                         # Ícones institucionais e de GPS (Google Maps, Waze, Home)
+│   └── logo/                          # Logos oficiais CODIUB e Prefeitura de Uberaba
+└── environments/                      # Configuração separada entre desenvolvimento e produção
 ```
 
 ---
@@ -68,7 +75,7 @@ As URLs da API ficam centralizadas em `src/environments/`:
 
 ### Pré-requisitos
 - Node.js 18+ e npm
-- [Eventos API](https://github.com/GabrielFuzaro/eventos-API) em execução em `http://localhost:8080`
+- [Eventos API](https://github.com/GabrielFuzaro/eventos-API) e MySQL em execução localmente em `http://localhost:8080`
 
 ### Comandos
 
@@ -79,7 +86,7 @@ npm ci
 # Servidor de desenvolvimento (http://localhost:4200)
 npm start
 
-# Build de produção (validação de tipos, templates e orçamentos de bundle)
+# Build de produção
 npx ng build
 
 # Testes unitários

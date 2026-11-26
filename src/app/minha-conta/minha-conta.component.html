@@ -24,7 +24,7 @@
 
     <div class="mb-6">
         <h1 class="text-2xl font-bold text-codiub-brand sm:text-3xl">Minha conta</h1>
-        <p class="mt-1 text-sm text-gray-600">Consulte seus dados de acesso e o nível de permissão da sessão atual</p>
+        <p class="mt-1 text-sm text-gray-600">Consulte seus dados de acesso, altere sua senha e gerencie a sessão atual</p>
     </div>
 </ng-container>
 
@@ -38,85 +38,194 @@
     </div>
 </ng-template>
 
-<section class="card w-full max-w-3xl p-5 sm:p-6" aria-labelledby="secaoDadosConta">
-    <div class="flex flex-wrap items-center justify-between gap-3">
-        <h2 id="secaoDadosConta" class="eyebrow">Informações sobre a conta</h2>
-        <span class="badge" [ngClass]="authService.isAdmin() ? 'bg-navy-tint text-codiub-navy' : 'bg-green-50 text-green-700'">
-            <span class="h-1.5 w-1.5 rounded-full" [ngClass]="authService.isAdmin() ? 'bg-codiub-navy' : 'bg-green-700'" aria-hidden="true"></span>
-            Sessão ativa
-        </span>
-    </div>
+<div class="grid w-full max-w-5xl grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
 
-    <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-4 md:gap-5">
-        <div class="md:col-span-1">
-            <label for="perfilSigla" class="label">Código de perfil</label>
-            <input
-                id="perfilSigla"
-                type="text"
-                [value]="siglaPerfil"
-                readonly
-                class="input border-transparent bg-codiub-disabled text-center font-semibold text-gray-800">
+    <section class="card p-5 sm:p-6" aria-labelledby="secaoDadosConta">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+            <h2 id="secaoDadosConta" class="eyebrow">Informações sobre a conta</h2>
+            <span class="badge" [ngClass]="authService.isAdmin() ? 'bg-navy-tint text-codiub-navy' : 'bg-green-50 text-green-700'">
+                <span class="h-1.5 w-1.5 rounded-full" [ngClass]="authService.isAdmin() ? 'bg-codiub-navy' : 'bg-green-700'" aria-hidden="true"></span>
+                Sessão ativa
+            </span>
         </div>
 
-        <div class="md:col-span-3">
-            <label for="usuarioLogado" class="label">Usuário</label>
-            <input
-                id="usuarioLogado"
-                type="text"
-                [value]="nomeUsuario"
-                readonly
-                class="input border-transparent bg-codiub-disabled text-gray-800">
+        <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-4 md:gap-5">
+            <div class="md:col-span-1">
+                <label for="perfilSigla" class="label">Código de perfil</label>
+                <input
+                    id="perfilSigla"
+                    type="text"
+                    [value]="siglaPerfil"
+                    readonly
+                    class="input border-transparent bg-codiub-disabled text-center font-semibold text-gray-800">
+            </div>
+
+            <div class="md:col-span-3">
+                <label for="usuarioLogado" class="label">Usuário</label>
+                <input
+                    id="usuarioLogado"
+                    type="text"
+                    [value]="nomeUsuario"
+                    readonly
+                    class="input border-transparent bg-codiub-disabled text-gray-800">
+            </div>
+
+            <div class="md:col-span-2">
+                <label for="nivelAcesso" class="label">Nível de acesso</label>
+                <input
+                    id="nivelAcesso"
+                    type="text"
+                    [value]="rotuloPerfil"
+                    readonly
+                    class="input border-transparent bg-codiub-disabled text-gray-800">
+            </div>
+
+            <div class="md:col-span-2">
+                <label for="modoAutenticacao" class="label">Segurança da sessão</label>
+                <input
+                    id="modoAutenticacao"
+                    type="text"
+                    value="Cookie HttpOnly protegido"
+                    readonly
+                    class="input border-transparent bg-codiub-disabled text-gray-800">
+            </div>
         </div>
 
-        <div class="md:col-span-2">
-            <label for="nivelAcesso" class="label">Nível de acesso</label>
-            <input
-                id="nivelAcesso"
-                type="text"
-                [value]="rotuloPerfil"
-                readonly
-                class="input border-transparent bg-codiub-disabled text-gray-800">
+        <div class="mt-6 border-t border-gray-100 pt-5">
+            <h2 class="eyebrow mb-3">Permissões disponíveis</h2>
+            <ul class="space-y-2 text-sm text-gray-700">
+                <li class="flex items-center gap-2">
+                    <svg class="h-4 w-4 shrink-0 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M5 12l5 5L20 7" />
+                    </svg>
+                    Consultar eventos municipais, vagas restantes e rotas de localização
+                </li>
+                <li class="flex items-center gap-2">
+                    <svg class="h-4 w-4 shrink-0 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M5 12l5 5L20 7" />
+                    </svg>
+                    Realizar inscrições em eventos abertos e acompanhar a lista de espera
+                </li>
+                <li *ngIf="authService.isAdmin()" class="flex items-center gap-2">
+                    <svg class="h-4 w-4 shrink-0 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M5 12l5 5L20 7" />
+                    </svg>
+                    Editar e excluir eventos, gerenciar participantes e exportar relatórios em Excel
+                </li>
+            </ul>
         </div>
 
-        <div class="md:col-span-2">
-            <label for="modoAutenticacao" class="label">Segurança da sessão</label>
-            <input
-                id="modoAutenticacao"
-                type="text"
-                value="Cookie HttpOnly protegido"
-                readonly
-                class="input border-transparent bg-codiub-disabled text-gray-800">
+        <div class="mt-6 flex flex-col-reverse items-stretch justify-end gap-2 border-t border-gray-100 pt-4 sm:flex-row sm:items-center">
+            <a routerLink="/eventos" class="btn-secondary w-full sm:w-auto">Voltar para eventos</a>
+            <button type="button" (click)="encerrarSessao()" class="btn-danger w-full sm:w-auto">
+                Encerrar sessão
+            </button>
         </div>
-    </div>
+    </section>
 
-    <div class="mt-6 border-t border-gray-100 pt-5">
-        <h2 class="eyebrow mb-3">Permissões disponíveis</h2>
-        <ul class="space-y-2 text-sm text-gray-700">
-            <li class="flex items-center gap-2">
-                <svg class="h-4 w-4 shrink-0 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M5 12l5 5L20 7" />
-                </svg>
-                Consultar eventos municipais, vagas restantes e rotas de localização
-            </li>
-            <li class="flex items-center gap-2">
-                <svg class="h-4 w-4 shrink-0 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M5 12l5 5L20 7" />
-                </svg>
-                Realizar inscrições em eventos abertos e acompanhar a lista de espera
-            </li>
-            <li *ngIf="authService.isAdmin()" class="flex items-center gap-2">
-                <svg class="h-4 w-4 shrink-0 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M5 12l5 5L20 7" />
-                </svg>
-                Editar e excluir eventos, gerenciar participantes e exportar relatórios em Excel
-            </li>
-        </ul>
-    </div>
+    <form [formGroup]="senhaForm" (ngSubmit)="alterarSenha()" class="card p-5 sm:p-6" novalidate aria-labelledby="secaoAlterarSenha">
+        <h2 id="secaoAlterarSenha" class="eyebrow">Segurança e acesso</h2>
+        <p class="mt-1 text-base font-bold text-codiub-ink">Alterar senha</p>
+        <p class="mt-1 text-sm text-gray-600">Escolha uma senha forte com no mínimo 8 caracteres.</p>
 
-    <div class="mt-6 flex flex-col-reverse items-stretch justify-end gap-2 border-t border-gray-100 pt-4 sm:flex-row sm:items-center">
-        <a routerLink="/eventos" class="btn-secondary w-full sm:w-auto">Voltar para eventos</a>
-        <button type="button" (click)="encerrarSessao()" class="btn-primary w-full sm:w-auto">
-            Encerrar sessão
-        </button>
-    </div>
-</section>
+        <div class="mt-5 space-y-4">
+            <div>
+                <label for="senhaAtual" class="label">Senha atual</label>
+                <div class="relative">
+                    <input
+                        id="senhaAtual"
+                        [type]="mostrarSenhaAtual ? 'text' : 'password'"
+                        formControlName="senhaAtual"
+                        autocomplete="current-password"
+                        class="input pr-10"
+                        [class.input-invalid]="invalido('senhaAtual')"
+                        [attr.aria-invalid]="invalido('senhaAtual')"
+                        aria-describedby="erro-senha-atual">
+                    <button
+                        type="button"
+                        (click)="mostrarSenhaAtual = !mostrarSenhaAtual"
+                        [attr.aria-label]="mostrarSenhaAtual ? 'Ocultar senha atual' : 'Mostrar senha atual'"
+                        [attr.aria-pressed]="mostrarSenhaAtual"
+                        class="absolute inset-y-0 right-0 flex w-10 items-center justify-center rounded-r-lg text-gray-500 hover:text-blue-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">
+                        <svg *ngIf="!mostrarSenhaAtual" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" /><circle cx="12" cy="12" r="3" />
+                        </svg>
+                        <svg *ngIf="mostrarSenhaAtual" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M17.94 17.94A10.07 10.07 0 0112 19c-6.5 0-10-7-10-7a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c6.5 0 10 7 10 7a18.5 18.5 0 01-2.16 3.19M14.12 14.12a3 3 0 11-4.24-4.24M1 1l22 22" />
+                        </svg>
+                    </button>
+                </div>
+                <p *ngIf="invalido('senhaAtual')" id="erro-senha-atual" class="field-error">Informe sua senha atual.</p>
+            </div>
+
+            <div>
+                <label for="novaSenha" class="label">Nova senha</label>
+                <div class="relative">
+                    <input
+                        id="novaSenha"
+                        [type]="mostrarNovaSenha ? 'text' : 'password'"
+                        formControlName="novaSenha"
+                        autocomplete="new-password"
+                        class="input pr-10"
+                        [class.input-invalid]="invalido('novaSenha')"
+                        [attr.aria-invalid]="invalido('novaSenha')"
+                        aria-describedby="ajuda-nova-senha">
+                    <button
+                        type="button"
+                        (click)="mostrarNovaSenha = !mostrarNovaSenha"
+                        [attr.aria-label]="mostrarNovaSenha ? 'Ocultar nova senha' : 'Mostrar nova senha'"
+                        [attr.aria-pressed]="mostrarNovaSenha"
+                        class="absolute inset-y-0 right-0 flex w-10 items-center justify-center rounded-r-lg text-gray-500 hover:text-blue-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">
+                        <svg *ngIf="!mostrarNovaSenha" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" /><circle cx="12" cy="12" r="3" />
+                        </svg>
+                        <svg *ngIf="mostrarNovaSenha" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M17.94 17.94A10.07 10.07 0 0112 19c-6.5 0-10-7-10-7a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c6.5 0 10 7 10 7a18.5 18.5 0 01-2.16 3.19M14.12 14.12a3 3 0 11-4.24-4.24M1 1l22 22" />
+                        </svg>
+                    </button>
+                </div>
+                <p *ngIf="invalido('novaSenha'); else ajudaNovaSenha" id="ajuda-nova-senha" class="field-error">A nova senha precisa ter de 8 a 100 caracteres.</p>
+                <ng-template #ajudaNovaSenha>
+                    <p id="ajuda-nova-senha" class="field-help">Mínimo de 8 caracteres.</p>
+                </ng-template>
+            </div>
+
+            <div>
+                <label for="confirmarSenha" class="label">Confirmar nova senha</label>
+                <div class="relative">
+                    <input
+                        id="confirmarSenha"
+                        [type]="mostrarConfirmarSenha ? 'text' : 'password'"
+                        formControlName="confirmarSenha"
+                        autocomplete="new-password"
+                        class="input pr-10"
+                        [class.input-invalid]="invalido('confirmarSenha') || confirmacaoDivergente"
+                        [attr.aria-invalid]="invalido('confirmarSenha') || confirmacaoDivergente"
+                        aria-describedby="erro-confirmar-senha">
+                    <button
+                        type="button"
+                        (click)="mostrarConfirmarSenha = !mostrarConfirmarSenha"
+                        [attr.aria-label]="mostrarConfirmarSenha ? 'Ocultar confirmação de senha' : 'Mostrar confirmação de senha'"
+                        [attr.aria-pressed]="mostrarConfirmarSenha"
+                        class="absolute inset-y-0 right-0 flex w-10 items-center justify-center rounded-r-lg text-gray-500 hover:text-blue-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">
+                        <svg *ngIf="!mostrarConfirmarSenha" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" /><circle cx="12" cy="12" r="3" />
+                        </svg>
+                        <svg *ngIf="mostrarConfirmarSenha" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M17.94 17.94A10.07 10.07 0 0112 19c-6.5 0-10-7-10-7a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c6.5 0 10 7 10 7a18.5 18.5 0 01-2.16 3.19M14.12 14.12a3 3 0 11-4.24-4.24M1 1l22 22" />
+                        </svg>
+                    </button>
+                </div>
+                <p *ngIf="invalido('confirmarSenha')" id="erro-confirmar-senha" class="field-error">Confirme a nova senha.</p>
+                <p *ngIf="!invalido('confirmarSenha') && confirmacaoDivergente" id="erro-confirmar-senha" class="field-error">As senhas digitadas não coincidem.</p>
+            </div>
+        </div>
+
+        <div class="mt-6 border-t border-gray-100 pt-4">
+            <button type="submit" [disabled]="senhaForm.invalid || enviando" class="btn-primary w-full">
+                {{ enviando ? 'Salvando...' : 'Alterar senha' }}
+            </button>
+        </div>
+    </form>
+
+</div>

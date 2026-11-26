@@ -1,7 +1,7 @@
-export interface Categoria{
+export interface Categoria {
     id: number;
     nome: string;
-    ativa: boolean;
+    ativa?: boolean;
 }
 
 // Categoria é informação, não estado: usa a badge navy do design CODIUB (sem cores novas)

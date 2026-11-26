@@ -33,8 +33,16 @@
     </div>
 
     <!-- Barra única de filtros da Área Pública (labels uppercase + controles 48px + botão Aplicar filtros) -->
-    <div class="mb-6 flex flex-wrap items-end justify-start gap-4 border-y border-gray-200 bg-white py-4 sm:gap-6 sm:py-6">
-        <div class="flex w-full flex-col gap-1.5 sm:w-48">
+    <div class="mb-6 flex flex-wrap items-end justify-start gap-4 border-y border-gray-200 bg-white py-4 sm:gap-5 sm:py-6">
+        <div class="flex w-full flex-col gap-1.5 sm:w-44">
+            <label for="filtroCategoriaPublico" class="text-xs font-semibold uppercase tracking-wide text-gray-500">Categoria</label>
+            <select id="filtroCategoriaPublico" [(ngModel)]="categoriaId" class="input-lg">
+                <option [ngValue]="null">Todas as categorias</option>
+                <option *ngFor="let categoria of categorias" [ngValue]="categoria.id">{{ categoria.nome }}</option>
+            </select>
+        </div>
+
+        <div class="flex w-full flex-col gap-1.5 sm:w-44">
             <label for="filtroStatusPublico" class="text-xs font-semibold uppercase tracking-wide text-gray-500">Status</label>
             <select id="filtroStatusPublico" [(ngModel)]="status" class="input-lg">
                 <option value="">Todos os status</option>
@@ -44,17 +52,17 @@
             </select>
         </div>
 
-        <div class="flex w-full flex-col gap-1.5 sm:w-44">
+        <div class="flex w-full flex-col gap-1.5 sm:w-40">
             <label for="dataInicialPublico" class="text-xs font-semibold uppercase tracking-wide text-gray-500">Data inicial</label>
             <input id="dataInicialPublico" type="date" [(ngModel)]="dataInicial" [max]="dataFinal" class="input-lg">
         </div>
 
-        <div class="flex w-full flex-col gap-1.5 sm:w-44">
+        <div class="flex w-full flex-col gap-1.5 sm:w-40">
             <label for="dataFinalPublico" class="text-xs font-semibold uppercase tracking-wide text-gray-500">Data final</label>
             <input id="dataFinalPublico" type="date" [(ngModel)]="dataFinal" [min]="dataInicial" class="input-lg">
         </div>
 
-        <div class="flex w-full flex-1 flex-col gap-1.5 sm:min-w-[220px]">
+        <div class="flex w-full flex-1 flex-col gap-1.5 sm:min-w-[200px]">
             <label for="pesquisaPublico" class="text-xs font-semibold uppercase tracking-wide text-gray-500">Evento</label>
             <div class="relative">
                 <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5">
@@ -82,8 +90,8 @@
 <!-- CABEÇALHO E INDICADORES — MODO CMS / ADMIN (Print 1)                       -->
 <!-- ========================================================================= -->
 <ng-template #cabecalhoCms>
-    <!-- Toolbar superior do CMS (sem breadcrumb, igual ao Print 1) -->
-    <div class="mb-5 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+    <!-- Toolbar superior do CMS (sem breadcrumb, igual ao Print 1: título à esquerda, Data inicial/final + Filtrar + Adicionar à direita) -->
+    <div class="mb-5 flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
         <div class="flex items-center gap-2.5">
             <svg class="h-5 w-5 text-codiub-ink" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <rect x="3" y="3" width="7" height="7" rx="1" />
@@ -94,11 +102,19 @@
             <h1 class="page-title">Dashboard de eventos</h1>
         </div>
 
-        <div class="flex flex-col-reverse gap-2 sm:flex-row sm:items-center">
-            <button type="button" (click)="toogleEstatisticas()" [attr.aria-expanded]="mostrarEstatisticas" aria-controls="indicadores" class="btn-ghost">
-                {{ mostrarEstatisticas ? 'Ocultar indicadores' : 'Mostrar indicadores' }}
+        <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+            <div class="flex items-center gap-2">
+                <label for="dataInicialDashboard" class="whitespace-nowrap text-sm font-medium text-gray-700">Data inicial</label>
+                <input id="dataInicialDashboard" type="date" [(ngModel)]="dataInicial" [max]="dataFinal" class="input sm:w-40">
+            </div>
+            <div class="flex items-center gap-2">
+                <label for="dataFinalDashboard" class="whitespace-nowrap text-sm font-medium text-gray-700">Data final</label>
+                <input id="dataFinalDashboard" type="date" [(ngModel)]="dataFinal" [min]="dataInicial" class="input sm:w-40">
+            </div>
+            <button type="button" (click)="aplicarFiltros()" class="btn-primary w-full sm:w-auto">
+                Filtrar
             </button>
-            <button type="button" (click)="cadastrarEventoFormulario()" class="btn-primary w-full sm:w-auto">
+            <button type="button" (click)="cadastrarEventoFormulario()" class="btn-secondary w-full sm:w-auto">
                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <path d="M12 5v14M5 12h14" />
                 </svg>
@@ -107,13 +123,26 @@
         </div>
     </div>
 
-    <!-- Painel agrupado de indicadores (container externo arredondado + mini-cards internos igual ao Print 1) -->
-    <article *ngIf="mostrarEstatisticas" id="indicadores" aria-label="Indicadores" class="mb-5 rounded-panel border border-navy-soft bg-white p-4 shadow-sm sm:p-6">
-        <div class="grid grid-cols-1 gap-3.5 sm:grid-cols-2 xl:grid-cols-4">
+    <!-- Painel agrupado de indicadores (container externo arredondado + seletor Categoria + 5 mini-cards igual ao Print 1) -->
+    <article id="indicadores" aria-label="Indicadores" class="mb-5 rounded-panel border border-navy-soft bg-white p-4 shadow-sm sm:p-6">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+            <div class="flex flex-wrap items-center gap-2">
+                <label for="categoriaDashboard" class="text-sm font-medium text-gray-700">Categoria</label>
+                <select id="categoriaDashboard" [(ngModel)]="categoriaId" (ngModelChange)="aplicarFiltros()" class="input w-full sm:w-56">
+                    <option [ngValue]="null">Todas as categorias</option>
+                    <option *ngFor="let categoria of categorias" [ngValue]="categoria.id">{{ categoria.nome }}</option>
+                </select>
+            </div>
+            <button type="button" (click)="toogleEstatisticas()" [attr.aria-expanded]="mostrarEstatisticas" aria-controls="grid-indicadores" class="btn-ghost px-2">
+                {{ mostrarEstatisticas ? 'Ocultar indicadores' : 'Mostrar indicadores' }}
+            </button>
+        </div>
+
+        <div *ngIf="mostrarEstatisticas" id="grid-indicadores" class="mt-4 grid grid-cols-1 gap-3.5 sm:grid-cols-2 xl:grid-cols-5">
             <div class="rounded-panel border border-navy-soft bg-codiub-panel-bg p-4">
                 <p class="text-sm text-codiub-muted">Eventos monitorados</p>
                 <p class="mt-1.5 text-2xl font-bold leading-tight text-codiub-navy tabular-nums sm:text-[1.75rem]">{{ totalEventos }}</p>
-                <p class="mt-1.5 text-xs text-slate-500">Quantidade total cadastrada no sistema</p>
+                <p class="mt-1.5 text-xs text-slate-500">Quantidade total no recorte</p>
             </div>
             <div class="rounded-panel border border-navy-soft bg-codiub-panel-bg p-4">
                 <p class="text-sm text-codiub-muted">Eventos abertos</p>
@@ -123,12 +152,17 @@
             <div class="rounded-panel border border-navy-soft bg-codiub-panel-bg p-4">
                 <p class="text-sm text-codiub-muted">Eventos lotados</p>
                 <p class="mt-1.5 text-2xl font-bold leading-tight text-codiub-navy tabular-nums sm:text-[1.75rem]">{{ totalLotados }}</p>
-                <p class="mt-1.5 text-xs text-slate-500">Capacidade máxima atingida (fila ativa)</p>
+                <p class="mt-1.5 text-xs text-slate-500">Capacidade máxima atingida</p>
             </div>
             <div class="rounded-panel border border-navy-soft bg-codiub-panel-bg p-4">
                 <p class="text-sm text-codiub-muted">Eventos encerrados</p>
                 <p class="mt-1.5 text-2xl font-bold leading-tight text-codiub-navy tabular-nums sm:text-[1.75rem]">{{ totalEncerrados }}</p>
                 <p class="mt-1.5 text-xs text-slate-500">Eventos cuja data já foi realizada</p>
+            </div>
+            <div class="rounded-panel border border-navy-soft bg-codiub-panel-bg p-4">
+                <p class="text-sm text-codiub-muted">Vagas ofertadas</p>
+                <p class="mt-1.5 text-2xl font-bold leading-tight text-codiub-navy tabular-nums sm:text-[1.75rem]">{{ totalVagas }}</p>
+                <p class="mt-1.5 text-xs text-slate-500">Soma das capacidades no período</p>
             </div>
         </div>
     </article>
@@ -151,10 +185,10 @@
         </span>
     </div>
 
-    <!-- Filtros internos do CMS (visíveis apenas para Admin, pois o Público já usa a barra única de cima) -->
+    <!-- Filtros internos da tabela do CMS (visíveis apenas para Admin) -->
     <div *ngIf="authService.isAdmin()" class="border-b border-gray-100 p-4">
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto] lg:items-end">
-            <div class="sm:col-span-2 lg:col-span-1">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_auto] lg:items-end">
+            <div>
                 <label for="pesquisa" class="label">Nome do evento</label>
                 <div class="relative">
                     <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -177,18 +211,18 @@
                 </select>
             </div>
 
-            <div>
-                <label for="dataInicial" class="label">Data inicial</label>
-                <input id="dataInicial" type="date" [(ngModel)]="dataInicial" (ngModelChange)="aplicarFiltros()" [max]="dataFinal" class="input">
-            </div>
-
-            <div>
-                <label for="dataFinal" class="label">Data final</label>
-                <input id="dataFinal" type="date" [(ngModel)]="dataFinal" (ngModelChange)="aplicarFiltros()" [min]="dataInicial" class="input">
-            </div>
-
-            <div class="flex flex-col gap-2 sm:col-span-2 sm:flex-row lg:col-span-1">
-                <button type="button" (click)="limparFiltros()" [disabled]="!filtroAtivo" class="btn-secondary w-full lg:w-auto">
+            <div class="flex flex-col gap-2 sm:col-span-2 sm:flex-row sm:flex-wrap lg:col-span-1">
+                <button
+                    type="button"
+                    (click)="exportarExcelEventos()"
+                    [disabled]="baixandoExcelEventos || eventos.length === 0"
+                    class="btn-secondary w-full sm:w-auto">
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
+                    </svg>
+                    {{ baixandoExcelEventos ? 'Gerando...' : 'Gerar Excel' }}
+                </button>
+                <button type="button" (click)="limparFiltros()" [disabled]="!filtroAtivo" class="btn-secondary w-full sm:w-auto">
                     Limpar filtros
                 </button>
                 <button
@@ -196,7 +230,7 @@
                     (click)="alternarSeletorColunas()"
                     [attr.aria-expanded]="mostrarSeletorColunas"
                     aria-controls="seletor-colunas"
-                    class="btn-ghost w-full lg:w-auto">
+                    class="btn-ghost w-full sm:w-auto">
                     {{ mostrarSeletorColunas ? 'Ocultar colunas' : 'Personalizar colunas' }}
                 </button>
             </div>
@@ -246,22 +280,50 @@
         </svg>
         <p class="mt-3 text-base font-semibold text-gray-800">Nenhum evento encontrado</p>
         <p class="mt-1 text-sm text-gray-600">
-            {{ filtroAtivo ? 'Nenhum resultado para os filtros selecionados. Tente outro período ou status.' : 'Cadastre o primeiro evento para começar.' }}
+            {{ filtroAtivo ? 'Nenhum resultado para os filtros selecionados. Tente outro período, categoria ou status.' : 'Cadastre o primeiro evento para começar.' }}
         </p>
         <button *ngIf="filtroAtivo" type="button" (click)="limparFiltros()" class="btn-secondary mt-4">Limpar filtros</button>
     </div>
 
-    <!-- Tabela (vira blocos abaixo de md) -->
+    <!-- Tabela (vira blocos abaixo de md) com ordenação acessível por coluna -->
     <div *ngIf="eventos.length > 0" class="relative overflow-x-auto transition-opacity" [class.opacity-50]="carregando">
         <table class="min-w-full text-sm">
             <caption class="sr-only">Lista de eventos</caption>
             <thead class="cabecalho-tabela">
                 <tr>
-                    <th scope="col">Data</th>
-                    <th scope="col">Evento</th>
+                    <th scope="col" [attr.aria-sort]="obterAriaSort('data_evento')">
+                        <button type="button" (click)="alternarOrdenacao('data_evento')" class="inline-flex items-center gap-1.5 rounded font-semibold text-gray-700 hover:text-codiub-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">
+                            <span>Data</span>
+                            <svg class="h-4 w-4 transition-transform" [ngClass]="{'text-codiub-brand': campoOrdenacao === 'data_evento', 'text-gray-400': campoOrdenacao !== 'data_evento', 'rotate-180': campoOrdenacao === 'data_evento' && direcaoOrdenacao === 'asc'}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M6 9l6 6 6-6" />
+                            </svg>
+                        </button>
+                    </th>
+                    <th scope="col" [attr.aria-sort]="obterAriaSort('nome')">
+                        <button type="button" (click)="alternarOrdenacao('nome')" class="inline-flex items-center gap-1.5 rounded font-semibold text-gray-700 hover:text-codiub-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">
+                            <span>Evento</span>
+                            <svg class="h-4 w-4 transition-transform" [ngClass]="{'text-codiub-brand': campoOrdenacao === 'nome', 'text-gray-400': campoOrdenacao !== 'nome', 'rotate-180': campoOrdenacao === 'nome' && direcaoOrdenacao === 'asc'}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M6 9l6 6 6-6" />
+                            </svg>
+                        </button>
+                    </th>
                     <th *ngIf="!colunasOcultas.categoria" scope="col">Categoria</th>
-                    <th *ngIf="!colunasOcultas.vagas" scope="col" class="text-right">Vagas</th>
-                    <th *ngIf="!colunasOcultas.status" scope="col">Status</th>
+                    <th *ngIf="!colunasOcultas.vagas" scope="col" class="text-right" [attr.aria-sort]="obterAriaSort('capacidade_maxima')">
+                        <button type="button" (click)="alternarOrdenacao('capacidade_maxima')" class="inline-flex items-center justify-end gap-1.5 rounded font-semibold text-gray-700 hover:text-codiub-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">
+                            <span>Vagas</span>
+                            <svg class="h-4 w-4 transition-transform" [ngClass]="{'text-codiub-brand': campoOrdenacao === 'capacidade_maxima', 'text-gray-400': campoOrdenacao !== 'capacidade_maxima', 'rotate-180': campoOrdenacao === 'capacidade_maxima' && direcaoOrdenacao === 'asc'}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M6 9l6 6 6-6" />
+                            </svg>
+                        </button>
+                    </th>
+                    <th *ngIf="!colunasOcultas.status" scope="col" [attr.aria-sort]="obterAriaSort('status')">
+                        <button type="button" (click)="alternarOrdenacao('status')" class="inline-flex items-center gap-1.5 rounded font-semibold text-gray-700 hover:text-codiub-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">
+                            <span>Status</span>
+                            <svg class="h-4 w-4 transition-transform" [ngClass]="{'text-codiub-brand': campoOrdenacao === 'status', 'text-gray-400': campoOrdenacao !== 'status', 'rotate-180': campoOrdenacao === 'status' && direcaoOrdenacao === 'asc'}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M6 9l6 6 6-6" />
+                            </svg>
+                        </button>
+                    </th>
                     <th scope="col" class="text-right"><span class="sr-only">Ações</span></th>
                 </tr>
             </thead>
@@ -375,7 +437,7 @@
 
 <!-- Indicadores resumidos na Área Pública (abaixo dos resultados, conforme layouts.md §6) -->
 <section *ngIf="!authService.isAdmin()" aria-label="Resumo de eventos" class="mt-6 rounded-panel border border-navy-soft bg-white p-4 shadow-sm sm:p-5">
-    <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+    <div class="grid grid-cols-1 gap-3 sm:grid-cols-4">
         <div class="rounded-panel border border-navy-soft bg-codiub-panel-bg p-4">
             <p class="text-sm text-codiub-muted">Eventos abertos</p>
             <p class="mt-1 text-2xl font-bold text-codiub-navy tabular-nums">{{ totalAbertos }}</p>
@@ -387,9 +449,14 @@
             <p class="mt-1 text-xs text-slate-500">Eventos com fila automática ativa</p>
         </div>
         <div class="rounded-panel border border-navy-soft bg-codiub-panel-bg p-4">
-            <p class="text-sm text-codiub-muted">Total cadastrado</p>
+            <p class="text-sm text-codiub-muted">Total no recorte</p>
             <p class="mt-1 text-2xl font-bold text-codiub-navy tabular-nums">{{ totalEventos }}</p>
             <p class="mt-1 text-xs text-slate-500">Eventos registrados no município</p>
+        </div>
+        <div class="rounded-panel border border-navy-soft bg-codiub-panel-bg p-4">
+            <p class="text-sm text-codiub-muted">Vagas ofertadas</p>
+            <p class="mt-1 text-2xl font-bold text-codiub-navy tabular-nums">{{ totalVagas }}</p>
+            <p class="mt-1 text-xs text-slate-500">Capacidade total disponível</p>
         </div>
     </div>
 </section>

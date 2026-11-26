@@ -1,12 +1,13 @@
 import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { EventoService, FiltrosEvento } from '../services/evento.service';
 import { Router } from '@angular/router';
-import { Evento, statusEvento } from '../models/evento';
-import { AuthService } from '../services/auth.service';
-import { NotifierService } from '../services/notifier.service';
 import { Subject, Subscription, catchError, debounceTime, firstValueFrom, of, switchMap, tap } from 'rxjs';
-import { corCategoria } from '../models/categoria';
+import { Categoria, corCategoria } from '../models/categoria';
+import { Evento, statusEvento } from '../models/evento';
 import { OPCOES_TAMANHO_PAGINA, Page, calcularPaginasVisiveis } from '../models/paginacao';
+import { AuthService } from '../services/auth.service';
+import { CategoriaService } from '../services/categoria.service';
+import { EventoService, FiltrosEvento } from '../services/evento.service';
+import { NotifierService } from '../services/notifier.service';
 
 @Component({
   selector: 'app-eventos',
@@ -16,9 +17,11 @@ import { OPCOES_TAMANHO_PAGINA, Page, calcularPaginasVisiveis } from '../models/
 export class EventosComponent implements OnInit, OnDestroy {
 
   eventos: Evento[] = [];
+  categorias: Categoria[] = [];
 
   constructor(
     private eventoService: EventoService,
+    private categoriaService: CategoriaService,
     private router: Router,
     public authService: AuthService,
     private notifier: NotifierService
@@ -30,6 +33,7 @@ export class EventosComponent implements OnInit, OnDestroy {
   erroCarregamento = '';
 
   carregando = true;
+  baixandoExcelEventos = false;
   paginaAtual = 0;
   tamanhoPagina = 10;
   readonly opcoesTamanhoPagina = OPCOES_TAMANHO_PAGINA;
@@ -38,7 +42,12 @@ export class EventosComponent implements OnInit, OnDestroy {
   totalAbertos = 0;
   totalLotados = 0;
   totalEncerrados = 0;
+  totalVagas = 0;
   mostrarEstatisticas = true;
+
+  // Ordenação clicável nas colunas da tabela
+  campoOrdenacao = 'id';
+  direcaoOrdenacao: 'asc' | 'desc' = 'desc';
 
   // Seletor de ocultação de colunas (components.md §22)
   mostrarSeletorColunas = false;
@@ -48,9 +57,10 @@ export class EventosComponent implements OnInit, OnDestroy {
     status: false
   };
 
-  // Filtros: todos são enviados juntos para a API, sempre com paginação
+  // Filtros combinados enviados para a API (listagem, indicadores e Excel)
   pesquisaEvento = '';
   status = '';
+  categoriaId: number | null = null;
   dataInicial = '';
   dataFinal = '';
 
@@ -91,6 +101,7 @@ export class EventosComponent implements OnInit, OnDestroy {
         .subscribe(() => this.aplicarFiltros())
     );
 
+    this.carregarCategorias();
     this.carregarEventos();
     this.carregarTotais();
   }
@@ -108,16 +119,35 @@ export class EventosComponent implements OnInit, OnDestroy {
   }
 
   get filtroAtivo(): boolean {
-    return !!(this.pesquisaEvento.trim() || this.status || this.dataInicial || this.dataFinal);
+    return !!(this.pesquisaEvento.trim() || this.status || this.categoriaId != null || this.dataInicial || this.dataFinal);
+  }
+
+  private get dataInicialIso(): string {
+    return this.dataInicial ? `${this.dataInicial}T00:00:00-03:00` : '';
+  }
+
+  private get dataFinalIso(): string {
+    return this.dataFinal ? `${this.dataFinal}T23:59:59-03:00` : '';
   }
 
   private get filtros(): FiltrosEvento {
     return {
       nome: this.pesquisaEvento.trim(),
       status: this.status,
-      dataInicial: this.dataInicial ? `${this.dataInicial}T00:00:00-03:00` : '',
-      dataFinal: this.dataFinal ? `${this.dataFinal}T23:59:59-03:00` : ''
+      categoriaId: this.categoriaId,
+      dataInicial: this.dataInicialIso,
+      dataFinal: this.dataFinalIso,
+      sort: `${this.campoOrdenacao},${this.direcaoOrdenacao}`
     };
+  }
+
+  carregarCategorias(): void {
+    this.categoriaService.listarCategorias().subscribe({
+      next: lista => this.categorias = lista,
+      error: () => {
+        this.categorias = [];
+      }
+    });
   }
 
   carregarEventos(): void {
@@ -153,6 +183,24 @@ export class EventosComponent implements OnInit, OnDestroy {
     this.mostrarSeletorColunas = !this.mostrarSeletorColunas;
   }
 
+  alternarOrdenacao(campo: string): void {
+    if (this.campoOrdenacao === campo) {
+      this.direcaoOrdenacao = this.direcaoOrdenacao === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.campoOrdenacao = campo;
+      this.direcaoOrdenacao = 'asc';
+    }
+    this.paginaAtual = 0;
+    this.carregarEventos();
+  }
+
+  obterAriaSort(campo: string): 'ascending' | 'descending' | 'none' {
+    if (this.campoOrdenacao !== campo) {
+      return 'none';
+    }
+    return this.direcaoOrdenacao === 'asc' ? 'ascending' : 'descending';
+  }
+
   irParaPagina(pagina: number): void {
     if (pagina < 0 || pagina >= this.totalPaginas) {
       return;
@@ -173,34 +221,86 @@ export class EventosComponent implements OnInit, OnDestroy {
     this.pesquisa$.next(texto);
   }
 
-  // Qualquer mudança de filtro volta para a primeira página
+  // Qualquer mudança de filtro volta para a primeira página e atualiza os indicadores
   aplicarFiltros(): void {
+    if (this.dataInicial && this.dataFinal && this.dataInicial > this.dataFinal) {
+      this.notifier.aviso('A data inicial não pode ser posterior à data final');
+      return;
+    }
     this.paginaAtual = 0;
     this.carregarEventos();
+    this.carregarTotais();
   }
 
   limparFiltros(): void {
     this.pesquisaEvento = '';
     this.status = '';
+    this.categoriaId = null;
     this.dataInicial = '';
     this.dataFinal = '';
     this.aplicarFiltros();
   }
 
   async carregarTotais(): Promise<void> {
-    try {
-      const [abertos, lotados, encerrados] = await Promise.all([
-        firstValueFrom(this.eventoService.contarPorStatus('ABERTO')),
-        firstValueFrom(this.eventoService.contarPorStatus('LOTADO')),
-        firstValueFrom(this.eventoService.contarPorStatus('ENCERRADO'))
-      ]);
-
-      this.totalAbertos = abertos;
-      this.totalLotados = lotados;
-      this.totalEncerrados = encerrados;
-    } catch {
-      this.notifier.erro('Não foi possível carregar os indicadores');
+    if (this.dataInicial && this.dataFinal && this.dataInicial > this.dataFinal) {
+      return;
     }
+
+    try {
+      const indicadores = await firstValueFrom(
+        this.eventoService.obterIndicadores({
+          categoriaId: this.categoriaId,
+          dataInicial: this.dataInicialIso,
+          dataFinal: this.dataFinalIso
+        })
+      );
+      this.totalAbertos = indicadores.totalAbertos;
+      this.totalLotados = indicadores.totalLotados;
+      this.totalEncerrados = indicadores.totalEncerrados;
+      this.totalVagas = indicadores.totalVagas;
+    } catch {
+      try {
+        const [abertos, lotados, encerrados] = await Promise.all([
+          firstValueFrom(this.eventoService.contarPorStatus('ABERTO')),
+          firstValueFrom(this.eventoService.contarPorStatus('LOTADO')),
+          firstValueFrom(this.eventoService.contarPorStatus('ENCERRADO'))
+        ]);
+
+        this.totalAbertos = abertos;
+        this.totalLotados = lotados;
+        this.totalEncerrados = encerrados;
+        this.totalVagas = 0;
+      } catch {
+        this.notifier.erro('Não foi possível carregar os indicadores');
+      }
+    }
+  }
+
+  exportarExcelEventos(): void {
+    const colunasOcultasAtivas = (Object.keys(this.colunasOcultas) as Array<keyof typeof this.colunasOcultas>)
+      .filter(chave => this.colunasOcultas[chave]);
+
+    this.baixandoExcelEventos = true;
+    this.eventoService.baixarExcelEventos(this.filtros, colunasOcultasAtivas).subscribe({
+      next: (arquivo: Blob) => {
+        this.baixandoExcelEventos = false;
+        const url = URL.createObjectURL(arquivo);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'eventos.xlsx';
+        link.click();
+        URL.revokeObjectURL(url);
+        this.notifier.sucesso('Planilha de eventos gerada');
+      },
+      error: async erro => {
+        this.baixandoExcelEventos = false;
+        let titulo = '';
+        try {
+          titulo = JSON.parse(await (erro.error as Blob).text())?.titulo ?? '';
+        } catch {}
+        this.notifier.erro(titulo || 'Não foi possível gerar o Excel de eventos. Tente novamente.');
+      }
+    });
   }
 
   // Abre o diálogo de confirmação; a exclusão acontece em confirmarExclusao()
@@ -257,7 +357,6 @@ export class EventosComponent implements OnInit, OnDestroy {
     // Volta para a primeira página sem filtros, onde o evento recém-cadastrado aparece primeiro
     this.statusFormulario = false;
     this.limparFiltros();
-    this.carregarTotais();
     this.notifier.sucesso('Evento cadastrado');
   }
 }

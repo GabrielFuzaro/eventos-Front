@@ -1,141 +1,137 @@
 # CLAUDE.md — Eventos Front
 
-Front-end Angular para o sistema de eventos: listagem com filtros e estatísticas, detalhes do evento,
-inscrição de participantes, lista de espera, login e cadastro.
+Front-end Angular institucional e municipal para o sistema de eventos: listagem com filtros e estatísticas, detalhes do evento, inscrição de participantes, lista de espera, área pública, painel administrativo CMS e gerenciamento de conta.
 Consome a API Spring Boot do repositório `eventos-API` em `http://localhost:8080`.
 
-## Stack e comandos
+---
 
-- Angular 15 (NgModule, **não** standalone components), TypeScript 4.9, RxJS 7.
-- Tailwind CSS 3 com o design CODIUB (preset `tailwind.codiub.preset.js`, tema claro, Open Sans) e classes próprias em `src/styles.css`.
-- Formulários com **Reactive Forms** (`FormGroup` / `FormControl` / `Validators`).
+## 1. Stack Tecnológica e Comandos do Terminal
+
+- **Angular 15** (NgModule, **não** utilizar standalone components), TypeScript 4.9, RxJS 7.
+- **Tailwind CSS 3** com o design system CODIUB (`tailwind.codiub.preset.js`, tema claro, Open Sans) e classes utilitárias semânticas em `src/styles.css`.
+- **Formulários Reativos** (`FormGroup` / `FormControl` / `Validators`).
+
+### Comandos Essenciais
 
 ```bash
-npm ci            # instalar dependências
-npm start         # ng serve em http://localhost:4200 (porta liberada no CORS da API)
-npx ng build      # build; precisa passar sem erros antes de commitar
+npm ci                                             # Instalação limpa e reproduzível das dependências
+npm start                                          # Servidor de desenvolvimento em http://localhost:4200
+npx ng build                                       # Build de produção (obrigatório validar sem erros antes de commitar)
+npx ng test --watch=false --browsers=ChromeHeadless # Bateria de testes unitários automatizados (27 testes)
 ```
 
-## Estrutura
+---
+
+## 2. Restrições Absolutas e Inegociáveis
+
+1. **NUNCA USAR DOCKER:**
+   - Este projeto não utiliza Docker, containers, Dockerfiles, docker-compose ou Nginx em container.
+   - Não crie arquivos Docker nem sugira fluxos baseados em containerização. O deploy e a execução são diretos no Node.js / servidor HTTP nativo.
+2. **NÃO REALIZAR GIT PUSH DIRETO:**
+   - Nunca realize `git push` sem que o usuário aprove e peça explicitamente.
+   - Trabalhe em branches limpas e faça commits atômicos com mensagens claras em português.
+
+---
+
+## 3. Estrutura do Projeto
 
 ```
 src/app
-├── compartilhado/   # AvisoComponent, ModalRotaComponent e PaginaNaoEncontradaComponent
-├── models/          # Interfaces (Evento, Participante, ListaEspera, Page<T>, Categoria...) + helpers de exibição
-├── services/        # Um service por recurso da API (evento, participante, lista-espera, categoria, auth) usando environment.apiUrl
-├── interceptors/    # AuthInterceptor: envia o cookie do token (withCredentials) e trata 401
-├── guards/          # AuthGuard: só libera rotas internas se a API (/auth/me) confirmar a sessão
-├── eventos/         # Página de eventos + formulários de cadastro e edição
-├── detalhes-eventos/# Página de detalhes (ocupação, formulário de inscrição, participantes, lista de espera)
-├── participantes/   # formularioParticipantes, lista-participantes, lista-espera
-├── login/ cadastro/ # Autenticação
+├── compartilhado/    # AvisoComponent, ModalRotaComponent, NotifierComponent, PaginaNaoEncontradaComponent
+├── models/           # Interfaces (Evento, Participante, ListaEspera, Page<T>, Categoria, Indicadores, Paginacao)
+├── services/         # EventoService, ParticipanteService, ListaEsperaService, CategoriaService, AuthService, NotifierService
+├── interceptors/     # AuthInterceptor (envia cookie HttpOnly withCredentials: true e trata HTTP 401)
+├── guards/           # AuthGuard (valida a sessão com a API via /auth/me)
+├── eventos/          # Listagem pública/CMS, formulários de cadastro e edição de eventos
+├── detalhes-eventos/ # Detalhes do evento, ocupação, formulário de inscrição e fila de espera
+├── participantes/    # formularioParticipantes, lista-participantes, lista-espera
+├── minha-conta/      # Alteração de senha e perfil do usuário logado
+├── login/ cadastro/  # Telas de autenticação
 └── app-routing.module.ts
 ```
 
-## Regras de projeto
+---
 
-- **Todo componente novo deve ser declarado em `app.module.ts`.**
-- **Chamadas HTTP só nos services** (`services/*.service.ts`), nunca direto no componente.
-  Cada service usa `environment.apiUrl` (`src/environments/environment.ts`).
-- Tipos de dados em `models/`. Respostas paginadas usam `Page<T>` (`content`, `totalPages`, `totalElements`...).
-- Comunicação entre componentes: `@Input()` para dados, `@Output() EventEmitter` para avisar o pai,
-  com o padrão de nome `algoAconteceuOutput` (ex.: `participanteCadastradoOutput`).
-  O pai recarrega o que precisar (ver `DetalhesEventosComponent.atualizarParticipantes()`).
-- Após qualquer ação que muda dados (inscrição, exclusão, fila), **recarregue evento, contagens e listas**,
-  porque a API pode ter alterado o status ou promovido alguém da lista de espera.
-- Mensagens de erro: mostrar `erro.error?.titulo ?? 'mensagem padrão'`. O `titulo` vem da API, já em português.
-  Mensagens de sucesso e erro somem com `setTimeout` (2 a 3,5s).
-- Botões de envio ficam desabilitados enquanto `enviando` é true ou o formulário é inválido.
-- Ações de exclusão ou remoção usam o diálogo acessível de confirmação CODIUB (`role="alertdialog"`, foco inicial no Cancelar e fechamento com `Esc`), nunca `window.confirm`.
-- Ações restritas a admin são escondidas com `*ngIf="authService.isAdmin()"`. A API também valida;
-  esconder no front é só UX.
-- Nomes de componentes, variáveis, métodos e textos da interface em **português**.
-  Mantenha os campos no formato da API (`data_evento`, `capacidade_maxima`, `categoriaId`...).
-- Datas enviadas à API em ISO com fuso de Brasília: `valor + ':00-03:00'` (inputs `datetime-local`).
-  Exibição com o pipe `date` (locale `pt-BR` já registrado).
+## 4. Regras Arquiteturais e de Código
 
-### Visual (design CODIUB — Modo Prefeitura)
+- **Registro de Componentes:** Todo novo componente, diretiva ou pipe deve ser declarado em `src/app/app.module.ts`.
+- **Camada de Serviços HTTP:**
+  - Chamadas HTTP ocorrem **exclusivamente** nos services (`services/*.service.ts`), jamais diretamente nos componentes.
+  - Cada service deve consumir `environment.apiUrl` (`src/environments/environment.ts`).
+- **Comunicação entre Componentes:**
+  - Utilizar `@Input()` para dados e `@Output() EventEmitter` com o sufixo `Output` (ex.: `participanteCadastradoOutput`).
+  - O componente pai deve recarregar os dados necessários ao receber eventos de atualização.
+- **Ciclo de Atualização Reativa:**
+  - Após qualquer ação que altere o estado (inscrição, exclusão, fila, alteração de capacidade), recarregue sempre evento, contagens e listas, pois a API recalcula status e promove automaticamente participantes da fila.
+- **Notificações e Feedback (NotifierService):**
+  - Utilizar o `NotifierService` (`notifierService.sucesso()`, `notifierService.erro()`, `notifierService.aviso()`, `notifierService.info()`) para notificações flutuantes (toasts acessíveis WCAG AA com live region, duração padrão de 3s e pausa no hover/foco).
+  - **Não** criar timeouts manuais (`setTimeout`) com divs de toast ad-hoc nos componentes.
+  - Utilizar `<app-aviso>` apenas para caixas de mensagem estáticas inline no fluxo da página.
+- **Padrão de Paginação:**
+  - Sempre utilizar as opções padronizadas `5 / 10 / 20` itens por página através da constante `OPCOES_TAMANHO_PAGINA` em `src/app/models/paginacao.ts`.
+  - Utilizar o helper `calcularPaginasVisiveis(paginaAtual, totalPaginas)` para exibir controles de navegação limpos.
+- **Diálogos de Confirmação:**
+  - Ações destrutivas (excluir evento, remover participante, cancelar inscrição) usam o diálogo acessível CODIUB (`role="alertdialog"`, fechamento com `Esc`, foco inicial no Cancelar). **Nunca use `window.confirm`**.
+- **Controle de Acesso na Interface:**
+  - Elementos restritos a administradores usam `*ngIf="authService.isAdmin()"`.
+- **Formatação e Padrão Linguístico:**
+  - Nomes de variáveis, métodos, componentes e textos de interface em **português (pt-BR)**.
+  - Textos em **sentence case** (apenas a primeira letra da frase em maiúscula), labels **sem dois-pontos** no final e botões iniciando por **verbo de ação** ("Cadastrar evento", "Salvar alterações", "Entrar na lista").
 
-- **Modo Prefeitura em duas faces:**
-  - **CMS (`ADMIN`):** navbar navy (`bg-codiub-navy`) com `assets/logo/prefeitura/pmu-colorida-texto-branco-horizontal.png`, sidebar clara recolhível com `☰`, sem breadcrumb e painel agrupado de indicadores.
-  - **Área Pública (`USER`, Login e Cadastro):** barra branca com `pmu-colorida-horizontal.png` + faixa navy `"Eventos"` + breadcrumb `Portal da Prefeitura › FacilitaTudo › Início` + barra única de filtros com controles `h-control-lg` (`48px`), widget VLibras e footer navy assinando com `codiub-branca-horizontal.png` em `gray-300`.
-- Cada azul tem um papel: `codiub-brand` (#002069) é ação e título (botão primário, `page-title`), `codiub-navy`
-  (#042D62) só superfície (navbar, footer, barra de título de card), `blue-600` é interação secundária (links,
-  botão secundário, paginação ativa). Ciano só como detalhe sobre navy. Não crie outros tons nem hex novos.
-- Use as classes de `styles.css` antes de criar estilos novos: `card`, `page-title`, `card-title`, `eyebrow`,
-  `micro-label`, `label`, `input`, `input-invalid`, `field-error`, `field-help`, `btn-primary`, `btn-secondary`,
-  `btn-ghost` (terciário/link), `btn-danger`, `btn-icon`, `btn-icon-danger`, `link`, `badge`, `badge-navy`,
-  `cabecalho-tabela` / `linha-tabela` / `celula-tabela` / `cell-label` (tabela que vira blocos abaixo de `md`),
-  `page-btn`, `dialog-overlay`, `toast-area`.
-- Botões são pílulas de 42px; um primário por área; na barra de ações o secundário fica à esquerda e o primário à
-  direita (no celular, empilhados com o primário em cima e `w-full sm:w-auto`).
-- Só três raios: `rounded-lg` (padrão), `rounded-panel` (indicadores/KPIs) e `rounded-full` (botões, badges).
-- Feedback com `<app-aviso tipo="sucesso|erro|info" [mensagem]="...">`, sempre com ícone (nunca só cor).
-- Cores de status (`statusEvento()` em `models/evento.ts`): Aberto = `green-50/700`, Lotado = `red-50/700`,
-  Encerrado = `gray-100/700`. Categoria e lista de espera usam a badge navy (`corCategoria()` em `models/categoria.ts`).
-- Mobile primeiro, funcionando em 360px: campos com `text-base sm:text-sm`, botões de ícone com 40px, sem rolagem
-  horizontal. Textos em sentence case, labels sem dois-pontos e botões começando com verbo.
+---
 
-### Autenticação e segurança
+## 5. Design System CODIUB (Modo Prefeitura — Duas Faces)
 
-- **O token JWT fica num cookie HttpOnly gravado pela API** (`eventos_token`). O JavaScript não consegue lê-lo, e isso é
-  proposital (protege contra roubo por XSS). **Nunca** guarde token em `localStorage`, `sessionStorage` ou variável.
-- O `AuthInterceptor` envia `withCredentials: true` só para `http://localhost:8080`. Requisição nova para a API deve
-  passar por ele (use o `HttpClient` injetado, nunca `fetch`).
-- O `AuthService` guarda em memória apenas `{ username, role }`, vindos de `/auth/login` ou `/auth/me`.
-  Use `isAdmin()`, `getUsername()` e `estaLogado()`; não decodifique token no front.
-- Rotas internas usam `canActivate: [AuthGuard]`, que pergunta à API (`/auth/me`) se a sessão é válida.
-  `/auth/login` e `/auth/cadastro` são públicas.
-- Resposta 401 da API (sessão expirada) faz o interceptor encerrar a sessão e voltar para o login. Logout chama
-  `POST /auth/logout`, que apaga o cookie.
-- Não use `innerHTML`/`bypassSecurityTrust*` com dados vindos da API ou do usuário; deixe o Angular escapar o conteúdo.
+O sistema segue rigorosamente o design institucional da Prefeitura Municipal de Uberaba (PMU) operado pela CODIUB, estruturado em duas faces:
 
-## Regras de negócio (aplicadas pela API, refletidas na interface)
+### Face 1: Painel Administrativo CMS (`ADMIN`)
+- **Navbar Superior:** Fundo Navy (`bg-codiub-navy` / `#042D62`) com logo branca horizontal (`assets/logo/prefeitura/pmu-colorida-texto-branco-horizontal.png`).
+- **Sidebar Retrátil:** Lateral esquerda clara com botão hambúrguer `☰` recolhível. Links: Eventos, Participantes, Lista de Espera, Minha Conta e Sair.
+- **Sem Breadcrumb:** Foco operacional direto.
+- **Painel de Indicadores:** Cards de KPIs no topo (`rounded-panel` com números de alto contraste).
 
-### Eventos
-- Obrigatórios: nome, local, capacidade (mínimo 1), data e categoria. **A data não pode estar no passado.**
-- Status: `ABERTO` (tem vaga), `LOTADO` (participantes ≥ capacidade), `ENCERRADO` (a data passou,
-  encerrado automaticamente pela API).
-- O status nunca é escolhido pelo usuário: a API recalcula.
-- Só é possível excluir eventos sem participantes. Editar e excluir: apenas `ADMIN`.
+### Face 2: Área Pública (`USER` e Cidadão Anônimo)
+- **Cabeçalho Superior Branco:** Barra branca de altura compacta (`p-3`) com logo colorida horizontal (`assets/logo/prefeitura/pmu-colorida-horizontal.png`) e identificação do usuário / link "Minha conta" / botão de saída à direita.
+- **Faixa de Título Navy:** Barra navy sólida (`bg-codiub-navy`, padding `p-5 md:p-10`) com título limpo em branco ("Eventos") em sentence case.
+- **Breadcrumb Acessível:** `Portal da Prefeitura › FacilitaTudo › Início` com separador chevron.
+- **Largura Fluida / Total:** O conteúdo da área pública utiliza a largura total da janela com respiro lateral padronizado (`px-4 py-5`), sem caixa estreita centralizada (`max-w-6xl` removido).
+- **Rodapé Institucional:** Rodapé navy com assinatura da CODIUB em `gray-300` e logo `codiub-branca-horizontal.png`.
 
-### Participantes
-- Nome (até 30) e email (válido, até 40) obrigatórios. O mesmo email não pode se inscrever duas vezes no mesmo evento.
-- Evento `ENCERRADO`: formulário de inscrição desabilitado.
-- Somente `ADMIN` exclui participantes e baixa o Excel (que contém apenas participantes).
-- Para quem não é `ADMIN`, a API devolve os emails mascarados (`an***@x.com`) na lista de participantes e na fila.
+### Paleta de Cores e Hierarquia Visual
+- `codiub-brand` (`#002069`): Botões primários (`btn-primary`), ações principais e títulos de destaque.
+- `codiub-navy` (`#042D62`): Superfícies (navbar, barra de título pública, cabeçalhos de tabela e rodapé).
+- `blue-600`: Ações secundárias, links e itens ativos da paginação.
+- Raios de borda:
+  - `rounded-lg`: Padrão para cards e caixas de diálogo.
+  - `rounded-panel`: Cards de KPIs e painéis de dados.
+  - `rounded-full`: Pílulas para botões de 42px e badges de status.
 
-### Lista de espera
-- Evento `LOTADO` que ainda não ocorreu: o formulário de inscrição vira **"Entrar na lista de espera"**
-  e mostra a posição recebida.
-- Fila por ordem de chegada. Quando um participante sai, **o primeiro da fila assume a vaga automaticamente**
-  (feito pela API). Se a capacidade do evento aumentar, a fila também é chamada.
-- O card "Lista de Espera" aparece quando o evento está lotado ou ainda há gente na fila.
-  Somente `ADMIN` remove pessoas da fila.
-- Um email não pode estar na fila e como participante ao mesmo tempo.
+---
 
-### Usuários
-- Papéis `ADMIN` e `USER`. O cadastro pela tela sempre cria `USER`.
-- Cadastro: usuário com 3 a 50 caracteres (letras, números, `.`, `-`, `_`) e senha com pelo menos 8 caracteres
-  (as mesmas regras da API).
-- A sessão dura 1 hora (padrão da API). Depois de 5 senhas erradas, o login fica bloqueado por 15 minutos
-  e a API devolve a mensagem para exibir.
+## 6. Autenticação, Segurança e Integração com a API
 
-## Regras de commit
+- **Token JWT em Cookie HttpOnly:**
+  - O token `eventos_token` é gravado pela API como cookie `HttpOnly`. O front-end **não tem acesso** ao token e **nunca** deve armazená-lo em `localStorage` ou `sessionStorage`.
+  - O `AuthInterceptor` envia automaticamente `withCredentials: true` para todas as requisições destinadas à API (`http://localhost:8080`).
+- **Sessão do Usuário:**
+  - O `AuthService` mantém em memória apenas `{ username, role }`.
+  - As rotas protegidas utilizam `canActivate: [AuthGuard]`, que consulta `GET /auth/me` para validar a sessão.
+  - Respostas HTTP 401 deslogam automaticamente o usuário e redirecionam para a tela de login.
+- **Endpoints Específicos Integrados:**
+  - `GET /eventos/indicadores` → Consumido por `EventoService.obterIndicadores()`.
+  - `GET /eventos/excel` → Consumido por `EventoService.exportarExcel()`.
+  - `PUT /auth/alterar-senha` → Consumido por `AuthService.alterarSenha()`.
+  - `GET /categorias` → Consumido por `CategoriaService.listar()`.
 
-- Mensagens em **português**, no formato Conventional Commits: `tipo: descrição curta`.
-  - `feat:` nova funcionalidade ou tela
-  - `fix:` correção de bug
-  - `refactor:` mudança de código sem mudar comportamento
-  - `style:` mudanças apenas visuais ou de formatação
-  - `docs:` documentação (README, CLAUDE.md)
-  - `chore:` build, dependências, configuração
-  - `test:` testes
-- Primeira linha com até ~72 caracteres, em minúsculas e sem ponto final.
-  Ex.: `feat: lista de espera nos detalhes do evento`.
-- Se precisar, deixe uma linha em branco e detalhe em tópicos (`- ...`) o que mudou e por quê.
-- Um commit por assunto. `npx ng build` precisa passar antes do commit.
-- Não comite `node_modules/`, `dist/`, `.angular/` nem `console.log` de debug.
-- Mudanças que dependem de alteração na API devem ter a mudança correspondente no `eventos-API`,
-  de preferência com o mesmo nome de branch nos dois repositórios, e o PR da API deve ser mergeado antes ou junto.
-- Trabalhe em branch própria e abra Pull Request para a `main`. Não faça push direto na `main`.
+---
+
+## 7. Padrão de Commits
+
+Mensagens em **português (pt-BR)** no padrão Conventional Commits:
+- `feat:` Nova funcionalidade ou tela
+- `fix:` Correção de bug
+- `refactor:` Refatoração sem alteração de comportamento
+- `style:` Ajustes visuais ou de formatação
+- `test:` Criação ou manutenção de testes
+- `docs:` Alterações em documentação (`README.md`, `CLAUDE.md`, `GEMINI.md`)
+- `chore:` Configurações e dependências

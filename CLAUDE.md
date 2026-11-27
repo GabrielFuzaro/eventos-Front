@@ -2,6 +2,7 @@
 
 Front-end Angular institucional e municipal para o sistema de eventos: listagem com filtros e estatísticas, detalhes do evento, inscrição de participantes, lista de espera, área pública, painel administrativo CMS e gerenciamento de conta.
 Consome a API Spring Boot do repositório `eventos-API` em `http://localhost:8080`.
+Segue integralmente a skill unificada **`codiub-design`** (`SKILL.md` + `references/engineering.md`, `brand.md`, `tokens.md`, `components.md`, `layouts.md`, `voice.md`), que governa tanto o Design System (Modo Prefeitura — Duas Faces) quanto os padrões de Engenharia Corporativa (arquitetura, RBAC, `NotifierService.erroBlob()`, testes e execução nativa sem Docker).
 
 ---
 

@@ -8,7 +8,10 @@ Interface web desenvolvida em **Angular 15** e **Tailwind CSS 3**, padronizada c
 
 - **Duas Faces Institucionais (Modo Prefeitura):**
   - **Área Administrativa / CMS (`ADMIN`):** navbar navy (`#042D62`) com brasão colorido da Prefeitura + texto branco (`pmu-colorida-texto-branco-horizontal.png`), sidebar clara recolhível no desktop (`GE` + botão `☰`) com acesso direto a **Eventos**, **Minha conta** e **Portal da Prefeitura**, além de painel agrupado com **5 indicadores dinâmicos** filtráveis por **Data inicial**, **Data final** e **Categoria**.
-  - **Área Pública / Cidadão (`USER`, Login e Cadastro):** barra superior branca com `pmu-colorida-horizontal.png` + faixa navy `"Eventos"` alinhados ao grid `max-w-6xl`, breadcrumb `Portal da Prefeitura › FacilitaTudo › Início` e barra única de filtros com controles grandes (`48px`).
+  - **Área Pública / Cidadão (`USER`, Login e Cadastro):** barra superior branca com `pmu-colorida-horizontal.png` + faixa navy `"Eventos"` em largura fluida (`w-full px-4 py-5`), breadcrumb `Portal da Prefeitura › FacilitaTudo › Início` e barra única de filtros com controles grandes (`48px`).
+- **Controle de Acesso RBAC e Segurança:**
+  - `AuthGuard` valida a sessão via `/auth/me` e restringe rotas administrativas (`/eventos/:id/edicao`) ao perfil `ADMIN`, bloqueando acesso direto via URL por usuários comuns (`USER`).
+  - Tokens JWT mantidos exclusivamente em cookie `HttpOnly` (`withCredentials: true` via `AuthInterceptor`), sem armazenamento em `localStorage` ou `sessionStorage`.
 - **Listagem Avançada, Ordenação e Exportação Excel:**
   - Tabela responsiva (colunas ordenáveis com `aria-sort` no desktop e blocos rotulados abaixo de `md`), paginação corporativa **5 / 10 / 20 itens por página**, seletor de ocultação de colunas e **exportação para Excel** (`GET /eventos/excel`) respeitando os filtros ativos e as colunas visíveis.
 - **Notificações Globais (`NotifierService` + `NotifierComponent`):**
@@ -37,6 +40,15 @@ Interface web desenvolvida em **Angular 15** e **Tailwind CSS 3**, padronizada c
 ---
 
 ## Arquitetura e Organização
+
+```mermaid
+flowchart LR
+    UI["Componentes Angular 15 (CMS & Área Pública)"] --> Guard["AuthGuard (Sessão / RBAC)"]
+    UI --> Services["Camada de Serviços HTTP (Evento, Participante, ListaEspera, Categoria, Auth)"]
+    UI --> Notifier["NotifierService (Toasts & erroBlob)"]
+    Services --> Interceptor["AuthInterceptor (withCredentials + 401)"]
+    Interceptor --> API["Eventos API (Spring Boot)"]
+```
 
 ```text
 src/

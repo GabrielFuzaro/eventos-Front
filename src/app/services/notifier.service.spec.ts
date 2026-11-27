@@ -85,4 +85,16 @@ describe('NotifierService', () => {
     const erroConexao = new HttpErrorResponse({ status: 0 });
     expect(service.extrairMensagemErro(erroConexao, 'Padrão')).toContain('conectar ao servidor');
   });
+
+  it('deve extrair mensagem de erro em Blob JSON via erroBlob e notificar erro', async () => {
+    const blobJson = new Blob([JSON.stringify({ titulo: 'Nenhum participante para exportar.' })], { type: 'application/json' });
+    const erro = new HttpErrorResponse({ status: 422, error: blobJson });
+
+    await service.erroBlob(erro, 'Fallback');
+
+    const lista = await firstValueFrom(service.notificacoes$);
+    expect(lista.length).toBe(1);
+    expect(lista[0].tipo).toBe('erro');
+    expect(lista[0].mensagem).toBe('Nenhum participante para exportar.');
+  });
 });

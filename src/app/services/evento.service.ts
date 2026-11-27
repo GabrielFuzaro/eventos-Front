@@ -55,7 +55,7 @@ export class EventoService {
         return this.http.get<IndicadoresEvento>(`${this.apiUrl}/indicadores`, { params });
     }
 
-    baixarExcelEventos(filtros: FiltrosEvento = {}, colunasOcultas: string[] = []): Observable<Blob> {
+    exportarExcel(filtros: FiltrosEvento = {}, colunasOcultas: string[] = []): Observable<Blob> {
         let params = new HttpParams();
         if (filtros.nome) params = params.set('nome', filtros.nome);
         if (filtros.status) params = params.set('status', filtros.status);
@@ -70,6 +70,11 @@ export class EventoService {
             params,
             responseType: 'blob'
         });
+    }
+
+    /** @deprecated Utilizar `exportarExcel` */
+    baixarExcelEventos(filtros: FiltrosEvento = {}, colunasOcultas: string[] = []): Observable<Blob> {
+        return this.exportarExcel(filtros, colunasOcultas);
     }
 
     contarPorStatus(status: string): Observable<number> {

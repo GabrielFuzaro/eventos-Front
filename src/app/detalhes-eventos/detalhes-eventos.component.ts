@@ -92,12 +92,7 @@ export class DetalhesEventosComponent implements OnInit {
       },
       error: async erro => {
         this.baixandoExcel = false;
-        // Com responseType 'blob' o corpo do erro também vem como Blob: converte para ler o "titulo" da API
-        let titulo = '';
-        try {
-          titulo = JSON.parse(await (erro.error as Blob).text())?.titulo ?? '';
-        } catch {}
-        this.notifier.erro(titulo || 'Não foi possível gerar o Excel. Tente novamente.');
+        await this.notifier.erroBlob(erro, 'Não foi possível gerar o Excel. Tente novamente.');
       }
     });
   }

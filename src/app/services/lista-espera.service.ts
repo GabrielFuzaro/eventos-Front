@@ -29,7 +29,7 @@ export class ListaEsperaService {
         return this.http.post<ListaEspera>(this.apiUrl, inscricao);
     }
 
-    remover(id: number) { //Remove alguém da fila (admin)
-        return this.http.delete(`${this.apiUrl}/${id}`);
+    remover(id: number): Observable<void> { //Remove alguém da fila (admin)
+        return this.http.delete<void>(`${this.apiUrl}/${id}`);
     }
 }

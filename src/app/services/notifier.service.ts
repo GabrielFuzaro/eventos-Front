@@ -54,6 +54,24 @@ export class NotifierService {
     this.erro(this.extrairMensagemErro(erro, mensagemPadrao));
   }
 
+  async erroBlob(erro: unknown, mensagemPadrao = 'Não foi possível gerar o arquivo. Tente novamente.'): Promise<void> {
+    const httpErro = erro as HttpErrorResponse | undefined;
+    if (httpErro?.error instanceof Blob) {
+      try {
+        const texto = await httpErro.error.text();
+        const corpo = JSON.parse(texto) as { titulo?: string; message?: string };
+        const mensagem = corpo?.titulo || corpo?.message;
+        if (mensagem) {
+          this.erro(String(mensagem));
+          return;
+        }
+      } catch {
+        // Blob não contém JSON válido; utiliza o fallback de status HTTP / mensagem padrão
+      }
+    }
+    this.erroApi(erro, mensagemPadrao);
+  }
+
   // Aliases compatíveis com o padrão legado NotifierService da CODIUB
   showSuccess(message: string): void {
     this.sucesso(message);

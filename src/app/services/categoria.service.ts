@@ -14,7 +14,12 @@ export class CategoriaService{
 
     constructor(private http: HttpClient){}
 
-    listarCategorias(): Observable<Categoria[]>{
+    listar(): Observable<Categoria[]> {
         return this.http.get<Categoria[]>(`${this.apiUrl}`);
+    }
+
+    /** @deprecated Utilizar `listar` */
+    listarCategorias(): Observable<Categoria[]> {
+        return this.listar();
     }
 }

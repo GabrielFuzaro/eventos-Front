@@ -26,8 +26,13 @@ export class AuthService {
             .pipe(tap(usuario => this.usuario = usuario));
     }
 
-    cadatrar(username: string, senha: string): Observable<Usuario>{
-        return this.http.post<Usuario>(`${this.apiUrl}/cadastro`, { username, senha })
+    cadastrar(username: string, senha: string): Observable<Usuario> {
+        return this.http.post<Usuario>(`${this.apiUrl}/cadastro`, { username, senha });
+    }
+
+    /** @deprecated Utilizar `cadastrar` */
+    cadatrar(username: string, senha: string): Observable<Usuario> {
+        return this.cadastrar(username, senha);
     }
 
     alterarSenha(senhaAtual: string, novaSenha: string): Observable<void> {

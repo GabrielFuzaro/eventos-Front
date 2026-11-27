@@ -15,19 +15,23 @@ export class ParticipanteService {
     constructor( private http: HttpClient) {}
 
     listarParticipantes(page: number, size: number): Observable<Page<Participante>> {
-        return this.http.get<Page<Participante>>(`${this.apiUrl}?page=${page}&size=${size}`);
+        return this.http.get<Page<Participante>>(this.apiUrl, {
+            params: { page, size }
+        });
     }
 
-    listarParticipantesEvento(id: number, page: number, size: number){ //Método para listar os participantes de um evento com paginação
-        return this.http.get<Page<Participante>>(`${this.apiUrl}/evento/${id}/?page=${page}&size=${size}`)
+    listarParticipantesEvento(id: number, page: number, size: number): Observable<Page<Participante>> { //Método para listar os participantes de um evento com paginação
+        return this.http.get<Page<Participante>>(`${this.apiUrl}/evento/${id}/`, {
+            params: { page, size }
+        });
     }
 
-    cadastrarParticipante(participante: ParticipanteInput){   //Método para cadastrar participante
-        return this.http.post<Participante>(this.apiUrl, participante)
+    cadastrarParticipante(participante: ParticipanteInput): Observable<Participante> {   //Método para cadastrar participante
+        return this.http.post<Participante>(this.apiUrl, participante);
     }
 
-    excluirParticipante(id: number){ //Método para excluir participante
-        return this.http.delete(`${this.apiUrl}/${id}`)
+    excluirParticipante(id: number): Observable<void> { //Método para excluir participante
+        return this.http.delete<void>(`${this.apiUrl}/${id}`);
     }
 
     baixarExcel(eventoId: number): Observable<Blob> {

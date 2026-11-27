@@ -174,9 +174,14 @@ export class EventosComponent implements OnInit, OnDestroy {
     this.carregando = false;
   }
 
-  toogleEstatisticas(): boolean {
+  alternarEstatisticas(): boolean {
     this.mostrarEstatisticas = !this.mostrarEstatisticas;
     return this.mostrarEstatisticas;
+  }
+
+  /** @deprecated Utilizar `alternarEstatisticas` */
+  toogleEstatisticas(): boolean {
+    return this.alternarEstatisticas();
   }
 
   alternarSeletorColunas(): void {
@@ -281,7 +286,7 @@ export class EventosComponent implements OnInit, OnDestroy {
       .filter(chave => this.colunasOcultas[chave]);
 
     this.baixandoExcelEventos = true;
-    this.eventoService.baixarExcelEventos(this.filtros, colunasOcultasAtivas).subscribe({
+    this.eventoService.exportarExcel(this.filtros, colunasOcultasAtivas).subscribe({
       next: (arquivo: Blob) => {
         this.baixandoExcelEventos = false;
         const url = URL.createObjectURL(arquivo);
@@ -294,11 +299,7 @@ export class EventosComponent implements OnInit, OnDestroy {
       },
       error: async erro => {
         this.baixandoExcelEventos = false;
-        let titulo = '';
-        try {
-          titulo = JSON.parse(await (erro.error as Blob).text())?.titulo ?? '';
-        } catch {}
-        this.notifier.erro(titulo || 'Não foi possível gerar o Excel de eventos. Tente novamente.');
+        await this.notifier.erroBlob(erro, 'Não foi possível gerar o Excel de eventos. Tente novamente.');
       }
     });
   }

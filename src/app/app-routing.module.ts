@@ -28,12 +28,14 @@ const routes: Routes = [
   {
     canActivate: [AuthGuard],
     path: 'eventos/:id/edicao',
-    component: FormularioEdicaoEventosComponent
+    component: FormularioEdicaoEventosComponent,
+    data: { role: 'ADMIN' }
   },
   {
     canActivate: [AuthGuard],
     path: 'eventos/:id/edição',
-    component: FormularioEdicaoEventosComponent
+    component: FormularioEdicaoEventosComponent,
+    data: { role: 'ADMIN' }
   },
   {
     path: '',

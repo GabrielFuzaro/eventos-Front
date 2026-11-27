@@ -17,7 +17,7 @@ Consome a API Spring Boot do repositório `eventos-API` em `http://localhost:808
 npm ci                                             # Instalação limpa e reproduzível das dependências
 npm start                                          # Servidor de desenvolvimento em http://localhost:4200
 npx ng build                                       # Build de produção (obrigatório validar sem erros antes de commitar)
-npx ng test --watch=false --browsers=ChromeHeadless # Bateria de testes unitários automatizados (27 testes)
+npx ng test --watch=false --browsers=ChromeHeadless # Bateria de testes unitários automatizados (33 testes)
 ```
 
 ---

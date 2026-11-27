@@ -55,7 +55,7 @@ export class CadastroComponent {
     const usuario = this.cadastroFormulario.getRawValue();
     this.enviando = true;
 
-    this.authService.cadatrar(usuario.username, usuario.senha)
+    this.authService.cadastrar(usuario.username, usuario.senha)
       .subscribe({
         next: () => {
           this.cadastroFormulario.reset();

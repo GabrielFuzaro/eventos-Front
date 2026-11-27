@@ -1,6 +1,14 @@
-<!-- Retorno interno no CMS (sem breadcrumb público) -->
-<div class="mb-4">
-    <a [routerLink]="['/eventos', id]" class="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:underline">
+<!-- Cabeçalho interno no CMS (sem breadcrumb público) -->
+<div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <div class="flex flex-wrap items-center gap-3">
+        <h1 class="page-title">Editar evento</h1>
+        <span *ngIf="evento" class="badge" [ngClass]="statusEvento(evento.status).badge">
+            <span class="h-1.5 w-1.5 rounded-full" [ngClass]="statusEvento(evento.status).dot" aria-hidden="true"></span>
+            {{ statusEvento(evento.status).label }}
+        </span>
+    </div>
+
+    <a [routerLink]="['/eventos', id]" class="btn-secondary w-full sm:w-auto">
         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M15 19l-7-7 7-7" />
         </svg>
@@ -8,21 +16,13 @@
     </a>
 </div>
 
-<div class="mb-5 flex flex-wrap items-center gap-3">
-    <h1 class="page-title">Editar evento</h1>
-    <span *ngIf="evento" class="badge" [ngClass]="statusEvento(evento.status).badge">
-        <span class="h-1.5 w-1.5 rounded-full" [ngClass]="statusEvento(evento.status).dot" aria-hidden="true"></span>
-        {{ statusEvento(evento.status).label }}
-    </span>
-</div>
-
 <!-- Carregando -->
 <div *ngIf="carregando" class="card space-y-4 p-5" aria-label="Carregando evento">
     <div class="h-4 w-32 animate-pulse rounded-lg bg-gray-100"></div>
-    <div class="h-[42px] animate-pulse rounded-lg bg-gray-100"></div>
+    <div class="h-control animate-pulse rounded-lg bg-gray-100"></div>
     <div class="grid gap-4 md:grid-cols-2">
-        <div class="h-[42px] animate-pulse rounded-lg bg-gray-100"></div>
-        <div class="h-[42px] animate-pulse rounded-lg bg-gray-100"></div>
+        <div class="h-control animate-pulse rounded-lg bg-gray-100"></div>
+        <div class="h-control animate-pulse rounded-lg bg-gray-100"></div>
     </div>
 </div>
 

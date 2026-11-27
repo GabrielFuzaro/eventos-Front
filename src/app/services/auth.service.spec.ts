@@ -80,4 +80,16 @@ describe('AuthService', () => {
     expect(service.estaLogado()).toBeFalse();
     expect(service.getUsername()).toBe('');
   });
+
+  it('deve enviar requisição POST para /auth/cadastro ao chamar cadastrar', () => {
+    service.cadastrar('novo.usuario', 'senhaForte123').subscribe(usuario => {
+      expect(usuario.username).toBe('novo.usuario');
+      expect(usuario.role).toBe('USER');
+    });
+
+    const req = httpMock.expectOne(`${apiUrl}/cadastro`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({ username: 'novo.usuario', senha: 'senhaForte123' });
+    req.flush({ username: 'novo.usuario', role: 'USER' });
+  });
 });

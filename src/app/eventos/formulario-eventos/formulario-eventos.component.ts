@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 import { Categoria } from 'src/app/models/categoria';
@@ -22,6 +22,10 @@ export class FormularioEventosComponent implements OnInit {
 
   @Output() eventoCadastradoOutput = new EventEmitter<void>();
   @Output() fecharOutput = new EventEmitter<void>();
+
+  @ViewChild('campoNome') set campoNome(input: ElementRef<HTMLInputElement> | undefined) {
+    input?.nativeElement.focus();
+  }
 
   categorias: Categoria[] = [];
   enviando = false;
